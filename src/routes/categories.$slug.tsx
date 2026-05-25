@@ -71,7 +71,7 @@ function CategoryPage() {
         supabase.from("categories").select("*").eq("slug", slug).maybeSingle(),
         supabase
           .from("products")
-          .select("id,name,price,image_url,category,stock")
+          .select("id,name,name_ar,price,image_url,category,stock")
           .eq("is_active", true)
           .eq("category", slug)
           .order("created_at", { ascending: false }),
