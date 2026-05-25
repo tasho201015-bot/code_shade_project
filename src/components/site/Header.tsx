@@ -37,7 +37,7 @@ export function Header() {
         <Link to="/" className="font-display text-2xl tracking-luxe uppercase">
           Mala<span className="italic font-light">z</span>
         </Link>
-        <nav className="hidden md:flex items-center gap-10 text-xs uppercase tracking-luxe">
+        <nav className="hidden lg:flex items-center gap-10 text-xs uppercase tracking-luxe">
           <Link to="/" className="link-underline">{t("nav.home")}</Link>
           <Link to="/shop" search={{ category: "all" }} className="link-underline">{t("nav.shop")}</Link>
           <Link to="/categories" className="link-underline">Collections</Link>
