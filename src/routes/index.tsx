@@ -276,8 +276,8 @@ function HomePage() {
                   </div>
                   <div className="mt-4 flex items-start justify-between gap-3">
                     <div>
-                      <div className="font-display text-lg leading-tight">{p.name}</div>
-                      <div className="text-[10px] uppercase tracking-luxe text-muted-foreground mt-1">{p.category}</div>
+                      <div className="font-display text-lg leading-tight">{lang === "ar" && p.name_ar ? p.name_ar : p.name}</div>
+                      <div className="text-[10px] uppercase tracking-luxe text-muted-foreground mt-1">{t(`cat.${p.category}`)}</div>
                     </div>
                     <div className="text-sm tabular-nums">${Number(p.price).toFixed(0)}</div>
                   </div>
