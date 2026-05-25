@@ -45,7 +45,7 @@ const EG_LOCATIONS: Record<string, string[]> = {
   Aswan: ["Aswan City", "Kom Ombo", "Edfu"],
   Asyut: ["Asyut City", "Dairout", "Abnoub"],
   "Beni Suef": ["Beni Suef City", "Wasta", "Nasser"],
-  Port Said: ["Port Said City", "Port Fouad"],
+  "Port Said": ["Port Said City", "Port Fouad"],
   Damietta: ["Damietta City", "New Damietta", "Ras El Bar"],
   Sharqia: ["Zagazig", "10th of Ramadan", "Belbeis", "Minya El Qamh"],
   "South Sinai": ["Sharm El Sheikh", "Dahab", "Nuweiba", "Saint Catherine"],
