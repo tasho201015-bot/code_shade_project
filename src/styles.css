@@ -217,3 +217,12 @@
   }
   .link-underline:hover::after { transform: scaleX(1); transform-origin: left; }
 }
+
+@layer components {
+  .form-control {
+    @apply w-full bg-transparent border-b border-border py-2 outline-none text-sm transition-colors;
+  }
+  .form-control:focus { border-color: hsl(var(--accent)); }
+  select.form-control { appearance: none; cursor: pointer; padding-right: 24px; }
+}
+
