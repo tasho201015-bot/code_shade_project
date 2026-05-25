@@ -1,12 +1,20 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
 import { useCart } from "@/lib/cart";
 import { useI18n } from "@/lib/i18n";
 import { LanguageToggle } from "@/components/site/LanguageToggle";
-import { ShoppingBag, User as UserIcon, LogOut, LayoutDashboard } from "lucide-react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { ShoppingBag, User as UserIcon, LogOut, LayoutDashboard, Menu, X } from "lucide-react";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
 
 export function Header() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+  useEffect(() => { setMenuOpen(false); }, [location.pathname]);
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [menuOpen]);
   const { user, signOut, isAdmin } = useAuth();
   const { count } = useCart();
   const { t } = useI18n();
