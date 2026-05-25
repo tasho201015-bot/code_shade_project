@@ -111,7 +111,7 @@ function CategoryPage() {
         {hero ? (
           <motion.img
             src={resolveImage(hero)}
-            alt={cat.name}
+            alt={catName}
             initial={{ scale: 1.15, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
