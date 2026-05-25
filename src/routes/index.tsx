@@ -75,7 +75,7 @@ const testimonials = [
 ];
 
 function HomePage() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [products, setProducts] = useState<Product[]>(() => productsCache ?? []);
   const [heroLoaded, setHeroLoaded] = useState(false);
   const { scrollY } = useScroll();
