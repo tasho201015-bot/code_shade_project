@@ -5,6 +5,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/lib/cart";
+import { useI18n } from "@/lib/i18n";
 import { resolveImage } from "@/lib/product-image";
 import { toast } from "sonner";
 
@@ -15,7 +16,9 @@ export const Route = createFileRoute("/product/$id")({
 interface Product {
   id: string;
   name: string;
+  name_ar: string | null;
   description: string | null;
+  description_ar: string | null;
   price: number;
   image_url: string | null;
   category: string;
@@ -24,6 +27,7 @@ interface Product {
 
 function ProductPage() {
   const { id } = Route.useParams();
+  const { t, lang } = useI18n();
   const [p, setP] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const { add, loaded: cartLoaded } = useCart();
@@ -37,10 +41,12 @@ function ProductPage() {
     });
   }, [id]);
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading…</div>;
-  if (!p) return <div className="min-h-screen flex items-center justify-center">Not found.</div>;
+  if (loading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">{t("prod.loading")}</div>;
+  if (!p) return <div className="min-h-screen flex items-center justify-center">{t("prod.notFound")}</div>;
 
   const soldOut = (p.stock ?? 0) <= 0;
+  const displayName = lang === "ar" && p.name_ar ? p.name_ar : p.name;
+  const displayDesc = lang === "ar" && p.description_ar ? p.description_ar : p.description;
 
   const handleAdd = () => {
     if (soldOut) return;
@@ -48,7 +54,7 @@ function ProductPage() {
       { id: p.id, name: p.name, price: Number(p.price), image_url: p.image_url, stock: p.stock },
     );
     if (!res.ok) {
-      toast.error(res.reason ?? "Could not add to bag");
+      toast.error(res.reason ?? t("prod.addToBag"));
       return;
     }
     if (res.reason) toast.message(res.reason);
@@ -66,7 +72,7 @@ function ProductPage() {
           transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
           className="aspect-[3/4] bg-muted shadow-luxe overflow-hidden"
         >
-          <img src={resolveImage(p.image_url)} alt={p.name} className="w-full h-full object-cover" />
+          <img src={resolveImage(p.image_url)} alt={displayName} className="w-full h-full object-cover" />
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -74,10 +80,12 @@ function ProductPage() {
           transition={{ duration: 0.9, delay: 0.2 }}
           className="lg:pt-10"
         >
-          <div className="text-[10px] uppercase tracking-luxe text-accent">{p.category}</div>
-          <h1 className="font-display text-4xl md:text-5xl mt-3 leading-tight">{p.name}</h1>
+          <div className="text-[10px] uppercase tracking-luxe text-accent">{t(`cat.${p.category}`)}</div>
+          <h1 className="font-display text-4xl md:text-5xl mt-3 leading-tight">{displayName}</h1>
           <div className="mt-4 text-2xl tabular-nums">${Number(p.price).toFixed(2)}</div>
-          <p className="mt-8 text-muted-foreground leading-relaxed max-w-md">{p.description}</p>
+          {displayDesc && (
+            <p className="mt-8 text-muted-foreground leading-relaxed max-w-md">{displayDesc}</p>
+          )}
 
           <div className="mt-10 flex flex-col gap-3">
             <button
@@ -85,21 +93,21 @@ function ProductPage() {
               disabled={!cartLoaded || soldOut}
               className="btn-glow bg-noir text-cream px-8 py-4 text-xs uppercase tracking-luxe disabled:opacity-60"
             >
-              {soldOut ? "Sold out" : added ? "Added to bag ✓" : "Add to bag"}
+              {soldOut ? t("prod.soldOut") : added ? t("prod.added") : t("prod.addToBag")}
             </button>
             <button
               onClick={() => { handleAdd(); nav({ to: "/cart" }); }}
               disabled={!cartLoaded || soldOut}
               className="px-8 py-4 text-xs uppercase tracking-luxe border border-border hover:border-accent transition-colors disabled:opacity-60"
             >
-              Buy now
+              {t("prod.buyNow")}
             </button>
           </div>
 
           <div className="mt-12 grid grid-cols-3 gap-6 text-[10px] uppercase tracking-luxe text-muted-foreground">
-            <div>Free shipping<br/>over $200</div>
-            <div>Easy returns<br/>14 days</div>
-            <div>Secure<br/>checkout</div>
+            <div>{t("prod.shipping")}</div>
+            <div>{t("prod.returns")}</div>
+            <div>{t("prod.secure")}</div>
           </div>
         </motion.div>
       </div>
