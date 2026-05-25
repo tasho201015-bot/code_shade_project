@@ -27,6 +27,7 @@ export const Route = createFileRoute("/")({
 interface Product {
   id: string;
   name: string;
+  name_ar: string | null;
   price: number;
   image_url: string | null;
   category: string;
