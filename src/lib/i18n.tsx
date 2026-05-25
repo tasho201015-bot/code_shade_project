@@ -118,7 +118,7 @@ const ar: Dict = {
   "prod.eyebrow": "البوتيك",
   "prod.title": "أحدث القطع",
   "test.eyebrow": "أصوات",
-  "test.title": "كلمات من نسائنا",
+  "test.title": "آراء عميلاتنا",
   "cta.eyebrow": "ابدئي قصتك",
   "cta.title1": "اكتشفي",
   "cta.title2": "عباءتكِ المثالية.",
