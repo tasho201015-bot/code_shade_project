@@ -47,7 +47,7 @@ function loadHomepageProducts(): Promise<Product[]> {
   if (productsPromise) return productsPromise;
   const p = supabase
     .from("products")
-    .select("id,name,price,image_url,category")
+    .select("id,name,name_ar,price,image_url,category")
     .eq("is_active", true)
     .order("created_at", { ascending: false })
     .limit(8)
