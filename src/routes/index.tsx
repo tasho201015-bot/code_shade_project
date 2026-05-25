@@ -298,14 +298,14 @@ function HomePage() {
         <Stagger className="grid md:grid-cols-3 gap-6">
           {testimonials.map((tm) => (
             <motion.figure
-              key={tm.name}
+              key={tm.nameKey}
               variants={itemVariants}
               className="glass p-8 rounded-sm"
             >
               <div className="text-accent font-display text-4xl leading-none">"</div>
-              <blockquote className="mt-3 font-display text-xl leading-snug text-balance">{tm.quote}</blockquote>
+              <blockquote className="mt-3 font-display text-xl leading-snug text-balance">{t(tm.quoteKey)}</blockquote>
               <figcaption className="mt-6 text-[10px] uppercase tracking-luxe text-muted-foreground">
-                {tm.name} — {tm.role}
+                {t(tm.nameKey)} — {t(tm.roleKey)}
               </figcaption>
             </motion.figure>
           ))}
