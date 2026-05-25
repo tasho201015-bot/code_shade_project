@@ -27,6 +27,7 @@ export const Route = createFileRoute("/")({
 interface Product {
   id: string;
   name: string;
+  name_ar: string | null;
   price: number;
   image_url: string | null;
   category: string;
@@ -46,7 +47,7 @@ function loadHomepageProducts(): Promise<Product[]> {
   if (productsPromise) return productsPromise;
   const p = supabase
     .from("products")
-    .select("id,name,price,image_url,category")
+    .select("id,name,name_ar,price,image_url,category")
     .eq("is_active", true)
     .order("created_at", { ascending: false })
     .limit(8)
@@ -68,13 +69,13 @@ const collections = [
 ];
 
 const testimonials = [
-  { quote: "Wearing Malaz feels like wearing confidence. Every cut, every fabric — pure poetry.", name: "Layla A.", role: "Riyadh" },
-  { quote: "I have never felt more elegant. The fabric flows like water.", name: "Noura H.", role: "Dubai" },
-  { quote: "Modern, modest, unforgettable. My wardrobe finally feels like me.", name: "Sara M.", role: "London" },
+  { quoteKey: "test.1.quote", nameKey: "test.1.name", roleKey: "test.1.role" },
+  { quoteKey: "test.2.quote", nameKey: "test.2.name", roleKey: "test.2.role" },
+  { quoteKey: "test.3.quote", nameKey: "test.3.name", roleKey: "test.3.role" },
 ];
 
 function HomePage() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [products, setProducts] = useState<Product[]>(() => productsCache ?? []);
   const [heroLoaded, setHeroLoaded] = useState(false);
   const { scrollY } = useScroll();
@@ -275,8 +276,8 @@ function HomePage() {
                   </div>
                   <div className="mt-4 flex items-start justify-between gap-3">
                     <div>
-                      <div className="font-display text-lg leading-tight">{p.name}</div>
-                      <div className="text-[10px] uppercase tracking-luxe text-muted-foreground mt-1">{p.category}</div>
+                      <div className="font-display text-lg leading-tight">{lang === "ar" && p.name_ar ? p.name_ar : p.name}</div>
+                      <div className="text-[10px] uppercase tracking-luxe text-muted-foreground mt-1">{t(`cat.${p.category}`)}</div>
                     </div>
                     <div className="text-sm tabular-nums">${Number(p.price).toFixed(0)}</div>
                   </div>
@@ -298,14 +299,14 @@ function HomePage() {
         <Stagger className="grid md:grid-cols-3 gap-6">
           {testimonials.map((tm) => (
             <motion.figure
-              key={tm.name}
+              key={tm.nameKey}
               variants={itemVariants}
               className="glass p-8 rounded-sm"
             >
               <div className="text-accent font-display text-4xl leading-none">"</div>
-              <blockquote className="mt-3 font-display text-xl leading-snug text-balance">{tm.quote}</blockquote>
+              <blockquote className="mt-3 font-display text-xl leading-snug text-balance">{t(tm.quoteKey)}</blockquote>
               <figcaption className="mt-6 text-[10px] uppercase tracking-luxe text-muted-foreground">
-                {tm.name} — {tm.role}
+                {t(tm.nameKey)} — {t(tm.roleKey)}
               </figcaption>
             </motion.figure>
           ))}

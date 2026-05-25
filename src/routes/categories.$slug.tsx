@@ -5,6 +5,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { resolveImage } from "@/lib/product-image";
+import { useI18n } from "@/lib/i18n";
 import { ChevronLeft } from "lucide-react";
 
 export const Route = createFileRoute("/categories/$slug")({
@@ -40,6 +41,7 @@ export const Route = createFileRoute("/categories/$slug")({
 interface Cat {
   id: string;
   name: string;
+  name_ar: string | null;
   slug: string;
   description: string | null;
   image_url: string | null;
@@ -47,6 +49,7 @@ interface Cat {
 interface Product {
   id: string;
   name: string;
+  name_ar: string | null;
   price: number;
   image_url: string | null;
   category: string;
@@ -55,6 +58,7 @@ interface Product {
 
 function CategoryPage() {
   const { slug } = Route.useParams();
+  const { t, lang } = useI18n();
   const [cat, setCat] = useState<Cat | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -67,7 +71,7 @@ function CategoryPage() {
         supabase.from("categories").select("*").eq("slug", slug).maybeSingle(),
         supabase
           .from("products")
-          .select("id,name,price,image_url,category,stock")
+          .select("id,name,name_ar,price,image_url,category,stock")
           .eq("is_active", true)
           .eq("category", slug)
           .order("created_at", { ascending: false }),
@@ -87,7 +91,7 @@ function CategoryPage() {
       <div className="bg-background min-h-screen">
         <Header />
         <div className="pt-40 max-w-7xl mx-auto px-6 lg:px-10 text-muted-foreground text-sm">
-          Loading collection…
+          {t("catpage.loading")}
         </div>
       </div>
     );
@@ -96,6 +100,7 @@ function CategoryPage() {
   if (!cat) throw notFound();
 
   const hero = cat.image_url ?? products[0]?.image_url ?? null;
+  const catName = lang === "ar" && cat.name_ar ? cat.name_ar : cat.name;
 
   return (
     <div className="bg-background min-h-screen">
@@ -106,7 +111,7 @@ function CategoryPage() {
         {hero ? (
           <motion.img
             src={resolveImage(hero)}
-            alt={cat.name}
+            alt={catName}
             initial={{ scale: 1.15, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
@@ -128,19 +133,19 @@ function CategoryPage() {
               to="/categories"
               className="inline-flex items-center gap-2 text-[10px] uppercase tracking-luxe opacity-80 hover:opacity-100"
             >
-              <ChevronLeft className="w-3 h-3" /> All collections
+              <ChevronLeft className="w-3 h-3" /> {t("catpage.back")}
             </Link>
             <div className="mt-6 text-[10px] uppercase tracking-luxe text-accent">
-              The {cat.name} edit
+              {t("catpage.theEdit", { name: catName })}
             </div>
             <h1 className="font-display text-6xl md:text-8xl leading-[0.95] mt-3">
-              {cat.name}
+              {catName}
             </h1>
             {cat.description && (
               <p className="mt-5 max-w-xl text-sm opacity-85">{cat.description}</p>
             )}
             <div className="mt-6 text-[10px] uppercase tracking-luxe opacity-70">
-              {products.length} {products.length === 1 ? "piece" : "pieces"} · curated
+              {products.length} {products.length === 1 ? t("catpage.piece") : t("catpage.pieces")} · {t("catpage.curated")}
             </div>
           </motion.div>
         </div>
@@ -150,7 +155,7 @@ function CategoryPage() {
       <section className="max-w-[90rem] mx-auto px-4 lg:px-8 py-20">
         {products.length === 0 ? (
           <div className="py-24 text-center text-muted-foreground">
-            No pieces in this collection yet.
+            {t("catpage.empty")}
           </div>
         ) : (
           <div className="grid grid-cols-12 gap-3 md:gap-6">
@@ -185,7 +190,7 @@ function CategoryPage() {
                     >
                       <motion.img
                         src={resolveImage(p.image_url)}
-                        alt={p.name}
+                        alt={lang === "ar" && p.name_ar ? p.name_ar : p.name}
                         loading="lazy"
                         className="absolute inset-0 w-full h-full object-cover"
                         whileHover={{ scale: 1.05 }}
@@ -194,22 +199,22 @@ function CategoryPage() {
                       <div className="absolute inset-0 bg-gradient-to-t from-noir/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                       {p.stock <= 0 && (
                         <div className="absolute top-3 left-3 bg-noir text-cream px-3 py-1 text-[10px] uppercase tracking-luxe">
-                          Sold out
+                          {t("catpage.soldOut")}
                         </div>
                       )}
                       {p.stock > 0 && p.stock <= 3 && (
                         <div className="absolute top-3 left-3 bg-accent text-background px-3 py-1 text-[10px] uppercase tracking-luxe">
-                          Only {p.stock} left
+                          {t("catpage.onlyLeft", { n: p.stock })}
                         </div>
                       )}
                     </div>
                     <div className="mt-4 flex items-start justify-between gap-4 px-1">
                       <div className="min-w-0">
                         <div className="font-display text-xl md:text-2xl leading-tight truncate group-hover:text-accent transition-colors">
-                          {p.name}
+                          {lang === "ar" && p.name_ar ? p.name_ar : p.name}
                         </div>
                         <div className="text-[10px] uppercase tracking-luxe text-muted-foreground mt-1">
-                          {p.category}
+                          {t(`cat.${p.category}`)}
                         </div>
                       </div>
                       <div className="text-sm tabular-nums">${Number(p.price).toFixed(0)}</div>

@@ -55,6 +55,50 @@ const en: Dict = {
   // testimonials
   "test.eyebrow": "Voices",
   "test.title": "Our customers' opinions",
+  "test.1.quote": "Wearing Malaz feels like wearing confidence. Every cut, every fabric — pure poetry.",
+  "test.1.name": "Layla A.",
+  "test.1.role": "Riyadh",
+  "test.2.quote": "I have never felt more elegant. The fabric flows like water.",
+  "test.2.name": "Noura H.",
+  "test.2.role": "Dubai",
+  "test.3.quote": "Modern, modest, unforgettable. My wardrobe finally feels like me.",
+  "test.3.name": "Sara M.",
+  "test.3.role": "London",
+  // shop
+  "shop.eyebrow": "Boutique",
+  "shop.title": "The Collection",
+  "shop.empty": "No pieces in this collection yet.",
+  // category labels (by slug)
+  "cat.all": "All",
+  "cat.abayas": "Abayas",
+  "cat.omrah-abayas": "Omrah Abayas",
+  "cat.khaliji-abayas": "Khaliji Abayas",
+  "cat.dresses": "Dresses",
+  "cat.blouses": "Blouses",
+  "cat.cardigan-abayas": "Cardigan Abayas",
+  "cat.new-arrivals": "New Arrivals",
+  // product page
+  "prod.addToBag": "Add to bag",
+  "prod.added": "Added to bag ✓",
+  "prod.soldOut": "Sold out",
+  "prod.buyNow": "Buy now",
+  "prod.loading": "Loading…",
+  "prod.notFound": "Not found.",
+  "prod.shipping": "Free shipping over $200",
+  "prod.returns": "Easy returns 14 days",
+  "prod.secure": "Secure checkout",
+  // category page
+  "catpage.back": "All collections",
+  "catpage.empty": "No pieces in this collection yet.",
+  "catpage.theEdit": "The {name} edit",
+  "catpage.piece": "piece",
+  "catpage.pieces": "pieces",
+  "catpage.curated": "curated",
+  "catpage.soldOut": "Sold out",
+  "catpage.onlyLeft": "Only {n} left",
+  "catpage.loading": "Loading collection…",
+  "catpage.notFound": "Collection not found",
+  "catpage.seeAll": "See all collections",
   // CTA
   "cta.eyebrow": "Start your story",
   "cta.title1": "Discover your",
@@ -119,6 +163,46 @@ const ar: Dict = {
   "prod.title": "أحدث القطع",
   "test.eyebrow": "أصوات",
   "test.title": "آراء عميلاتنا",
+  "test.1.quote": "ارتداء ملاذ يُشعرني بالثقة. كل قصّة، كل قماش — قصيدة من الأناقة.",
+  "test.1.name": "ليلى أ.",
+  "test.1.role": "الرياض",
+  "test.2.quote": "لم أشعر يومًا بأناقة كهذه. القماش ينساب كالماء.",
+  "test.2.name": "نورة هـ.",
+  "test.2.role": "دبي",
+  "test.3.quote": "عصرية، محتشمة، لا تُنسى. خزانتي أخيرًا تشبهني.",
+  "test.3.name": "سارة م.",
+  "test.3.role": "لندن",
+  "shop.eyebrow": "البوتيك",
+  "shop.title": "التشكيلة",
+  "shop.empty": "لا توجد قطع في هذه المجموعة بعد.",
+  "cat.all": "الكل",
+  "cat.abayas": "عبايات",
+  "cat.omrah-abayas": "عبايات العمرة",
+  "cat.khaliji-abayas": "عبايات خليجية",
+  "cat.dresses": "فساتين",
+  "cat.blouses": "بلوزات",
+  "cat.cardigan-abayas": "عبايات كارديغان",
+  "cat.new-arrivals": "وافدات جديدة",
+  "prod.addToBag": "أضيفي للحقيبة",
+  "prod.added": "أُضيفت للحقيبة ✓",
+  "prod.soldOut": "نفدت الكمية",
+  "prod.buyNow": "اشتري الآن",
+  "prod.loading": "جارٍ التحميل…",
+  "prod.notFound": "غير موجود.",
+  "prod.shipping": "شحن مجاني للطلبات فوق 200$",
+  "prod.returns": "إرجاع سهل خلال 14 يومًا",
+  "prod.secure": "دفع آمن",
+  "catpage.back": "كل المجموعات",
+  "catpage.empty": "لا توجد قطع في هذه المجموعة بعد.",
+  "catpage.theEdit": "مجموعة {name}",
+  "catpage.piece": "قطعة",
+  "catpage.pieces": "قطع",
+  "catpage.curated": "منتقاة",
+  "catpage.soldOut": "نفدت",
+  "catpage.onlyLeft": "بقي {n} فقط",
+  "catpage.loading": "جارٍ تحميل المجموعة…",
+  "catpage.notFound": "المجموعة غير موجودة",
+  "catpage.seeAll": "عرض كل المجموعات",
   "cta.eyebrow": "ابدئي قصتك",
   "cta.title1": "اكتشفي",
   "cta.title2": "عباءتكِ المثالية.",
@@ -142,7 +226,7 @@ const dictionaries: Record<Lang, Dict> = { en, ar };
 interface I18nCtx {
   lang: Lang;
   dir: "ltr" | "rtl";
-  t: (key: string) => string;
+  t: (key: string, vars?: Record<string, string | number>) => string;
   toggle: () => void;
   setLang: (l: Lang) => void;
 }
@@ -178,7 +262,25 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     try { window.localStorage.setItem(STORAGE_KEY, lang); } catch {}
   }, [lang, dir]);
 
-  const t = (key: string) => dictionaries[lang][key] ?? dictionaries.en[key] ?? key;
+  const warned = useState(() => new Set<string>())[0];
+  const t = (key: string, vars?: Record<string, string | number>) => {
+    const dict = dictionaries[lang];
+    let raw = dict[key];
+    if (raw === undefined) {
+      if (import.meta.env.DEV && !warned.has(`${lang}:${key}`)) {
+        warned.add(`${lang}:${key}`);
+        // eslint-disable-next-line no-console
+        console.warn(`[i18n] Missing "${lang}" translation for key: "${key}"`);
+      }
+      raw = dictionaries.en[key] ?? `⟦${key}⟧`;
+    }
+    if (vars) {
+      for (const k of Object.keys(vars)) {
+        raw = raw.replace(new RegExp(`\\{${k}\\}`, "g"), String(vars[k]));
+      }
+    }
+    return raw;
+  };
   const setLang = (l: Lang) => setLangState(l);
   const toggle = () => setLangState((p) => (p === "en" ? "ar" : "en"));
 

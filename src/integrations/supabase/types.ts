@@ -22,6 +22,7 @@ export type Database = {
           image_url: string | null
           is_active: boolean
           name: string
+          name_ar: string | null
           slug: string
           sort_order: number
           updated_at: string
@@ -33,6 +34,7 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean
           name: string
+          name_ar?: string | null
           slug: string
           sort_order?: number
           updated_at?: string
@@ -44,6 +46,7 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean
           name?: string
+          name_ar?: string | null
           slug?: string
           sort_order?: number
           updated_at?: string
@@ -178,10 +181,12 @@ export type Database = {
           category: string
           created_at: string
           description: string | null
+          description_ar: string | null
           id: string
           image_url: string | null
           is_active: boolean
           name: string
+          name_ar: string | null
           price: number
           stock: number
           updated_at: string
@@ -190,10 +195,12 @@ export type Database = {
           category?: string
           created_at?: string
           description?: string | null
+          description_ar?: string | null
           id?: string
           image_url?: string | null
           is_active?: boolean
           name: string
+          name_ar?: string | null
           price: number
           stock?: number
           updated_at?: string
@@ -202,10 +209,12 @@ export type Database = {
           category?: string
           created_at?: string
           description?: string | null
+          description_ar?: string | null
           id?: string
           image_url?: string | null
           is_active?: boolean
           name?: string
+          name_ar?: string | null
           price?: number
           stock?: number
           updated_at?: string
