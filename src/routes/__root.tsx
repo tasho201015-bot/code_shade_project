@@ -1,63 +1,56 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  Outlet,
-  Link,
-  createRootRouteWithContext,
-  useRouter,
-  HeadContent,
-  Scripts,
-} from "@tanstack/react-router";
-
+import { Outlet, Link, createRootRoute, HeadContent, Scripts, useLocation, useRouter } from "@tanstack/react-router";
+import { useEffect } from "react";
 import appCss from "../styles.css?url";
+import { AuthProvider, useAuth } from "@/lib/auth";
+import { CartProvider } from "@/lib/cart";
+import { I18nProvider } from "@/lib/i18n";
+import { BackButton } from "@/components/site/BackButton";
 
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
+        <h1 className="font-display text-7xl text-foreground">404</h1>
+        <h2 className="mt-4 text-xl text-foreground">Page not found</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+          The page you're looking for doesn't exist.
         </p>
-        <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Go home
-          </Link>
-        </div>
+        <Link
+          to="/"
+          className="mt-6 inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-xs uppercase tracking-luxe text-primary-foreground transition-colors hover:bg-primary/90"
+        >
+          Go home
+        </Link>
       </div>
     </div>
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
-  console.error(error);
-  const router = useRouter();
-
+function RootErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+  useEffect(() => {
+    console.error("[root-error]", error);
+  }, [error]);
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+        <div className="text-[10px] uppercase tracking-luxe text-accent">Error</div>
+        <h1 className="font-display text-5xl mt-3 text-foreground">Something went wrong</h1>
+        <p className="mt-3 text-sm text-muted-foreground break-words">
+          {error?.message || "An unexpected error occurred."}
         </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-2">
+        <div className="mt-8 flex justify-center gap-3">
           <button
             onClick={() => {
-              router.invalidate();
-              reset();
+              try { reset(); } catch (e) { console.error("[root-error] reset failed", e); }
+              if (typeof window !== "undefined") window.location.reload();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="px-6 py-3 text-xs uppercase tracking-luxe bg-noir text-cream"
           >
             Try again
           </button>
           <a
             href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            className="px-6 py-3 text-xs uppercase tracking-luxe border border-border hover:border-accent transition-colors"
           >
             Go home
           </a>
@@ -67,31 +60,29 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Malaz — Modern Modest Luxury" },
+      { name: "description", content: "Malaz: elegant modest fashion. Discover abayas, dresses, blouses and modern modest essentials crafted in premium fabrics." },
+      { name: "author", content: "Malaz" },
+      { property: "og:title", content: "Malaz — Modern Modest Luxury" },
+      { property: "og:description", content: "Malaz: elegant modest fashion. Discover abayas, dresses, blouses and modern modest essentials crafted in premium fabrics." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Malaz — Modern Modest Luxury" },
+      { name: "twitter:description", content: "Malaz: elegant modest fashion. Discover abayas, dresses, blouses and modern modest essentials crafted in premium fabrics." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/Oevvt6HiM0Ww3JMFGnieZ8oeEEm1/social-images/social-1776526059596-WhatsApp_Image_2026-04-05_at_12.22.03_AM.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/Oevvt6HiM0Ww3JMFGnieZ8oeEEm1/social-images/social-1776526059596-WhatsApp_Image_2026-04-05_at_12.22.03_AM.webp" },
     ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-    ],
+    links: [{ rel: "stylesheet", href: appCss }],
   }),
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
-  errorComponent: ErrorComponent,
+  errorComponent: RootErrorComponent,
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
@@ -101,19 +92,62 @@ function RootShell({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        {children}
+        <I18nProvider>
+          <CartProvider>{children}</CartProvider>
+        </I18nProvider>
         <Scripts />
       </body>
     </html>
   );
 }
 
-function RootComponent() {
-  const { queryClient } = Route.useRouteContext();
+function AuthGate() {
+  const { user, loading } = useAuth();
+  const location = useLocation();
+  const router = useRouter();
+
+  // Public routes
+  const publicPaths = ["/login", "/forgot-password", "/reset-password"];
+  const isPublic = publicPaths.includes(location.pathname);
+  // Routes that should NEVER auto-redirect signed-in users away
+  // (recovery links create a temporary session, but the user must stay
+  // on /reset-password to set a new password).
+  const noAuthRedirectPaths = ["/reset-password"];
+  const skipAuthedRedirect = noAuthRedirectPaths.includes(location.pathname);
+
+  useEffect(() => {
+    if (loading) return;
+    if (!user && !isPublic) {
+      router.navigate({ to: "/login", search: { redirect: location.pathname } as never });
+    } else if (user && isPublic && !skipAuthedRedirect) {
+      router.navigate({ to: "/" });
+    }
+  }, [user, loading, isPublic, skipAuthedRedirect, location.pathname, router]);
+
+  useEffect(() => {
+    console.log("[route] navigated to", location.pathname);
+  }, [location.pathname]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="font-display text-2xl tracking-luxe text-muted-foreground animate-pulse">M A L A Z</div>
+      </div>
+    );
+  }
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <>
+      <BackButton />
       <Outlet />
-    </QueryClientProvider>
+    </>
+  );
+}
+
+function RootComponent() {
+  return (
+    <AuthProvider>
+      <AuthGate />
+    </AuthProvider>
   );
 }
