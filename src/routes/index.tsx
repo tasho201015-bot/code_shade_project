@@ -68,9 +68,9 @@ const collections = [
 ];
 
 const testimonials = [
-  { quote: "Wearing Malaz feels like wearing confidence. Every cut, every fabric — pure poetry.", name: "Layla A.", role: "Riyadh" },
-  { quote: "I have never felt more elegant. The fabric flows like water.", name: "Noura H.", role: "Dubai" },
-  { quote: "Modern, modest, unforgettable. My wardrobe finally feels like me.", name: "Sara M.", role: "London" },
+  { quoteKey: "test.1.quote", nameKey: "test.1.name", roleKey: "test.1.role" },
+  { quoteKey: "test.2.quote", nameKey: "test.2.name", roleKey: "test.2.role" },
+  { quoteKey: "test.3.quote", nameKey: "test.3.name", roleKey: "test.3.role" },
 ];
 
 function HomePage() {
