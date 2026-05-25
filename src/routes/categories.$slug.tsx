@@ -100,6 +100,7 @@ function CategoryPage() {
   if (!cat) throw notFound();
 
   const hero = cat.image_url ?? products[0]?.image_url ?? null;
+  const catName = lang === "ar" && cat.name_ar ? cat.name_ar : cat.name;
 
   return (
     <div className="bg-background min-h-screen">
