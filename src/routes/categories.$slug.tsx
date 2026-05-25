@@ -190,7 +190,7 @@ function CategoryPage() {
                     >
                       <motion.img
                         src={resolveImage(p.image_url)}
-                        alt={p.name}
+                        alt={lang === "ar" && p.name_ar ? p.name_ar : p.name}
                         loading="lazy"
                         className="absolute inset-0 w-full h-full object-cover"
                         whileHover={{ scale: 1.05 }}
@@ -199,22 +199,22 @@ function CategoryPage() {
                       <div className="absolute inset-0 bg-gradient-to-t from-noir/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                       {p.stock <= 0 && (
                         <div className="absolute top-3 left-3 bg-noir text-cream px-3 py-1 text-[10px] uppercase tracking-luxe">
-                          Sold out
+                          {t("catpage.soldOut")}
                         </div>
                       )}
                       {p.stock > 0 && p.stock <= 3 && (
                         <div className="absolute top-3 left-3 bg-accent text-background px-3 py-1 text-[10px] uppercase tracking-luxe">
-                          Only {p.stock} left
+                          {t("catpage.onlyLeft", { n: p.stock })}
                         </div>
                       )}
                     </div>
                     <div className="mt-4 flex items-start justify-between gap-4 px-1">
                       <div className="min-w-0">
                         <div className="font-display text-xl md:text-2xl leading-tight truncate group-hover:text-accent transition-colors">
-                          {p.name}
+                          {lang === "ar" && p.name_ar ? p.name_ar : p.name}
                         </div>
                         <div className="text-[10px] uppercase tracking-luxe text-muted-foreground mt-1">
-                          {p.category}
+                          {t(`cat.${p.category}`)}
                         </div>
                       </div>
                       <div className="text-sm tabular-nums">${Number(p.price).toFixed(0)}</div>
