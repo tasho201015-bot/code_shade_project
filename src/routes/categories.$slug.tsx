@@ -91,7 +91,7 @@ function CategoryPage() {
       <div className="bg-background min-h-screen">
         <Header />
         <div className="pt-40 max-w-7xl mx-auto px-6 lg:px-10 text-muted-foreground text-sm">
-          Loading collection…
+          {t("catpage.loading")}
         </div>
       </div>
     );
