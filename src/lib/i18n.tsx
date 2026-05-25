@@ -226,7 +226,7 @@ const dictionaries: Record<Lang, Dict> = { en, ar };
 interface I18nCtx {
   lang: Lang;
   dir: "ltr" | "rtl";
-  t: (key: string) => string;
+  t: (key: string, vars?: Record<string, string | number>) => string;
   toggle: () => void;
   setLang: (l: Lang) => void;
 }
