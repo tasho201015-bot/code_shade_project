@@ -262,7 +262,25 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     try { window.localStorage.setItem(STORAGE_KEY, lang); } catch {}
   }, [lang, dir]);
 
-  const t = (key: string) => dictionaries[lang][key] ?? dictionaries.en[key] ?? key;
+  const warned = useState(() => new Set<string>())[0];
+  const t = (key: string, vars?: Record<string, string | number>) => {
+    const dict = dictionaries[lang];
+    let raw = dict[key];
+    if (raw === undefined) {
+      if (import.meta.env.DEV && !warned.has(`${lang}:${key}`)) {
+        warned.add(`${lang}:${key}`);
+        // eslint-disable-next-line no-console
+        console.warn(`[i18n] Missing "${lang}" translation for key: "${key}"`);
+      }
+      raw = dictionaries.en[key] ?? `⟦${key}⟧`;
+    }
+    if (vars) {
+      for (const k of Object.keys(vars)) {
+        raw = raw.replace(new RegExp(`\\{${k}\\}`, "g"), String(vars[k]));
+      }
+    }
+    return raw;
+  };
   const setLang = (l: Lang) => setLangState(l);
   const toggle = () => setLangState((p) => (p === "en" ? "ar" : "en"));
 
