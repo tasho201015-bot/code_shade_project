@@ -54,7 +54,7 @@ const en: Dict = {
   "prod.title": "Latest pieces",
   // testimonials
   "test.eyebrow": "Voices",
-  "test.title": "Words from our women",
+  "test.title": "Our customers' opinions",
   // CTA
   "cta.eyebrow": "Start your story",
   "cta.title1": "Discover your",
@@ -118,7 +118,7 @@ const ar: Dict = {
   "prod.eyebrow": "البوتيك",
   "prod.title": "أحدث القطع",
   "test.eyebrow": "أصوات",
-  "test.title": "كلمات من نسائنا",
+  "test.title": "آراء عميلاتنا",
   "cta.eyebrow": "ابدئي قصتك",
   "cta.title1": "اكتشفي",
   "cta.title2": "عباءتكِ المثالية.",
