@@ -41,6 +41,7 @@ export const Route = createFileRoute("/categories/$slug")({
 interface Cat {
   id: string;
   name: string;
+  name_ar: string | null;
   slug: string;
   description: string | null;
   image_url: string | null;
@@ -48,6 +49,7 @@ interface Cat {
 interface Product {
   id: string;
   name: string;
+  name_ar: string | null;
   price: number;
   image_url: string | null;
   category: string;
