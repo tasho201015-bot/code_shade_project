@@ -133,19 +133,19 @@ function CategoryPage() {
               to="/categories"
               className="inline-flex items-center gap-2 text-[10px] uppercase tracking-luxe opacity-80 hover:opacity-100"
             >
-              <ChevronLeft className="w-3 h-3" /> All collections
+              <ChevronLeft className="w-3 h-3" /> {t("catpage.back")}
             </Link>
             <div className="mt-6 text-[10px] uppercase tracking-luxe text-accent">
-              The {cat.name} edit
+              {t("catpage.theEdit", { name: catName })}
             </div>
             <h1 className="font-display text-6xl md:text-8xl leading-[0.95] mt-3">
-              {cat.name}
+              {catName}
             </h1>
             {cat.description && (
               <p className="mt-5 max-w-xl text-sm opacity-85">{cat.description}</p>
             )}
             <div className="mt-6 text-[10px] uppercase tracking-luxe opacity-70">
-              {products.length} {products.length === 1 ? "piece" : "pieces"} · curated
+              {products.length} {products.length === 1 ? t("catpage.piece") : t("catpage.pieces")} · {t("catpage.curated")}
             </div>
           </motion.div>
         </div>
