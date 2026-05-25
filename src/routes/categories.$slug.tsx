@@ -58,6 +58,7 @@ interface Product {
 
 function CategoryPage() {
   const { slug } = Route.useParams();
+  const { t, lang } = useI18n();
   const [cat, setCat] = useState<Cat | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
