@@ -5,6 +5,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { resolveImage } from "@/lib/product-image";
+import { useI18n } from "@/lib/i18n";
 import { ChevronLeft } from "lucide-react";
 
 export const Route = createFileRoute("/categories/$slug")({
