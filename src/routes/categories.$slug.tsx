@@ -155,7 +155,7 @@ function CategoryPage() {
       <section className="max-w-[90rem] mx-auto px-4 lg:px-8 py-20">
         {products.length === 0 ? (
           <div className="py-24 text-center text-muted-foreground">
-            No pieces in this collection yet.
+            {t("catpage.empty")}
           </div>
         ) : (
           <div className="grid grid-cols-12 gap-3 md:gap-6">
