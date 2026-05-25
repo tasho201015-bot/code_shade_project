@@ -9,38 +9,312 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ShopRouteImport } from './routes/shop'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as PaymentSuccessRouteImport } from './routes/payment-success'
+import { Route as PaymentRouteImport } from './routes/payment'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as CartRouteImport } from './routes/cart'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CategoriesIndexRouteImport } from './routes/categories.index'
+import { Route as ProductIdRouteImport } from './routes/product.$id'
+import { Route as PaymentCallbackRouteImport } from './routes/payment.callback'
+import { Route as ConfirmOrderIdRouteImport } from './routes/confirm-order.$id'
+import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
+import { Route as ApiPublicPaymobWebhookRouteImport } from './routes/api/public/paymob-webhook'
+import { Route as ApiPublicPaymobCallbackRouteImport } from './routes/api/public/paymob.callback'
 
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentSuccessRoute = PaymentSuccessRouteImport.update({
+  id: '/payment-success',
+  path: '/payment-success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentRoute = PaymentRouteImport.update({
+  id: '/payment',
+  path: '/payment',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CartRoute = CartRouteImport.update({
+  id: '/cart',
+  path: '/cart',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CategoriesIndexRoute = CategoriesIndexRouteImport.update({
+  id: '/categories/',
+  path: '/categories/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductIdRoute = ProductIdRouteImport.update({
+  id: '/product/$id',
+  path: '/product/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentCallbackRoute = PaymentCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => PaymentRoute,
+} as any)
+const ConfirmOrderIdRoute = ConfirmOrderIdRouteImport.update({
+  id: '/confirm-order/$id',
+  path: '/confirm-order/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CategoriesSlugRoute = CategoriesSlugRouteImport.update({
+  id: '/categories/$slug',
+  path: '/categories/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicPaymobWebhookRoute = ApiPublicPaymobWebhookRouteImport.update({
+  id: '/api/public/paymob-webhook',
+  path: '/api/public/paymob-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicPaymobCallbackRoute = ApiPublicPaymobCallbackRouteImport.update({
+  id: '/api/public/paymob/callback',
+  path: '/api/public/paymob/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/admin': typeof AdminRoute
+  '/cart': typeof CartRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/payment': typeof PaymentRouteWithChildren
+  '/payment-success': typeof PaymentSuccessRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/shop': typeof ShopRoute
+  '/categories/$slug': typeof CategoriesSlugRoute
+  '/confirm-order/$id': typeof ConfirmOrderIdRoute
+  '/payment/callback': typeof PaymentCallbackRoute
+  '/product/$id': typeof ProductIdRoute
+  '/categories/': typeof CategoriesIndexRoute
+  '/api/public/paymob-webhook': typeof ApiPublicPaymobWebhookRoute
+  '/api/public/paymob/callback': typeof ApiPublicPaymobCallbackRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/admin': typeof AdminRoute
+  '/cart': typeof CartRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/payment': typeof PaymentRouteWithChildren
+  '/payment-success': typeof PaymentSuccessRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/shop': typeof ShopRoute
+  '/categories/$slug': typeof CategoriesSlugRoute
+  '/confirm-order/$id': typeof ConfirmOrderIdRoute
+  '/payment/callback': typeof PaymentCallbackRoute
+  '/product/$id': typeof ProductIdRoute
+  '/categories': typeof CategoriesIndexRoute
+  '/api/public/paymob-webhook': typeof ApiPublicPaymobWebhookRoute
+  '/api/public/paymob/callback': typeof ApiPublicPaymobCallbackRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/account': typeof AccountRoute
+  '/admin': typeof AdminRoute
+  '/cart': typeof CartRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/payment': typeof PaymentRouteWithChildren
+  '/payment-success': typeof PaymentSuccessRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/shop': typeof ShopRoute
+  '/categories/$slug': typeof CategoriesSlugRoute
+  '/confirm-order/$id': typeof ConfirmOrderIdRoute
+  '/payment/callback': typeof PaymentCallbackRoute
+  '/product/$id': typeof ProductIdRoute
+  '/categories/': typeof CategoriesIndexRoute
+  '/api/public/paymob-webhook': typeof ApiPublicPaymobWebhookRoute
+  '/api/public/paymob/callback': typeof ApiPublicPaymobCallbackRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/account'
+    | '/admin'
+    | '/cart'
+    | '/forgot-password'
+    | '/login'
+    | '/payment'
+    | '/payment-success'
+    | '/reset-password'
+    | '/shop'
+    | '/categories/$slug'
+    | '/confirm-order/$id'
+    | '/payment/callback'
+    | '/product/$id'
+    | '/categories/'
+    | '/api/public/paymob-webhook'
+    | '/api/public/paymob/callback'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/account'
+    | '/admin'
+    | '/cart'
+    | '/forgot-password'
+    | '/login'
+    | '/payment'
+    | '/payment-success'
+    | '/reset-password'
+    | '/shop'
+    | '/categories/$slug'
+    | '/confirm-order/$id'
+    | '/payment/callback'
+    | '/product/$id'
+    | '/categories'
+    | '/api/public/paymob-webhook'
+    | '/api/public/paymob/callback'
+  id:
+    | '__root__'
+    | '/'
+    | '/account'
+    | '/admin'
+    | '/cart'
+    | '/forgot-password'
+    | '/login'
+    | '/payment'
+    | '/payment-success'
+    | '/reset-password'
+    | '/shop'
+    | '/categories/$slug'
+    | '/confirm-order/$id'
+    | '/payment/callback'
+    | '/product/$id'
+    | '/categories/'
+    | '/api/public/paymob-webhook'
+    | '/api/public/paymob/callback'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AccountRoute: typeof AccountRoute
+  AdminRoute: typeof AdminRoute
+  CartRoute: typeof CartRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
+  LoginRoute: typeof LoginRoute
+  PaymentRoute: typeof PaymentRouteWithChildren
+  PaymentSuccessRoute: typeof PaymentSuccessRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
+  ShopRoute: typeof ShopRoute
+  CategoriesSlugRoute: typeof CategoriesSlugRoute
+  ConfirmOrderIdRoute: typeof ConfirmOrderIdRoute
+  ProductIdRoute: typeof ProductIdRoute
+  CategoriesIndexRoute: typeof CategoriesIndexRoute
+  ApiPublicPaymobWebhookRoute: typeof ApiPublicPaymobWebhookRoute
+  ApiPublicPaymobCallbackRoute: typeof ApiPublicPaymobCallbackRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment-success': {
+      id: '/payment-success'
+      path: '/payment-success'
+      fullPath: '/payment-success'
+      preLoaderRoute: typeof PaymentSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment': {
+      id: '/payment'
+      path: '/payment'
+      fullPath: '/payment'
+      preLoaderRoute: typeof PaymentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cart': {
+      id: '/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof CartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,12 +322,97 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/categories/': {
+      id: '/categories/'
+      path: '/categories'
+      fullPath: '/categories/'
+      preLoaderRoute: typeof CategoriesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/product/$id': {
+      id: '/product/$id'
+      path: '/product/$id'
+      fullPath: '/product/$id'
+      preLoaderRoute: typeof ProductIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment/callback': {
+      id: '/payment/callback'
+      path: '/callback'
+      fullPath: '/payment/callback'
+      preLoaderRoute: typeof PaymentCallbackRouteImport
+      parentRoute: typeof PaymentRoute
+    }
+    '/confirm-order/$id': {
+      id: '/confirm-order/$id'
+      path: '/confirm-order/$id'
+      fullPath: '/confirm-order/$id'
+      preLoaderRoute: typeof ConfirmOrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/categories/$slug': {
+      id: '/categories/$slug'
+      path: '/categories/$slug'
+      fullPath: '/categories/$slug'
+      preLoaderRoute: typeof CategoriesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/paymob-webhook': {
+      id: '/api/public/paymob-webhook'
+      path: '/api/public/paymob-webhook'
+      fullPath: '/api/public/paymob-webhook'
+      preLoaderRoute: typeof ApiPublicPaymobWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/paymob/callback': {
+      id: '/api/public/paymob/callback'
+      path: '/api/public/paymob/callback'
+      fullPath: '/api/public/paymob/callback'
+      preLoaderRoute: typeof ApiPublicPaymobCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface PaymentRouteChildren {
+  PaymentCallbackRoute: typeof PaymentCallbackRoute
+}
+
+const PaymentRouteChildren: PaymentRouteChildren = {
+  PaymentCallbackRoute: PaymentCallbackRoute,
+}
+
+const PaymentRouteWithChildren =
+  PaymentRoute._addFileChildren(PaymentRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AccountRoute: AccountRoute,
+  AdminRoute: AdminRoute,
+  CartRoute: CartRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
+  LoginRoute: LoginRoute,
+  PaymentRoute: PaymentRouteWithChildren,
+  PaymentSuccessRoute: PaymentSuccessRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
+  ShopRoute: ShopRoute,
+  CategoriesSlugRoute: CategoriesSlugRoute,
+  ConfirmOrderIdRoute: ConfirmOrderIdRoute,
+  ProductIdRoute: ProductIdRoute,
+  CategoriesIndexRoute: CategoriesIndexRoute,
+  ApiPublicPaymobWebhookRoute: ApiPublicPaymobWebhookRoute,
+  ApiPublicPaymobCallbackRoute: ApiPublicPaymobCallbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
