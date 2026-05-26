@@ -105,9 +105,11 @@ function CartPage() {
   const validate = (): string | null => {
     if (!user) return "Please sign in to place an order.";
     if (items.length === 0) return "Your bag is empty.";
+    if (!fullName.trim() || fullName.trim().length < 2) return "Please enter your full name.";
     if (!governorate) return "Select a governorate.";
     if (!city.trim()) return "Select or enter a city.";
     if (street.trim().length < 6) return "Enter a complete home address (street, building, floor, apt).";
+
     if (!/^1[0125]\d{8}$/.test(phone)) return "Enter a valid Egyptian mobile (10 digits after +20, starts with 1).";
     if (method === "card") {
       const digits = cardNumber.replace(/\s/g, "");
