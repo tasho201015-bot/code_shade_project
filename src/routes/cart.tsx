@@ -70,8 +70,10 @@ function CartPage() {
   const startPaymobWallet = useServerFn(createPaymobWalletCheckoutFn);
 
   // Shipping
+  const [fullName, setFullName] = useState("");
   const [governorate, setGovernorate] = useState("");
   const [city, setCity] = useState("");
+  const [useCustomCity, setUseCustomCity] = useState(false);
   const [street, setStreet] = useState("");
   const [phoneCode] = useState("+20");
   const [phone, setPhone] = useState("");
@@ -89,9 +91,16 @@ function CartPage() {
   const cities = useMemo(() => (governorate ? EG_LOCATIONS[governorate] ?? [] : []), [governorate]);
 
   const buildAddress = () => {
-    const parts = [street.trim(), city.trim(), governorate.trim(), "Egypt"].filter(Boolean);
+    const parts = [
+      fullName.trim() ? `Name: ${fullName.trim()}` : "",
+      street.trim(),
+      city.trim(),
+      governorate.trim(),
+      "Egypt",
+    ].filter(Boolean);
     return parts.join(", ");
   };
+
 
   const validate = (): string | null => {
     if (!user) return "Please sign in to place an order.";
