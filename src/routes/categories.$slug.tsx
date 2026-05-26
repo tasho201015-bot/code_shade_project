@@ -63,6 +63,20 @@ function CategoryPage() {
   const [cat, setCat] = useState<Cat | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [zoomImg, setZoomImg] = useState<{ src: string; alt: string } | null>(null);
+
+  useEffect(() => {
+    if (!zoomImg) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setZoomImg(null);
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [zoomImg]);
+
 
   useEffect(() => {
     let alive = true;
