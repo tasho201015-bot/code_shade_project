@@ -80,12 +80,13 @@ function ProductPage() {
           transition={{ duration: 0.9, delay: 0.2 }}
           className="lg:pt-10"
         >
-          <div className="text-[10px] uppercase tracking-luxe text-accent">{t(`cat.${p.category}`)}</div>
-          <h1 className="font-display text-4xl md:text-5xl mt-3 leading-tight">{displayName}</h1>
+          <h1 className="font-display text-2xl md:text-3xl mt-2 leading-tight">{displayName}</h1>
+          <div className="mt-2 text-[10px] uppercase tracking-luxe text-accent">{t(`cat.${p.category}`)}</div>
           <div className="mt-4 text-2xl tabular-nums">${Number(p.price).toFixed(2)}</div>
           {displayDesc && (
-            <p className="mt-8 text-muted-foreground leading-relaxed max-w-md">{displayDesc}</p>
+            <p className="mt-6 text-muted-foreground leading-relaxed max-w-md">{displayDesc}</p>
           )}
+
 
           <div className="mt-10 flex flex-col gap-3">
             <button
