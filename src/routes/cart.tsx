@@ -249,10 +249,26 @@ function CartPage() {
               {/* 2. Shipping address */}
               <Section title="Shipping address" step="02">
                 <div className="grid sm:grid-cols-2 gap-5">
+                  <div className="sm:col-span-2">
+                    <Field label="Full name">
+                      <input
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        placeholder="As it appears on your ID"
+                        autoComplete="name"
+                        className="form-control"
+                      />
+                    </Field>
+                  </div>
+
                   <Field label="Governorate">
                     <select
                       value={governorate}
-                      onChange={(e) => { setGovernorate(e.target.value); setCity(""); }}
+                      onChange={(e) => {
+                        setGovernorate(e.target.value);
+                        setCity("");
+                        setUseCustomCity(false);
+                      }}
                       className="form-control"
                     >
                       <option value="">Select governorate</option>
@@ -263,10 +279,18 @@ function CartPage() {
                   </Field>
 
                   <Field label="City">
-                    {cities.length > 0 ? (
+                    {cities.length > 0 && !useCustomCity ? (
                       <select
                         value={city}
-                        onChange={(e) => setCity(e.target.value)}
+                        onChange={(e) => {
+                          const v = e.target.value;
+                          if (v === "__other__") {
+                            setUseCustomCity(true);
+                            setCity("");
+                          } else {
+                            setCity(v);
+                          }
+                        }}
                         className="form-control"
                         disabled={!governorate}
                       >
@@ -277,23 +301,31 @@ function CartPage() {
                         <option value="__other__">Other…</option>
                       </select>
                     ) : (
-                      <input
-                        value={city}
-                        onChange={(e) => setCity(e.target.value)}
-                        placeholder="Enter city"
-                        className="form-control"
-                        disabled={!governorate}
-                      />
-                    )}
-                    {city === "__other__" && (
-                      <input
-                        autoFocus
-                        onChange={(e) => setCity(e.target.value)}
-                        placeholder="Enter your city"
-                        className="form-control mt-2"
-                      />
+                      <div className="space-y-2">
+                        <input
+                          value={city}
+                          onChange={(e) => setCity(e.target.value)}
+                          placeholder="Enter city"
+                          autoFocus={useCustomCity}
+                          className="form-control"
+                          disabled={!governorate}
+                        />
+                        {useCustomCity && cities.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setUseCustomCity(false);
+                              setCity("");
+                            }}
+                            className="text-[10px] uppercase tracking-luxe text-accent hover:underline"
+                          >
+                            ← Choose from list
+                          </button>
+                        )}
+                      </div>
                     )}
                   </Field>
+
 
                   <div className="sm:col-span-2">
                     <Field label="Exact home address">
