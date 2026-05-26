@@ -254,7 +254,41 @@ function CategoryPage() {
         )}
       </section>
 
+      <AnimatePresence>
+        {zoomImg && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-[100] bg-noir/95 backdrop-blur-sm flex items-center justify-center p-4 cursor-zoom-out"
+            onClick={() => setZoomImg(null)}
+          >
+            <button
+              type="button"
+              aria-label="Close"
+              onClick={() => setZoomImg(null)}
+              className="absolute top-5 right-5 text-cream/90 hover:text-cream p-2"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            <motion.img
+              key={zoomImg.src}
+              src={zoomImg.src}
+              alt={zoomImg.alt}
+              initial={{ scale: 0.85, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              className="max-w-full max-h-full object-contain shadow-luxe"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <Footer />
     </div>
   );
 }
+
