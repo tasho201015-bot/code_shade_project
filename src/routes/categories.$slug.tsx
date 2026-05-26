@@ -1,12 +1,13 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { resolveImage } from "@/lib/product-image";
 import { useI18n } from "@/lib/i18n";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, X, ZoomIn } from "lucide-react";
+
 
 export const Route = createFileRoute("/categories/$slug")({
   component: CategoryPage,
@@ -62,6 +63,20 @@ function CategoryPage() {
   const [cat, setCat] = useState<Cat | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [zoomImg, setZoomImg] = useState<{ src: string; alt: string } | null>(null);
+
+  useEffect(() => {
+    if (!zoomImg) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setZoomImg(null);
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [zoomImg]);
+
 
   useEffect(() => {
     let alive = true;
@@ -184,30 +199,41 @@ function CategoryPage() {
                   transition={{ duration: 0.7, delay: (i % 6) * 0.05, ease: [0.22, 1, 0.36, 1] }}
                   className={`${span} group`}
                 >
-                  <Link to="/product/$id" params={{ id: p.id }} className="block">
-                    <div
-                      className={`relative ${aspect} overflow-hidden bg-muted shadow-soft rounded-sm`}
+                  <div className={`relative ${aspect} overflow-hidden bg-muted shadow-soft rounded-sm`}>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setZoomImg({
+                          src: resolveImage(p.image_url),
+                          alt: lang === "ar" && p.name_ar ? p.name_ar : p.name,
+                        })
+                      }
+                      className="absolute inset-0 w-full h-full block focus:outline-none focus:ring-2 focus:ring-accent"
+                      aria-label="Zoom image"
                     >
                       <motion.img
                         src={resolveImage(p.image_url)}
                         alt={lang === "ar" && p.name_ar ? p.name_ar : p.name}
                         loading="lazy"
-                        className="absolute inset-0 w-full h-full object-cover"
-                        whileHover={{ scale: 1.05 }}
-                        transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 active:scale-95"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-noir/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                      {p.stock <= 0 && (
-                        <div className="absolute top-3 left-3 bg-noir text-cream px-3 py-1 text-[10px] uppercase tracking-luxe">
-                          {t("catpage.soldOut")}
-                        </div>
-                      )}
-                      {p.stock > 0 && p.stock <= 3 && (
-                        <div className="absolute top-3 left-3 bg-accent text-background px-3 py-1 text-[10px] uppercase tracking-luxe">
-                          {t("catpage.onlyLeft", { n: p.stock })}
-                        </div>
-                      )}
-                    </div>
+                      <div className="absolute bottom-3 right-3 bg-noir/70 text-cream p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                        <ZoomIn className="w-4 h-4" />
+                      </div>
+                    </button>
+                    {p.stock <= 0 && (
+                      <div className="absolute top-3 left-3 bg-noir text-cream px-3 py-1 text-[10px] uppercase tracking-luxe pointer-events-none">
+                        {t("catpage.soldOut")}
+                      </div>
+                    )}
+                    {p.stock > 0 && p.stock <= 3 && (
+                      <div className="absolute top-3 left-3 bg-accent text-background px-3 py-1 text-[10px] uppercase tracking-luxe pointer-events-none">
+                        {t("catpage.onlyLeft", { n: p.stock })}
+                      </div>
+                    )}
+                  </div>
+                  <Link to="/product/$id" params={{ id: p.id }} className="block">
                     <div className="mt-4 flex items-start justify-between gap-4 px-1">
                       <div className="min-w-0">
                         <div className="font-display text-xl md:text-2xl leading-tight truncate group-hover:text-accent transition-colors">
@@ -220,6 +246,7 @@ function CategoryPage() {
                       <div className="text-sm tabular-nums">${Number(p.price).toFixed(0)}</div>
                     </div>
                   </Link>
+
                 </motion.div>
               );
             })}
@@ -227,7 +254,41 @@ function CategoryPage() {
         )}
       </section>
 
+      <AnimatePresence>
+        {zoomImg && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-[100] bg-noir/95 backdrop-blur-sm flex items-center justify-center p-4 cursor-zoom-out"
+            onClick={() => setZoomImg(null)}
+          >
+            <button
+              type="button"
+              aria-label="Close"
+              onClick={() => setZoomImg(null)}
+              className="absolute top-5 right-5 text-cream/90 hover:text-cream p-2"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            <motion.img
+              key={zoomImg.src}
+              src={zoomImg.src}
+              alt={zoomImg.alt}
+              initial={{ scale: 0.85, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              className="max-w-full max-h-full object-contain shadow-luxe"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <Footer />
     </div>
   );
 }
+
