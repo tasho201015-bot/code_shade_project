@@ -22,7 +22,11 @@ import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SellingIndexRouteImport } from './routes/selling.index'
 import { Route as CategoriesIndexRouteImport } from './routes/categories.index'
+import { Route as SellingUpsellsRouteImport } from './routes/selling.upsells'
+import { Route as SellingSettingsRouteImport } from './routes/selling.settings'
 import { Route as SellingProductsRouteImport } from './routes/selling.products'
+import { Route as SellingCrossSellsRouteImport } from './routes/selling.cross-sells'
+import { Route as SellingBundlesRouteImport } from './routes/selling.bundles'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as PaymentCallbackRouteImport } from './routes/payment.callback'
 import { Route as ConfirmOrderIdRouteImport } from './routes/confirm-order.$id'
@@ -95,9 +99,29 @@ const CategoriesIndexRoute = CategoriesIndexRouteImport.update({
   path: '/categories/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SellingUpsellsRoute = SellingUpsellsRouteImport.update({
+  id: '/upsells',
+  path: '/upsells',
+  getParentRoute: () => SellingRoute,
+} as any)
+const SellingSettingsRoute = SellingSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => SellingRoute,
+} as any)
 const SellingProductsRoute = SellingProductsRouteImport.update({
   id: '/products',
   path: '/products',
+  getParentRoute: () => SellingRoute,
+} as any)
+const SellingCrossSellsRoute = SellingCrossSellsRouteImport.update({
+  id: '/cross-sells',
+  path: '/cross-sells',
+  getParentRoute: () => SellingRoute,
+} as any)
+const SellingBundlesRoute = SellingBundlesRouteImport.update({
+  id: '/bundles',
+  path: '/bundles',
   getParentRoute: () => SellingRoute,
 } as any)
 const ProductIdRoute = ProductIdRouteImport.update({
@@ -147,7 +171,11 @@ export interface FileRoutesByFullPath {
   '/confirm-order/$id': typeof ConfirmOrderIdRoute
   '/payment/callback': typeof PaymentCallbackRoute
   '/product/$id': typeof ProductIdRoute
+  '/selling/bundles': typeof SellingBundlesRoute
+  '/selling/cross-sells': typeof SellingCrossSellsRoute
   '/selling/products': typeof SellingProductsRoute
+  '/selling/settings': typeof SellingSettingsRoute
+  '/selling/upsells': typeof SellingUpsellsRoute
   '/categories/': typeof CategoriesIndexRoute
   '/selling/': typeof SellingIndexRoute
   '/api/public/paymob-webhook': typeof ApiPublicPaymobWebhookRoute
@@ -168,7 +196,11 @@ export interface FileRoutesByTo {
   '/confirm-order/$id': typeof ConfirmOrderIdRoute
   '/payment/callback': typeof PaymentCallbackRoute
   '/product/$id': typeof ProductIdRoute
+  '/selling/bundles': typeof SellingBundlesRoute
+  '/selling/cross-sells': typeof SellingCrossSellsRoute
   '/selling/products': typeof SellingProductsRoute
+  '/selling/settings': typeof SellingSettingsRoute
+  '/selling/upsells': typeof SellingUpsellsRoute
   '/categories': typeof CategoriesIndexRoute
   '/selling': typeof SellingIndexRoute
   '/api/public/paymob-webhook': typeof ApiPublicPaymobWebhookRoute
@@ -191,7 +223,11 @@ export interface FileRoutesById {
   '/confirm-order/$id': typeof ConfirmOrderIdRoute
   '/payment/callback': typeof PaymentCallbackRoute
   '/product/$id': typeof ProductIdRoute
+  '/selling/bundles': typeof SellingBundlesRoute
+  '/selling/cross-sells': typeof SellingCrossSellsRoute
   '/selling/products': typeof SellingProductsRoute
+  '/selling/settings': typeof SellingSettingsRoute
+  '/selling/upsells': typeof SellingUpsellsRoute
   '/categories/': typeof CategoriesIndexRoute
   '/selling/': typeof SellingIndexRoute
   '/api/public/paymob-webhook': typeof ApiPublicPaymobWebhookRoute
@@ -215,7 +251,11 @@ export interface FileRouteTypes {
     | '/confirm-order/$id'
     | '/payment/callback'
     | '/product/$id'
+    | '/selling/bundles'
+    | '/selling/cross-sells'
     | '/selling/products'
+    | '/selling/settings'
+    | '/selling/upsells'
     | '/categories/'
     | '/selling/'
     | '/api/public/paymob-webhook'
@@ -236,7 +276,11 @@ export interface FileRouteTypes {
     | '/confirm-order/$id'
     | '/payment/callback'
     | '/product/$id'
+    | '/selling/bundles'
+    | '/selling/cross-sells'
     | '/selling/products'
+    | '/selling/settings'
+    | '/selling/upsells'
     | '/categories'
     | '/selling'
     | '/api/public/paymob-webhook'
@@ -258,7 +302,11 @@ export interface FileRouteTypes {
     | '/confirm-order/$id'
     | '/payment/callback'
     | '/product/$id'
+    | '/selling/bundles'
+    | '/selling/cross-sells'
     | '/selling/products'
+    | '/selling/settings'
+    | '/selling/upsells'
     | '/categories/'
     | '/selling/'
     | '/api/public/paymob-webhook'
@@ -378,11 +426,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/selling/upsells': {
+      id: '/selling/upsells'
+      path: '/upsells'
+      fullPath: '/selling/upsells'
+      preLoaderRoute: typeof SellingUpsellsRouteImport
+      parentRoute: typeof SellingRoute
+    }
+    '/selling/settings': {
+      id: '/selling/settings'
+      path: '/settings'
+      fullPath: '/selling/settings'
+      preLoaderRoute: typeof SellingSettingsRouteImport
+      parentRoute: typeof SellingRoute
+    }
     '/selling/products': {
       id: '/selling/products'
       path: '/products'
       fullPath: '/selling/products'
       preLoaderRoute: typeof SellingProductsRouteImport
+      parentRoute: typeof SellingRoute
+    }
+    '/selling/cross-sells': {
+      id: '/selling/cross-sells'
+      path: '/cross-sells'
+      fullPath: '/selling/cross-sells'
+      preLoaderRoute: typeof SellingCrossSellsRouteImport
+      parentRoute: typeof SellingRoute
+    }
+    '/selling/bundles': {
+      id: '/selling/bundles'
+      path: '/bundles'
+      fullPath: '/selling/bundles'
+      preLoaderRoute: typeof SellingBundlesRouteImport
       parentRoute: typeof SellingRoute
     }
     '/product/$id': {
@@ -442,12 +518,20 @@ const PaymentRouteWithChildren =
   PaymentRoute._addFileChildren(PaymentRouteChildren)
 
 interface SellingRouteChildren {
+  SellingBundlesRoute: typeof SellingBundlesRoute
+  SellingCrossSellsRoute: typeof SellingCrossSellsRoute
   SellingProductsRoute: typeof SellingProductsRoute
+  SellingSettingsRoute: typeof SellingSettingsRoute
+  SellingUpsellsRoute: typeof SellingUpsellsRoute
   SellingIndexRoute: typeof SellingIndexRoute
 }
 
 const SellingRouteChildren: SellingRouteChildren = {
+  SellingBundlesRoute: SellingBundlesRoute,
+  SellingCrossSellsRoute: SellingCrossSellsRoute,
   SellingProductsRoute: SellingProductsRoute,
+  SellingSettingsRoute: SellingSettingsRoute,
+  SellingUpsellsRoute: SellingUpsellsRoute,
   SellingIndexRoute: SellingIndexRoute,
 }
 
