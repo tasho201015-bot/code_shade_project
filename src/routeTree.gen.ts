@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ShopRouteImport } from './routes/shop'
+import { Route as SellingRouteImport } from './routes/selling'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PaymentSuccessRouteImport } from './routes/payment-success'
 import { Route as PaymentRouteImport } from './routes/payment'
@@ -19,7 +20,9 @@ import { Route as CartRouteImport } from './routes/cart'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SellingIndexRouteImport } from './routes/selling.index'
 import { Route as CategoriesIndexRouteImport } from './routes/categories.index'
+import { Route as SellingProductsRouteImport } from './routes/selling.products'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as PaymentCallbackRouteImport } from './routes/payment.callback'
 import { Route as ConfirmOrderIdRouteImport } from './routes/confirm-order.$id'
@@ -30,6 +33,11 @@ import { Route as ApiPublicPaymobCallbackRouteImport } from './routes/api/public
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellingRoute = SellingRouteImport.update({
+  id: '/selling',
+  path: '/selling',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -77,10 +85,20 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SellingIndexRoute = SellingIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SellingRoute,
+} as any)
 const CategoriesIndexRoute = CategoriesIndexRouteImport.update({
   id: '/categories/',
   path: '/categories/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const SellingProductsRoute = SellingProductsRouteImport.update({
+  id: '/products',
+  path: '/products',
+  getParentRoute: () => SellingRoute,
 } as any)
 const ProductIdRoute = ProductIdRouteImport.update({
   id: '/product/$id',
@@ -123,12 +141,15 @@ export interface FileRoutesByFullPath {
   '/payment': typeof PaymentRouteWithChildren
   '/payment-success': typeof PaymentSuccessRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/selling': typeof SellingRouteWithChildren
   '/shop': typeof ShopRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/confirm-order/$id': typeof ConfirmOrderIdRoute
   '/payment/callback': typeof PaymentCallbackRoute
   '/product/$id': typeof ProductIdRoute
+  '/selling/products': typeof SellingProductsRoute
   '/categories/': typeof CategoriesIndexRoute
+  '/selling/': typeof SellingIndexRoute
   '/api/public/paymob-webhook': typeof ApiPublicPaymobWebhookRoute
   '/api/public/paymob/callback': typeof ApiPublicPaymobCallbackRoute
 }
@@ -147,7 +168,9 @@ export interface FileRoutesByTo {
   '/confirm-order/$id': typeof ConfirmOrderIdRoute
   '/payment/callback': typeof PaymentCallbackRoute
   '/product/$id': typeof ProductIdRoute
+  '/selling/products': typeof SellingProductsRoute
   '/categories': typeof CategoriesIndexRoute
+  '/selling': typeof SellingIndexRoute
   '/api/public/paymob-webhook': typeof ApiPublicPaymobWebhookRoute
   '/api/public/paymob/callback': typeof ApiPublicPaymobCallbackRoute
 }
@@ -162,12 +185,15 @@ export interface FileRoutesById {
   '/payment': typeof PaymentRouteWithChildren
   '/payment-success': typeof PaymentSuccessRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/selling': typeof SellingRouteWithChildren
   '/shop': typeof ShopRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/confirm-order/$id': typeof ConfirmOrderIdRoute
   '/payment/callback': typeof PaymentCallbackRoute
   '/product/$id': typeof ProductIdRoute
+  '/selling/products': typeof SellingProductsRoute
   '/categories/': typeof CategoriesIndexRoute
+  '/selling/': typeof SellingIndexRoute
   '/api/public/paymob-webhook': typeof ApiPublicPaymobWebhookRoute
   '/api/public/paymob/callback': typeof ApiPublicPaymobCallbackRoute
 }
@@ -183,12 +209,15 @@ export interface FileRouteTypes {
     | '/payment'
     | '/payment-success'
     | '/reset-password'
+    | '/selling'
     | '/shop'
     | '/categories/$slug'
     | '/confirm-order/$id'
     | '/payment/callback'
     | '/product/$id'
+    | '/selling/products'
     | '/categories/'
+    | '/selling/'
     | '/api/public/paymob-webhook'
     | '/api/public/paymob/callback'
   fileRoutesByTo: FileRoutesByTo
@@ -207,7 +236,9 @@ export interface FileRouteTypes {
     | '/confirm-order/$id'
     | '/payment/callback'
     | '/product/$id'
+    | '/selling/products'
     | '/categories'
+    | '/selling'
     | '/api/public/paymob-webhook'
     | '/api/public/paymob/callback'
   id:
@@ -221,12 +252,15 @@ export interface FileRouteTypes {
     | '/payment'
     | '/payment-success'
     | '/reset-password'
+    | '/selling'
     | '/shop'
     | '/categories/$slug'
     | '/confirm-order/$id'
     | '/payment/callback'
     | '/product/$id'
+    | '/selling/products'
     | '/categories/'
+    | '/selling/'
     | '/api/public/paymob-webhook'
     | '/api/public/paymob/callback'
   fileRoutesById: FileRoutesById
@@ -241,6 +275,7 @@ export interface RootRouteChildren {
   PaymentRoute: typeof PaymentRouteWithChildren
   PaymentSuccessRoute: typeof PaymentSuccessRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  SellingRoute: typeof SellingRouteWithChildren
   ShopRoute: typeof ShopRoute
   CategoriesSlugRoute: typeof CategoriesSlugRoute
   ConfirmOrderIdRoute: typeof ConfirmOrderIdRoute
@@ -257,6 +292,13 @@ declare module '@tanstack/react-router' {
       path: '/shop'
       fullPath: '/shop'
       preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/selling': {
+      id: '/selling'
+      path: '/selling'
+      fullPath: '/selling'
+      preLoaderRoute: typeof SellingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -322,12 +364,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/selling/': {
+      id: '/selling/'
+      path: '/'
+      fullPath: '/selling/'
+      preLoaderRoute: typeof SellingIndexRouteImport
+      parentRoute: typeof SellingRoute
+    }
     '/categories/': {
       id: '/categories/'
       path: '/categories'
       fullPath: '/categories/'
       preLoaderRoute: typeof CategoriesIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/selling/products': {
+      id: '/selling/products'
+      path: '/products'
+      fullPath: '/selling/products'
+      preLoaderRoute: typeof SellingProductsRouteImport
+      parentRoute: typeof SellingRoute
     }
     '/product/$id': {
       id: '/product/$id'
@@ -385,6 +441,19 @@ const PaymentRouteChildren: PaymentRouteChildren = {
 const PaymentRouteWithChildren =
   PaymentRoute._addFileChildren(PaymentRouteChildren)
 
+interface SellingRouteChildren {
+  SellingProductsRoute: typeof SellingProductsRoute
+  SellingIndexRoute: typeof SellingIndexRoute
+}
+
+const SellingRouteChildren: SellingRouteChildren = {
+  SellingProductsRoute: SellingProductsRoute,
+  SellingIndexRoute: SellingIndexRoute,
+}
+
+const SellingRouteWithChildren =
+  SellingRoute._addFileChildren(SellingRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountRoute: AccountRoute,
@@ -395,6 +464,7 @@ const rootRouteChildren: RootRouteChildren = {
   PaymentRoute: PaymentRouteWithChildren,
   PaymentSuccessRoute: PaymentSuccessRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  SellingRoute: SellingRouteWithChildren,
   ShopRoute: ShopRoute,
   CategoriesSlugRoute: CategoriesSlugRoute,
   ConfirmOrderIdRoute: ConfirmOrderIdRoute,
