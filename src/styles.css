@@ -239,3 +239,91 @@ html[dir="rtl"] .font-display {
   font-weight: 500;
   letter-spacing: 0;
 }
+
+/* ============================================================
+   Selling Admin Module (scoped dark theme + emerald accent)
+   ============================================================ */
+.selling-shell {
+  --s-bg: oklch(0.16 0.012 260);
+  --s-surface: oklch(0.21 0.014 260);
+  --s-surface-2: oklch(0.25 0.014 260);
+  --s-border: oklch(0.32 0.012 260);
+  --s-fg: oklch(0.97 0.005 260);
+  --s-muted: oklch(0.65 0.012 260);
+  --s-accent: oklch(0.72 0.16 160);          /* emerald */
+  --s-accent-fg: oklch(0.16 0.05 160);
+  --s-danger: oklch(0.65 0.20 25);
+
+  background: var(--s-bg);
+  color: var(--s-fg);
+  min-height: 100vh;
+}
+.selling-shell .s-card {
+  background: var(--s-surface);
+  border: 1px solid var(--s-border);
+  border-radius: 0.75rem;
+}
+.selling-shell .s-surface-2 { background: var(--s-surface-2); }
+.selling-shell .s-border { border-color: var(--s-border); }
+.selling-shell .s-muted { color: var(--s-muted); }
+.selling-shell .s-accent { color: var(--s-accent); }
+.selling-shell .s-bg-accent {
+  background: var(--s-accent);
+  color: var(--s-accent-fg);
+}
+.selling-shell .s-input {
+  background: var(--s-surface-2);
+  border: 1px solid var(--s-border);
+  color: var(--s-fg);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s ease;
+}
+.selling-shell .s-input:focus { border-color: var(--s-accent); }
+.selling-shell .s-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.selling-shell .s-btn-primary {
+  background: var(--s-accent);
+  color: var(--s-accent-fg);
+}
+.selling-shell .s-btn-primary:hover { filter: brightness(1.08); }
+.selling-shell .s-btn-ghost {
+  background: transparent;
+  color: var(--s-fg);
+  border-color: var(--s-border);
+}
+.selling-shell .s-btn-ghost:hover { background: var(--s-surface-2); }
+.selling-shell .s-btn-danger {
+  background: transparent;
+  color: var(--s-danger);
+  border-color: var(--s-border);
+}
+.selling-shell .s-btn-danger:hover { background: color-mix(in oklab, var(--s-danger) 12%, transparent); }
+.selling-shell .s-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  background: color-mix(in oklab, var(--s-accent) 18%, transparent);
+  color: var(--s-accent);
+  border: 1px solid color-mix(in oklab, var(--s-accent) 30%, transparent);
+}
+.selling-shell .s-link-active {
+  background: color-mix(in oklab, var(--s-accent) 16%, transparent);
+  color: var(--s-accent);
+}
