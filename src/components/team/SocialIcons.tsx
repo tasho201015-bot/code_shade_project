@@ -26,8 +26,8 @@ export function SocialIcons({
   className?: string;
   iconClass?: string;
 }) {
-  const entries = Object.entries(socials).filter(([, v]) => v) as [keyof TeamSocials, string][];
   const entries = Object.entries(socials).filter(([, v]) => v) as [string, string][];
+
   if (!entries.length && !email && !phone) return null;
   return (
     <div className={`flex items-center gap-3 ${className}`}>
