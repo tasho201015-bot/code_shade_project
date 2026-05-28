@@ -47,7 +47,7 @@ export function SocialIcons({
         );
       })}
 
-      })}
+
       {email && (
         <a href={`mailto:${email}`} aria-label="Email" className="hover:text-accent transition-colors">
           <Mail className={iconClass} />
