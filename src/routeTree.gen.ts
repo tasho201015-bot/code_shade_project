@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TeamRouteImport } from './routes/team'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SellingRouteImport } from './routes/selling'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -17,11 +18,13 @@ import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as CartRouteImport } from './routes/cart'
+import { Route as AdminTeamRouteImport } from './routes/admin-team'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SellingIndexRouteImport } from './routes/selling.index'
 import { Route as CategoriesIndexRouteImport } from './routes/categories.index'
+import { Route as TeamSlugRouteImport } from './routes/team.$slug'
 import { Route as SellingUpsellsRouteImport } from './routes/selling.upsells'
 import { Route as SellingSettingsRouteImport } from './routes/selling.settings'
 import { Route as SellingProductsRouteImport } from './routes/selling.products'
@@ -34,6 +37,11 @@ import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
 import { Route as ApiPublicPaymobWebhookRouteImport } from './routes/api/public/paymob-webhook'
 import { Route as ApiPublicPaymobCallbackRouteImport } from './routes/api/public/paymob.callback'
 
+const TeamRoute = TeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopRoute = ShopRouteImport.update({
   id: '/shop',
   path: '/shop',
@@ -74,6 +82,11 @@ const CartRoute = CartRouteImport.update({
   path: '/cart',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminTeamRoute = AdminTeamRouteImport.update({
+  id: '/admin-team',
+  path: '/admin-team',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -98,6 +111,11 @@ const CategoriesIndexRoute = CategoriesIndexRouteImport.update({
   id: '/categories/',
   path: '/categories/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const TeamSlugRoute = TeamSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => TeamRoute,
 } as any)
 const SellingUpsellsRoute = SellingUpsellsRouteImport.update({
   id: '/upsells',
@@ -159,6 +177,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
   '/admin': typeof AdminRoute
+  '/admin-team': typeof AdminTeamRoute
   '/cart': typeof CartRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -167,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/selling': typeof SellingRouteWithChildren
   '/shop': typeof ShopRoute
+  '/team': typeof TeamRouteWithChildren
   '/categories/$slug': typeof CategoriesSlugRoute
   '/confirm-order/$id': typeof ConfirmOrderIdRoute
   '/payment/callback': typeof PaymentCallbackRoute
@@ -176,6 +196,7 @@ export interface FileRoutesByFullPath {
   '/selling/products': typeof SellingProductsRoute
   '/selling/settings': typeof SellingSettingsRoute
   '/selling/upsells': typeof SellingUpsellsRoute
+  '/team/$slug': typeof TeamSlugRoute
   '/categories/': typeof CategoriesIndexRoute
   '/selling/': typeof SellingIndexRoute
   '/api/public/paymob-webhook': typeof ApiPublicPaymobWebhookRoute
@@ -185,6 +206,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
   '/admin': typeof AdminRoute
+  '/admin-team': typeof AdminTeamRoute
   '/cart': typeof CartRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -192,6 +214,7 @@ export interface FileRoutesByTo {
   '/payment-success': typeof PaymentSuccessRoute
   '/reset-password': typeof ResetPasswordRoute
   '/shop': typeof ShopRoute
+  '/team': typeof TeamRouteWithChildren
   '/categories/$slug': typeof CategoriesSlugRoute
   '/confirm-order/$id': typeof ConfirmOrderIdRoute
   '/payment/callback': typeof PaymentCallbackRoute
@@ -201,6 +224,7 @@ export interface FileRoutesByTo {
   '/selling/products': typeof SellingProductsRoute
   '/selling/settings': typeof SellingSettingsRoute
   '/selling/upsells': typeof SellingUpsellsRoute
+  '/team/$slug': typeof TeamSlugRoute
   '/categories': typeof CategoriesIndexRoute
   '/selling': typeof SellingIndexRoute
   '/api/public/paymob-webhook': typeof ApiPublicPaymobWebhookRoute
@@ -211,6 +235,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
   '/admin': typeof AdminRoute
+  '/admin-team': typeof AdminTeamRoute
   '/cart': typeof CartRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -219,6 +244,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/selling': typeof SellingRouteWithChildren
   '/shop': typeof ShopRoute
+  '/team': typeof TeamRouteWithChildren
   '/categories/$slug': typeof CategoriesSlugRoute
   '/confirm-order/$id': typeof ConfirmOrderIdRoute
   '/payment/callback': typeof PaymentCallbackRoute
@@ -228,6 +254,7 @@ export interface FileRoutesById {
   '/selling/products': typeof SellingProductsRoute
   '/selling/settings': typeof SellingSettingsRoute
   '/selling/upsells': typeof SellingUpsellsRoute
+  '/team/$slug': typeof TeamSlugRoute
   '/categories/': typeof CategoriesIndexRoute
   '/selling/': typeof SellingIndexRoute
   '/api/public/paymob-webhook': typeof ApiPublicPaymobWebhookRoute
@@ -239,6 +266,7 @@ export interface FileRouteTypes {
     | '/'
     | '/account'
     | '/admin'
+    | '/admin-team'
     | '/cart'
     | '/forgot-password'
     | '/login'
@@ -247,6 +275,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/selling'
     | '/shop'
+    | '/team'
     | '/categories/$slug'
     | '/confirm-order/$id'
     | '/payment/callback'
@@ -256,6 +285,7 @@ export interface FileRouteTypes {
     | '/selling/products'
     | '/selling/settings'
     | '/selling/upsells'
+    | '/team/$slug'
     | '/categories/'
     | '/selling/'
     | '/api/public/paymob-webhook'
@@ -265,6 +295,7 @@ export interface FileRouteTypes {
     | '/'
     | '/account'
     | '/admin'
+    | '/admin-team'
     | '/cart'
     | '/forgot-password'
     | '/login'
@@ -272,6 +303,7 @@ export interface FileRouteTypes {
     | '/payment-success'
     | '/reset-password'
     | '/shop'
+    | '/team'
     | '/categories/$slug'
     | '/confirm-order/$id'
     | '/payment/callback'
@@ -281,6 +313,7 @@ export interface FileRouteTypes {
     | '/selling/products'
     | '/selling/settings'
     | '/selling/upsells'
+    | '/team/$slug'
     | '/categories'
     | '/selling'
     | '/api/public/paymob-webhook'
@@ -290,6 +323,7 @@ export interface FileRouteTypes {
     | '/'
     | '/account'
     | '/admin'
+    | '/admin-team'
     | '/cart'
     | '/forgot-password'
     | '/login'
@@ -298,6 +332,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/selling'
     | '/shop'
+    | '/team'
     | '/categories/$slug'
     | '/confirm-order/$id'
     | '/payment/callback'
@@ -307,6 +342,7 @@ export interface FileRouteTypes {
     | '/selling/products'
     | '/selling/settings'
     | '/selling/upsells'
+    | '/team/$slug'
     | '/categories/'
     | '/selling/'
     | '/api/public/paymob-webhook'
@@ -317,6 +353,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountRoute: typeof AccountRoute
   AdminRoute: typeof AdminRoute
+  AdminTeamRoute: typeof AdminTeamRoute
   CartRoute: typeof CartRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
@@ -325,6 +362,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   SellingRoute: typeof SellingRouteWithChildren
   ShopRoute: typeof ShopRoute
+  TeamRoute: typeof TeamRouteWithChildren
   CategoriesSlugRoute: typeof CategoriesSlugRoute
   ConfirmOrderIdRoute: typeof ConfirmOrderIdRoute
   ProductIdRoute: typeof ProductIdRoute
@@ -335,6 +373,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/team': {
+      id: '/team'
+      path: '/team'
+      fullPath: '/team'
+      preLoaderRoute: typeof TeamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shop': {
       id: '/shop'
       path: '/shop'
@@ -391,6 +436,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CartRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin-team': {
+      id: '/admin-team'
+      path: '/admin-team'
+      fullPath: '/admin-team'
+      preLoaderRoute: typeof AdminTeamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -425,6 +477,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/categories/'
       preLoaderRoute: typeof CategoriesIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/team/$slug': {
+      id: '/team/$slug'
+      path: '/$slug'
+      fullPath: '/team/$slug'
+      preLoaderRoute: typeof TeamSlugRouteImport
+      parentRoute: typeof TeamRoute
     }
     '/selling/upsells': {
       id: '/selling/upsells'
@@ -538,10 +597,21 @@ const SellingRouteChildren: SellingRouteChildren = {
 const SellingRouteWithChildren =
   SellingRoute._addFileChildren(SellingRouteChildren)
 
+interface TeamRouteChildren {
+  TeamSlugRoute: typeof TeamSlugRoute
+}
+
+const TeamRouteChildren: TeamRouteChildren = {
+  TeamSlugRoute: TeamSlugRoute,
+}
+
+const TeamRouteWithChildren = TeamRoute._addFileChildren(TeamRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountRoute: AccountRoute,
   AdminRoute: AdminRoute,
+  AdminTeamRoute: AdminTeamRoute,
   CartRoute: CartRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
@@ -550,6 +620,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   SellingRoute: SellingRouteWithChildren,
   ShopRoute: ShopRoute,
+  TeamRoute: TeamRouteWithChildren,
   CategoriesSlugRoute: CategoriesSlugRoute,
   ConfirmOrderIdRoute: ConfirmOrderIdRoute,
   ProductIdRoute: ProductIdRoute,
@@ -560,13 +631,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

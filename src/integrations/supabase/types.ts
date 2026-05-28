@@ -245,6 +245,126 @@ export type Database = {
         }
         Relationships: []
       }
+      team_members: {
+        Row: {
+          bio: string | null
+          created_at: string
+          cta_label: string | null
+          cta_url: string | null
+          email: string | null
+          id: string
+          image_url: string | null
+          is_featured: boolean
+          is_visible: boolean
+          name: string
+          phone: string | null
+          quote: string | null
+          role: string
+          slug: string
+          socials: Json
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string
+          cta_label?: string | null
+          cta_url?: string | null
+          email?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean
+          is_visible?: boolean
+          name: string
+          phone?: string | null
+          quote?: string | null
+          role: string
+          slug: string
+          socials?: Json
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string
+          cta_label?: string | null
+          cta_url?: string | null
+          email?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean
+          is_visible?: boolean
+          name?: string
+          phone?: string | null
+          quote?: string | null
+          role?: string
+          slug?: string
+          socials?: Json
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      team_settings: {
+        Row: {
+          animations_enabled: boolean
+          background_color: string | null
+          background_image: string | null
+          card_radius: number
+          card_spacing: number
+          columns: number
+          created_at: string
+          dark_mode: boolean
+          eyebrow: string | null
+          hover_effect: string
+          id: string
+          layout: string
+          overlay_opacity: number
+          show_featured_section: boolean
+          subtitle: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          animations_enabled?: boolean
+          background_color?: string | null
+          background_image?: string | null
+          card_radius?: number
+          card_spacing?: number
+          columns?: number
+          created_at?: string
+          dark_mode?: boolean
+          eyebrow?: string | null
+          hover_effect?: string
+          id?: string
+          layout?: string
+          overlay_opacity?: number
+          show_featured_section?: boolean
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          animations_enabled?: boolean
+          background_color?: string | null
+          background_image?: string | null
+          card_radius?: number
+          card_spacing?: number
+          columns?: number
+          created_at?: string
+          dark_mode?: boolean
+          eyebrow?: string | null
+          hover_effect?: string
+          id?: string
+          layout?: string
+          overlay_opacity?: number
+          show_featured_section?: boolean
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
