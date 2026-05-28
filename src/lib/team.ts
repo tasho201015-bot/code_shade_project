@@ -10,7 +10,9 @@ export interface TeamSocials {
   behance?: string;
   dribbble?: string;
   website?: string;
+  [key: string]: string | undefined;
 }
+
 
 export interface TeamMember {
   id: string;
