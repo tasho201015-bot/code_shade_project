@@ -41,8 +41,10 @@ export function Header() {
           <Link to="/" className="link-underline">{t("nav.home")}</Link>
           <Link to="/shop" search={{ category: "all" }} className="link-underline">{t("nav.shop")}</Link>
           <Link to="/categories" className="link-underline">Collections</Link>
+          <Link to="/team" className="link-underline">Atelier</Link>
           <Link to="/shop" search={{ category: "new-arrivals" } as never} className="link-underline">{t("nav.new")}</Link>
         </nav>
+
         <div className="flex items-center gap-2">
           <LanguageToggle />
           {isAdmin && (
@@ -109,7 +111,9 @@ export function Header() {
                 <Link to="/" className="py-3 text-xs uppercase tracking-luxe border-b border-border/40">{t("nav.home")}</Link>
                 <Link to="/shop" search={{ category: "all" }} className="py-3 text-xs uppercase tracking-luxe border-b border-border/40">{t("nav.shop")}</Link>
                 <Link to="/categories" className="py-3 text-xs uppercase tracking-luxe border-b border-border/40">Collections</Link>
+                <Link to="/team" className="py-3 text-xs uppercase tracking-luxe border-b border-border/40">Atelier</Link>
                 <Link to="/shop" search={{ category: "new-arrivals" } as never} className="py-3 text-xs uppercase tracking-luxe border-b border-border/40">{t("nav.new")}</Link>
+
                 {isAdmin && (
                   <div className="mt-4 pt-4 border-t border-border">
                     <div className="text-[10px] uppercase tracking-luxe text-accent mb-2">Admin</div>
