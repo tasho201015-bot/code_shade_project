@@ -27,11 +27,12 @@ export function SocialIcons({
   iconClass?: string;
 }) {
   const entries = Object.entries(socials).filter(([, v]) => v) as [keyof TeamSocials, string][];
+  const entries = Object.entries(socials).filter(([, v]) => v) as [string, string][];
   if (!entries.length && !email && !phone) return null;
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       {entries.map(([key, url]) => {
-        const Icon = ICONS[key] ?? Globe;
+        const Icon = ICONS[key as keyof TeamSocials] ?? Globe;
         return (
           <a
             key={key}
@@ -44,6 +45,8 @@ export function SocialIcons({
             <Icon className={iconClass} />
           </a>
         );
+      })}
+
       })}
       {email && (
         <a href={`mailto:${email}`} aria-label="Email" className="hover:text-accent transition-colors">
