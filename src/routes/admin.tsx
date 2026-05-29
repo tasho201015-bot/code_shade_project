@@ -196,6 +196,7 @@ function AdminPage() {
             ["performance", "Performance"],
             ["products", "Products"],
             ["categories", "Categories"],
+            ["team", "Team"],
             ["orders", "Manage orders"],
           ] as const).map(([t, label]) => (
             <button
