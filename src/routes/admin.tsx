@@ -58,7 +58,7 @@ const empty: Omit<Product, "id"> = {
 function AdminPage() {
   const { isAdmin, loading, user } = useAuth();
   const nav = useNavigate();
-  const [tab, setTab] = useState<"overview" | "orders-analytics" | "performance" | "products" | "categories" | "orders">("overview");
+  const [tab, setTab] = useState<"overview" | "orders-analytics" | "performance" | "products" | "categories" | "team" | "orders">("overview");
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<{ slug: string; name: string }[]>([]);
