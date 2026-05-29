@@ -215,6 +215,7 @@ function AdminPage() {
         {tab === "orders-analytics" && <AnalyticsDashboard section="orders" />}
         {tab === "performance" && <AnalyticsDashboard section="performance" />}
         {tab === "categories" && <CategoryManager />}
+        {tab === "team" && <TeamManager />}
 
         {tab === "products" && (
           <div className="mt-8">
