@@ -11,6 +11,7 @@ import { AnalyticsDashboard } from "@/components/admin/AnalyticsDashboard";
 import { CategoryManager } from "@/components/admin/CategoryManager";
 import { toast } from "sonner";
 import { OrderStatusBadge, ORDER_STATUSES } from "@/components/site/OrderStatusBadge";
+import { TeamManager } from "@/components/admin/TeamManager";
 
 export const Route = createFileRoute("/admin")({
   beforeLoad: async () => {
@@ -57,7 +58,7 @@ const empty: Omit<Product, "id"> = {
 function AdminPage() {
   const { isAdmin, loading, user } = useAuth();
   const nav = useNavigate();
-  const [tab, setTab] = useState<"overview" | "orders-analytics" | "performance" | "products" | "categories" | "orders">("overview");
+  const [tab, setTab] = useState<"overview" | "orders-analytics" | "performance" | "products" | "categories" | "team" | "orders">("overview");
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<{ slug: string; name: string }[]>([]);
@@ -195,6 +196,7 @@ function AdminPage() {
             ["performance", "Performance"],
             ["products", "Products"],
             ["categories", "Categories"],
+            ["team", "Team"],
             ["orders", "Manage orders"],
           ] as const).map(([t, label]) => (
             <button
@@ -213,6 +215,7 @@ function AdminPage() {
         {tab === "orders-analytics" && <AnalyticsDashboard section="orders" />}
         {tab === "performance" && <AnalyticsDashboard section="performance" />}
         {tab === "categories" && <CategoryManager />}
+        {tab === "team" && <TeamManager />}
 
         {tab === "products" && (
           <div className="mt-8">
