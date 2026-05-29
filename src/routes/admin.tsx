@@ -11,6 +11,7 @@ import { AnalyticsDashboard } from "@/components/admin/AnalyticsDashboard";
 import { CategoryManager } from "@/components/admin/CategoryManager";
 import { toast } from "sonner";
 import { OrderStatusBadge, ORDER_STATUSES } from "@/components/site/OrderStatusBadge";
+import { TeamManager } from "@/components/admin/TeamManager";
 
 export const Route = createFileRoute("/admin")({
   beforeLoad: async () => {
