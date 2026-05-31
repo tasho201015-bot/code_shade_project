@@ -20,7 +20,7 @@ export const Route = createFileRoute("/selling/upsells")({
   component: UpsellsPage,
 });
 
-function UpsellsPage() {
+export function UpsellsPage() {
   const rules = useSellingStore((s) => s.upsells);
   const bundles = useSellingStore((s) => s.bundles);
   const products = useProducts();

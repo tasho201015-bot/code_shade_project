@@ -12,7 +12,7 @@ export const Route = createFileRoute("/selling/bundles")({
   component: BundlesPage,
 });
 
-function BundlesPage() {
+export function BundlesPage() {
   const bundles = useSellingStore((s) => s.bundles);
   const products = useProducts();
   const [open, setOpen] = useState(false);

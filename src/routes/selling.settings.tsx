@@ -16,7 +16,7 @@ const LOCATIONS: { value: DisplayLocation; label: string }[] = [
   { value: "homepage", label: "Homepage" },
 ];
 
-function SettingsPage() {
+export function SettingsPage() {
   const settings = useSellingStore((s) => s.settings);
   const [draft, setDraft] = useState<SellingSettings>(settings);
 

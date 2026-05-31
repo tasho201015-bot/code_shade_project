@@ -7,7 +7,7 @@ export const Route = createFileRoute("/selling/products")({
   component: ProductsPage,
 });
 
-function ProductsPage() {
+export function ProductsPage() {
   const products = useProducts();
   const [q, setQ] = useState("");
 

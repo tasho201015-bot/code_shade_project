@@ -13,7 +13,7 @@ export const Route = createFileRoute("/selling/cross-sells")({
   component: CrossSellsPage,
 });
 
-function CrossSellsPage() {
+export function CrossSellsPage() {
   const rules = useSellingStore((s) => s.crossSells);
   const products = useProducts();
   const [open, setOpen] = useState(false);
