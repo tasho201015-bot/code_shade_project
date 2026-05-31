@@ -34,7 +34,14 @@ import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as PaymentCallbackRouteImport } from './routes/payment.callback'
 import { Route as ConfirmOrderIdRouteImport } from './routes/confirm-order.$id'
 import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
+import { Route as AdminSalesBoosterRouteImport } from './routes/admin.sales-booster'
+import { Route as AdminSalesBoosterIndexRouteImport } from './routes/admin.sales-booster.index'
 import { Route as ApiPublicPaymobWebhookRouteImport } from './routes/api/public/paymob-webhook'
+import { Route as AdminSalesBoosterUpsellsRouteImport } from './routes/admin.sales-booster.upsells'
+import { Route as AdminSalesBoosterSettingsRouteImport } from './routes/admin.sales-booster.settings'
+import { Route as AdminSalesBoosterProductsRouteImport } from './routes/admin.sales-booster.products'
+import { Route as AdminSalesBoosterCrossSellsRouteImport } from './routes/admin.sales-booster.cross-sells'
+import { Route as AdminSalesBoosterBundlesRouteImport } from './routes/admin.sales-booster.bundles'
 import { Route as ApiPublicPaymobCallbackRouteImport } from './routes/api/public/paymob.callback'
 
 const TeamRoute = TeamRouteImport.update({
@@ -162,11 +169,51 @@ const CategoriesSlugRoute = CategoriesSlugRouteImport.update({
   path: '/categories/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminSalesBoosterRoute = AdminSalesBoosterRouteImport.update({
+  id: '/sales-booster',
+  path: '/sales-booster',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSalesBoosterIndexRoute = AdminSalesBoosterIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminSalesBoosterRoute,
+} as any)
 const ApiPublicPaymobWebhookRoute = ApiPublicPaymobWebhookRouteImport.update({
   id: '/api/public/paymob-webhook',
   path: '/api/public/paymob-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminSalesBoosterUpsellsRoute =
+  AdminSalesBoosterUpsellsRouteImport.update({
+    id: '/upsells',
+    path: '/upsells',
+    getParentRoute: () => AdminSalesBoosterRoute,
+  } as any)
+const AdminSalesBoosterSettingsRoute =
+  AdminSalesBoosterSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AdminSalesBoosterRoute,
+  } as any)
+const AdminSalesBoosterProductsRoute =
+  AdminSalesBoosterProductsRouteImport.update({
+    id: '/products',
+    path: '/products',
+    getParentRoute: () => AdminSalesBoosterRoute,
+  } as any)
+const AdminSalesBoosterCrossSellsRoute =
+  AdminSalesBoosterCrossSellsRouteImport.update({
+    id: '/cross-sells',
+    path: '/cross-sells',
+    getParentRoute: () => AdminSalesBoosterRoute,
+  } as any)
+const AdminSalesBoosterBundlesRoute =
+  AdminSalesBoosterBundlesRouteImport.update({
+    id: '/bundles',
+    path: '/bundles',
+    getParentRoute: () => AdminSalesBoosterRoute,
+  } as any)
 const ApiPublicPaymobCallbackRoute = ApiPublicPaymobCallbackRouteImport.update({
   id: '/api/public/paymob/callback',
   path: '/api/public/paymob/callback',
@@ -176,7 +223,7 @@ const ApiPublicPaymobCallbackRoute = ApiPublicPaymobCallbackRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/admin-team': typeof AdminTeamRoute
   '/cart': typeof CartRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -187,6 +234,7 @@ export interface FileRoutesByFullPath {
   '/selling': typeof SellingRouteWithChildren
   '/shop': typeof ShopRoute
   '/team': typeof TeamRouteWithChildren
+  '/admin/sales-booster': typeof AdminSalesBoosterRouteWithChildren
   '/categories/$slug': typeof CategoriesSlugRoute
   '/confirm-order/$id': typeof ConfirmOrderIdRoute
   '/payment/callback': typeof PaymentCallbackRoute
@@ -199,13 +247,19 @@ export interface FileRoutesByFullPath {
   '/team/$slug': typeof TeamSlugRoute
   '/categories/': typeof CategoriesIndexRoute
   '/selling/': typeof SellingIndexRoute
+  '/admin/sales-booster/bundles': typeof AdminSalesBoosterBundlesRoute
+  '/admin/sales-booster/cross-sells': typeof AdminSalesBoosterCrossSellsRoute
+  '/admin/sales-booster/products': typeof AdminSalesBoosterProductsRoute
+  '/admin/sales-booster/settings': typeof AdminSalesBoosterSettingsRoute
+  '/admin/sales-booster/upsells': typeof AdminSalesBoosterUpsellsRoute
   '/api/public/paymob-webhook': typeof ApiPublicPaymobWebhookRoute
+  '/admin/sales-booster/': typeof AdminSalesBoosterIndexRoute
   '/api/public/paymob/callback': typeof ApiPublicPaymobCallbackRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/admin-team': typeof AdminTeamRoute
   '/cart': typeof CartRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -227,14 +281,20 @@ export interface FileRoutesByTo {
   '/team/$slug': typeof TeamSlugRoute
   '/categories': typeof CategoriesIndexRoute
   '/selling': typeof SellingIndexRoute
+  '/admin/sales-booster/bundles': typeof AdminSalesBoosterBundlesRoute
+  '/admin/sales-booster/cross-sells': typeof AdminSalesBoosterCrossSellsRoute
+  '/admin/sales-booster/products': typeof AdminSalesBoosterProductsRoute
+  '/admin/sales-booster/settings': typeof AdminSalesBoosterSettingsRoute
+  '/admin/sales-booster/upsells': typeof AdminSalesBoosterUpsellsRoute
   '/api/public/paymob-webhook': typeof ApiPublicPaymobWebhookRoute
+  '/admin/sales-booster': typeof AdminSalesBoosterIndexRoute
   '/api/public/paymob/callback': typeof ApiPublicPaymobCallbackRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/account': typeof AccountRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/admin-team': typeof AdminTeamRoute
   '/cart': typeof CartRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -245,6 +305,7 @@ export interface FileRoutesById {
   '/selling': typeof SellingRouteWithChildren
   '/shop': typeof ShopRoute
   '/team': typeof TeamRouteWithChildren
+  '/admin/sales-booster': typeof AdminSalesBoosterRouteWithChildren
   '/categories/$slug': typeof CategoriesSlugRoute
   '/confirm-order/$id': typeof ConfirmOrderIdRoute
   '/payment/callback': typeof PaymentCallbackRoute
@@ -257,7 +318,13 @@ export interface FileRoutesById {
   '/team/$slug': typeof TeamSlugRoute
   '/categories/': typeof CategoriesIndexRoute
   '/selling/': typeof SellingIndexRoute
+  '/admin/sales-booster/bundles': typeof AdminSalesBoosterBundlesRoute
+  '/admin/sales-booster/cross-sells': typeof AdminSalesBoosterCrossSellsRoute
+  '/admin/sales-booster/products': typeof AdminSalesBoosterProductsRoute
+  '/admin/sales-booster/settings': typeof AdminSalesBoosterSettingsRoute
+  '/admin/sales-booster/upsells': typeof AdminSalesBoosterUpsellsRoute
   '/api/public/paymob-webhook': typeof ApiPublicPaymobWebhookRoute
+  '/admin/sales-booster/': typeof AdminSalesBoosterIndexRoute
   '/api/public/paymob/callback': typeof ApiPublicPaymobCallbackRoute
 }
 export interface FileRouteTypes {
@@ -276,6 +343,7 @@ export interface FileRouteTypes {
     | '/selling'
     | '/shop'
     | '/team'
+    | '/admin/sales-booster'
     | '/categories/$slug'
     | '/confirm-order/$id'
     | '/payment/callback'
@@ -288,7 +356,13 @@ export interface FileRouteTypes {
     | '/team/$slug'
     | '/categories/'
     | '/selling/'
+    | '/admin/sales-booster/bundles'
+    | '/admin/sales-booster/cross-sells'
+    | '/admin/sales-booster/products'
+    | '/admin/sales-booster/settings'
+    | '/admin/sales-booster/upsells'
     | '/api/public/paymob-webhook'
+    | '/admin/sales-booster/'
     | '/api/public/paymob/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -316,7 +390,13 @@ export interface FileRouteTypes {
     | '/team/$slug'
     | '/categories'
     | '/selling'
+    | '/admin/sales-booster/bundles'
+    | '/admin/sales-booster/cross-sells'
+    | '/admin/sales-booster/products'
+    | '/admin/sales-booster/settings'
+    | '/admin/sales-booster/upsells'
     | '/api/public/paymob-webhook'
+    | '/admin/sales-booster'
     | '/api/public/paymob/callback'
   id:
     | '__root__'
@@ -333,6 +413,7 @@ export interface FileRouteTypes {
     | '/selling'
     | '/shop'
     | '/team'
+    | '/admin/sales-booster'
     | '/categories/$slug'
     | '/confirm-order/$id'
     | '/payment/callback'
@@ -345,14 +426,20 @@ export interface FileRouteTypes {
     | '/team/$slug'
     | '/categories/'
     | '/selling/'
+    | '/admin/sales-booster/bundles'
+    | '/admin/sales-booster/cross-sells'
+    | '/admin/sales-booster/products'
+    | '/admin/sales-booster/settings'
+    | '/admin/sales-booster/upsells'
     | '/api/public/paymob-webhook'
+    | '/admin/sales-booster/'
     | '/api/public/paymob/callback'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AccountRoute: typeof AccountRoute
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   AdminTeamRoute: typeof AdminTeamRoute
   CartRoute: typeof CartRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
@@ -548,12 +635,61 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/sales-booster': {
+      id: '/admin/sales-booster'
+      path: '/sales-booster'
+      fullPath: '/admin/sales-booster'
+      preLoaderRoute: typeof AdminSalesBoosterRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/sales-booster/': {
+      id: '/admin/sales-booster/'
+      path: '/'
+      fullPath: '/admin/sales-booster/'
+      preLoaderRoute: typeof AdminSalesBoosterIndexRouteImport
+      parentRoute: typeof AdminSalesBoosterRoute
+    }
     '/api/public/paymob-webhook': {
       id: '/api/public/paymob-webhook'
       path: '/api/public/paymob-webhook'
       fullPath: '/api/public/paymob-webhook'
       preLoaderRoute: typeof ApiPublicPaymobWebhookRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/sales-booster/upsells': {
+      id: '/admin/sales-booster/upsells'
+      path: '/upsells'
+      fullPath: '/admin/sales-booster/upsells'
+      preLoaderRoute: typeof AdminSalesBoosterUpsellsRouteImport
+      parentRoute: typeof AdminSalesBoosterRoute
+    }
+    '/admin/sales-booster/settings': {
+      id: '/admin/sales-booster/settings'
+      path: '/settings'
+      fullPath: '/admin/sales-booster/settings'
+      preLoaderRoute: typeof AdminSalesBoosterSettingsRouteImport
+      parentRoute: typeof AdminSalesBoosterRoute
+    }
+    '/admin/sales-booster/products': {
+      id: '/admin/sales-booster/products'
+      path: '/products'
+      fullPath: '/admin/sales-booster/products'
+      preLoaderRoute: typeof AdminSalesBoosterProductsRouteImport
+      parentRoute: typeof AdminSalesBoosterRoute
+    }
+    '/admin/sales-booster/cross-sells': {
+      id: '/admin/sales-booster/cross-sells'
+      path: '/cross-sells'
+      fullPath: '/admin/sales-booster/cross-sells'
+      preLoaderRoute: typeof AdminSalesBoosterCrossSellsRouteImport
+      parentRoute: typeof AdminSalesBoosterRoute
+    }
+    '/admin/sales-booster/bundles': {
+      id: '/admin/sales-booster/bundles'
+      path: '/bundles'
+      fullPath: '/admin/sales-booster/bundles'
+      preLoaderRoute: typeof AdminSalesBoosterBundlesRouteImport
+      parentRoute: typeof AdminSalesBoosterRoute
     }
     '/api/public/paymob/callback': {
       id: '/api/public/paymob/callback'
@@ -564,6 +700,37 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AdminSalesBoosterRouteChildren {
+  AdminSalesBoosterBundlesRoute: typeof AdminSalesBoosterBundlesRoute
+  AdminSalesBoosterCrossSellsRoute: typeof AdminSalesBoosterCrossSellsRoute
+  AdminSalesBoosterProductsRoute: typeof AdminSalesBoosterProductsRoute
+  AdminSalesBoosterSettingsRoute: typeof AdminSalesBoosterSettingsRoute
+  AdminSalesBoosterUpsellsRoute: typeof AdminSalesBoosterUpsellsRoute
+  AdminSalesBoosterIndexRoute: typeof AdminSalesBoosterIndexRoute
+}
+
+const AdminSalesBoosterRouteChildren: AdminSalesBoosterRouteChildren = {
+  AdminSalesBoosterBundlesRoute: AdminSalesBoosterBundlesRoute,
+  AdminSalesBoosterCrossSellsRoute: AdminSalesBoosterCrossSellsRoute,
+  AdminSalesBoosterProductsRoute: AdminSalesBoosterProductsRoute,
+  AdminSalesBoosterSettingsRoute: AdminSalesBoosterSettingsRoute,
+  AdminSalesBoosterUpsellsRoute: AdminSalesBoosterUpsellsRoute,
+  AdminSalesBoosterIndexRoute: AdminSalesBoosterIndexRoute,
+}
+
+const AdminSalesBoosterRouteWithChildren =
+  AdminSalesBoosterRoute._addFileChildren(AdminSalesBoosterRouteChildren)
+
+interface AdminRouteChildren {
+  AdminSalesBoosterRoute: typeof AdminSalesBoosterRouteWithChildren
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminSalesBoosterRoute: AdminSalesBoosterRouteWithChildren,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface PaymentRouteChildren {
   PaymentCallbackRoute: typeof PaymentCallbackRoute
@@ -610,7 +777,7 @@ const TeamRouteWithChildren = TeamRoute._addFileChildren(TeamRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AccountRoute: AccountRoute,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   AdminTeamRoute: AdminTeamRoute,
   CartRoute: CartRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
