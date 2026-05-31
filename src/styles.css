@@ -327,3 +327,13 @@ html[dir="rtl"] .font-display {
   background: color-mix(in oklab, var(--s-accent) 16%, transparent);
   color: var(--s-accent);
 }
+
+/* Team marquee */
+@keyframes team-marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-team-marquee {
+  animation: team-marquee 35s linear infinite;
+  will-change: transform;
+}

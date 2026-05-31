@@ -5,6 +5,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { Reveal, Stagger, itemVariants } from "@/components/site/Reveal";
 import { DrawIcon } from "@/components/site/DrawIcon";
+import { TeamMarquee } from "@/components/team/TeamMarquee";
 import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { resolveImage } from "@/lib/product-image";
@@ -312,6 +313,9 @@ function HomePage() {
           ))}
         </Stagger>
       </section>
+
+      {/* TEAM MARQUEE */}
+      <TeamMarquee />
 
       {/* CTA */}
       <section className="relative overflow-hidden">
