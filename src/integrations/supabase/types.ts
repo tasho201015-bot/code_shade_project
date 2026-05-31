@@ -245,6 +245,197 @@ export type Database = {
         }
         Relationships: []
       }
+      sb_bundles: {
+        Row: {
+          active: boolean
+          badge: string
+          cover_image: string
+          created_at: string
+          description: string
+          discount_mode: string
+          discount_value: number
+          ends_at: string | null
+          id: string
+          locations: string[]
+          name: string
+          original_price_override: number | null
+          product_ids: string[]
+          purchases: number
+          sort_order: number
+          starts_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          badge?: string
+          cover_image?: string
+          created_at?: string
+          description?: string
+          discount_mode?: string
+          discount_value?: number
+          ends_at?: string | null
+          id?: string
+          locations?: string[]
+          name?: string
+          original_price_override?: number | null
+          product_ids?: string[]
+          purchases?: number
+          sort_order?: number
+          starts_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          badge?: string
+          cover_image?: string
+          created_at?: string
+          description?: string
+          discount_mode?: string
+          discount_value?: number
+          ends_at?: string | null
+          id?: string
+          locations?: string[]
+          name?: string
+          original_price_override?: number | null
+          product_ids?: string[]
+          purchases?: number
+          sort_order?: number
+          starts_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      sb_cross_sells: {
+        Row: {
+          active: boolean
+          clicks: number
+          created_at: string
+          id: string
+          location: string
+          max_shown: number
+          section_title: string
+          style: string
+          suggestions: Json
+          trigger_product_id: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          clicks?: number
+          created_at?: string
+          id?: string
+          location?: string
+          max_shown?: number
+          section_title?: string
+          style?: string
+          suggestions?: Json
+          trigger_product_id: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          clicks?: number
+          created_at?: string
+          id?: string
+          location?: string
+          max_shown?: number
+          section_title?: string
+          style?: string
+          suggestions?: Json
+          trigger_product_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      sb_settings: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          singleton: boolean
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json
+          id?: string
+          singleton?: boolean
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          singleton?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      sb_upsells: {
+        Row: {
+          active: boolean
+          badge: string
+          conversions: number
+          countdown_ends_at: string | null
+          created_at: string
+          headline: string
+          id: string
+          note: string
+          original_price: number
+          position: string
+          suggested_bundle_id: string | null
+          suggested_product_id: string | null
+          trigger_product_id: string
+          type: string
+          updated_at: string
+          upsell_price: number
+        }
+        Insert: {
+          active?: boolean
+          badge?: string
+          conversions?: number
+          countdown_ends_at?: string | null
+          created_at?: string
+          headline?: string
+          id?: string
+          note?: string
+          original_price?: number
+          position?: string
+          suggested_bundle_id?: string | null
+          suggested_product_id?: string | null
+          trigger_product_id: string
+          type?: string
+          updated_at?: string
+          upsell_price?: number
+        }
+        Update: {
+          active?: boolean
+          badge?: string
+          conversions?: number
+          countdown_ends_at?: string | null
+          created_at?: string
+          headline?: string
+          id?: string
+          note?: string
+          original_price?: number
+          position?: string
+          suggested_bundle_id?: string | null
+          suggested_product_id?: string | null
+          trigger_product_id?: string
+          type?: string
+          updated_at?: string
+          upsell_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sb_upsells_suggested_bundle_id_fkey"
+            columns: ["suggested_bundle_id"]
+            isOneToOne: false
+            referencedRelation: "sb_bundles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       team_members: {
         Row: {
           bio: string | null

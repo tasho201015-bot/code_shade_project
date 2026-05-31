@@ -26,7 +26,7 @@ export const Route = createFileRoute("/selling/")({
   component: SellingDashboard,
 });
 
-function SellingDashboard() {
+export function SellingDashboard() {
   const bundles = useSellingStore((s) => s.bundles);
   const crossSells = useSellingStore((s) => s.crossSells);
   const upsells = useSellingStore((s) => s.upsells);

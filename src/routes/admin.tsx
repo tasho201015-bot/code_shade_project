@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useNavigate, useRouterState, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
@@ -58,6 +58,10 @@ const empty: Omit<Product, "id"> = {
 function AdminPage() {
   const { isAdmin, loading, user } = useAuth();
   const nav = useNavigate();
+  const pathname = useRouterState({ select: (r) => r.location.pathname });
+  // When a child route is active (e.g. /admin/sales-booster), render only the Outlet
+  // so the child layout owns the full screen. The dashboard shell shows on exact /admin.
+  const isChild = pathname !== "/admin" && pathname !== "/admin/";
   const [tab, setTab] = useState<"overview" | "orders-analytics" | "performance" | "products" | "categories" | "team" | "orders">("overview");
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -182,14 +186,19 @@ function AdminPage() {
     );
   }
 
+  if (isChild) {
+    return <Outlet />;
+  }
+
   return (
     <div className="bg-background min-h-screen">
       <Header />
       <div className="pt-32 pb-32 max-w-7xl mx-auto px-6 lg:px-10">
+
         <div className="text-[10px] uppercase tracking-luxe text-accent">Atelier</div>
         <h1 className="font-display text-5xl md:text-6xl mt-2">Admin dashboard</h1>
 
-        <div className="mt-10 flex gap-2 border-b border-border flex-wrap">
+        <div className="mt-10 flex gap-2 border-b border-border flex-wrap items-center">
           {([
             ["overview", "Overview"],
             ["orders-analytics", "Orders"],
@@ -209,7 +218,14 @@ function AdminPage() {
               {label}
             </button>
           ))}
+          <Link
+            to="/admin/sales-booster"
+            className="px-6 py-3 text-xs uppercase tracking-luxe text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Sales Booster →
+          </Link>
         </div>
+
 
         {tab === "overview" && <AnalyticsDashboard section="overview" />}
         {tab === "orders-analytics" && <AnalyticsDashboard section="orders" />}

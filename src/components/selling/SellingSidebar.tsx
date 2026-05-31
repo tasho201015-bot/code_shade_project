@@ -8,17 +8,44 @@ import {
   Settings,
 } from "lucide-react";
 
-const items = [
-  { to: "/selling", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { to: "/selling/products", label: "Products", icon: Package },
-  { to: "/selling/bundles", label: "Bundles", icon: Boxes },
-  { to: "/selling/cross-sells", label: "Cross-Sells", icon: Shuffle },
-  { to: "/selling/upsells", label: "Upsells", icon: TrendingUp },
-  { to: "/selling/settings", label: "Settings", icon: Settings },
+interface Item {
+  to: string;
+  label: string;
+  icon: typeof LayoutDashboard;
+  exact?: boolean;
+}
+
+const ITEM_DEFS: { key: string; label: string; icon: Item["icon"]; exact?: boolean }[] = [
+  { key: "", label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { key: "/products", label: "Products", icon: Package },
+  { key: "/bundles", label: "Bundles", icon: Boxes },
+  { key: "/cross-sells", label: "Cross-Sells", icon: Shuffle },
+  { key: "/upsells", label: "Upsells", icon: TrendingUp },
+  { key: "/settings", label: "Settings", icon: Settings },
 ];
 
-export function SellingSidebar({ onNavigate }: { onNavigate?: () => void }) {
+export function SellingSidebar({
+  onNavigate,
+  basePath = "/selling",
+  title = "Selling Hub",
+  subtitle = "Smart Strategies",
+  backHref = "/",
+  backLabel = "← Back to store",
+}: {
+  onNavigate?: () => void;
+  basePath?: string;
+  title?: string;
+  subtitle?: string;
+  backHref?: string;
+  backLabel?: string;
+}) {
   const pathname = useRouterState({ select: (r) => r.location.pathname });
+  const items: Item[] = ITEM_DEFS.map((d) => ({
+    to: basePath + d.key,
+    label: d.label,
+    icon: d.icon,
+    exact: d.exact,
+  }));
 
   return (
     <aside className="s-card !rounded-none lg:!rounded-r-xl !border-l-0 h-full w-60 flex flex-col py-6">
@@ -31,9 +58,9 @@ export function SellingSidebar({ onNavigate }: { onNavigate?: () => void }) {
             S
           </div>
           <div>
-            <div className="font-semibold">Selling Hub</div>
+            <div className="font-semibold">{title}</div>
             <div className="text-[10px] s-muted uppercase tracking-wider">
-              Smart Strategies
+              {subtitle}
             </div>
           </div>
         </div>
@@ -62,8 +89,8 @@ export function SellingSidebar({ onNavigate }: { onNavigate?: () => void }) {
         })}
       </nav>
       <div className="px-5 pt-4 mt-4 border-t s-border">
-        <Link to="/" className="text-xs s-muted hover:s-accent">
-          ← Back to store
+        <Link to={backHref} className="text-xs s-muted hover:s-accent">
+          {backLabel}
         </Link>
       </div>
     </aside>
