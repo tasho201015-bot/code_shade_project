@@ -189,7 +189,7 @@ function AdminPage() {
         <div className="text-[10px] uppercase tracking-luxe text-accent">Atelier</div>
         <h1 className="font-display text-5xl md:text-6xl mt-2">Admin dashboard</h1>
 
-        <div className="mt-10 flex gap-2 border-b border-border flex-wrap">
+        <div className="mt-10 flex gap-2 border-b border-border flex-wrap items-center">
           {([
             ["overview", "Overview"],
             ["orders-analytics", "Orders"],
@@ -209,7 +209,14 @@ function AdminPage() {
               {label}
             </button>
           ))}
+          <Link
+            to="/admin/sales-booster"
+            className="px-6 py-3 text-xs uppercase tracking-luxe text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Sales Booster →
+          </Link>
         </div>
+
 
         {tab === "overview" && <AnalyticsDashboard section="overview" />}
         {tab === "orders-analytics" && <AnalyticsDashboard section="orders" />}
