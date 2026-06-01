@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/lib/cart";
 import { useI18n } from "@/lib/i18n";
 import { resolveImage } from "@/lib/product-image";
+import { ProductOffers } from "@/components/storefront/ProductOffers";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/product/$id")({
@@ -112,6 +113,10 @@ function ProductPage() {
           </div>
         </motion.div>
       </div>
+      <div className="max-w-7xl mx-auto px-6 lg:px-10 pb-32">
+        <ProductOffers productId={p.id} productPrice={Number(p.price)} />
+      </div>
+
       <Footer />
     </div>
   );
