@@ -113,7 +113,7 @@ export async function fetchBundlesForProduct(productId: string, location: Displa
     console.error("[sales-booster] fetchBundlesForProduct", error);
     return [];
   }
-  return (data ?? []).map(mapBundle).filter((b) => withinSchedule(b.startsAt, b.endsAt));
+  return (data ?? []).map(mapBundle).filter((b: Bundle) => withinSchedule(b.startsAt, b.endsAt));
 }
 
 export interface PublicProduct {
