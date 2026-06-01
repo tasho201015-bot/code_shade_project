@@ -113,6 +113,10 @@ function ProductPage() {
           </div>
         </motion.div>
       </div>
+      <div className="max-w-7xl mx-auto px-6 lg:px-10 pb-32">
+        <ProductOffers productId={p.id} productPrice={Number(p.price)} />
+      </div>
+
       <Footer />
     </div>
   );
