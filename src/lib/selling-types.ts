@@ -49,6 +49,22 @@ export type UpsellType =
   | "limited"
   | "bundle";
 
+/** Type-specific UI/business behavior. Never used for DB filtering, sort, joins, RLS. */
+export type UpsellConfig =
+  | { kind: "upgrade" }
+  | {
+      kind: "quantity";
+      minQuantity: number;
+      discountMode: "percent" | "fixed";
+      discountValue: number;
+    }
+  | { kind: "limited"; limitedStockMessage: string }
+  | { kind: "bundle" }
+  | Record<string, never>;
+
+export type CrossSellConfig = Record<string, unknown>;
+export type BundleConfig = Record<string, unknown>;
+
 export interface UpsellRule {
   id: string;
   triggerProductId: string;
@@ -64,9 +80,11 @@ export interface UpsellRule {
   position: "below_cart_btn" | "popup" | "cart" | "checkout";
   active: boolean;
   updatedAt: string;
+  config: UpsellConfig;
   /** mock metric */
   conversions: number;
 }
+
 
 export interface SellingSettings {
   defaultBundleTitle: string;
