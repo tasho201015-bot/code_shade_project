@@ -249,6 +249,7 @@ export type Database = {
         Row: {
           active: boolean
           badge: string
+          config: Json
           cover_image: string
           created_at: string
           description: string
@@ -268,6 +269,7 @@ export type Database = {
         Insert: {
           active?: boolean
           badge?: string
+          config?: Json
           cover_image?: string
           created_at?: string
           description?: string
@@ -287,6 +289,7 @@ export type Database = {
         Update: {
           active?: boolean
           badge?: string
+          config?: Json
           cover_image?: string
           created_at?: string
           description?: string
@@ -309,6 +312,7 @@ export type Database = {
         Row: {
           active: boolean
           clicks: number
+          config: Json
           created_at: string
           id: string
           location: string
@@ -322,6 +326,7 @@ export type Database = {
         Insert: {
           active?: boolean
           clicks?: number
+          config?: Json
           created_at?: string
           id?: string
           location?: string
@@ -335,6 +340,7 @@ export type Database = {
         Update: {
           active?: boolean
           clicks?: number
+          config?: Json
           created_at?: string
           id?: string
           location?: string
@@ -375,6 +381,7 @@ export type Database = {
         Row: {
           active: boolean
           badge: string
+          config: Json
           conversions: number
           countdown_ends_at: string | null
           created_at: string
@@ -393,6 +400,7 @@ export type Database = {
         Insert: {
           active?: boolean
           badge?: string
+          config?: Json
           conversions?: number
           countdown_ends_at?: string | null
           created_at?: string
@@ -411,6 +419,7 @@ export type Database = {
         Update: {
           active?: boolean
           badge?: string
+          config?: Json
           conversions?: number
           countdown_ends_at?: string | null
           created_at?: string
