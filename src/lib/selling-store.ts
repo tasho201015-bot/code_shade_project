@@ -389,6 +389,8 @@ export const upsellsApi = {
       active: input.active ?? true,
       updatedAt: new Date().toISOString(),
       conversions: 0,
+      config: input.config ?? ({} as UpsellRule["config"]),
+
     };
     setState((s) => ({ ...s, upsells: [...s.upsells, optimistic] }));
     (async () => {
