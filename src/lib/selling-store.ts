@@ -121,6 +121,7 @@ type UpsellRow = {
   countdown_ends_at: string | null;
   position: "below_cart_btn" | "popup" | "cart" | "checkout";
   active: boolean; conversions: number; updated_at: string;
+  config: UpsellRule["config"] | null;
 };
 const fromUpsellRow = (r: UpsellRow): UpsellRule => ({
   id: r.id, triggerProductId: r.trigger_product_id, type: r.type,
@@ -130,6 +131,7 @@ const fromUpsellRow = (r: UpsellRow): UpsellRule => ({
   badge: r.badge ?? "", countdownEndsAt: r.countdown_ends_at,
   position: r.position, active: r.active, conversions: r.conversions,
   updatedAt: r.updated_at,
+  config: (r.config ?? {}) as UpsellRule["config"],
 });
 const toUpsellRow = (r: Partial<UpsellRule>): Record<string, unknown> => {
   const out: Record<string, unknown> = {};
@@ -146,8 +148,10 @@ const toUpsellRow = (r: Partial<UpsellRule>): Record<string, unknown> => {
   if (r.position !== undefined) out.position = r.position;
   if (r.active !== undefined) out.active = r.active;
   if (r.conversions !== undefined) out.conversions = r.conversions;
+  if (r.config !== undefined) out.config = r.config;
   return out;
 };
+
 
 // ============ Initial load ============
 let loadingPromise: Promise<void> | null = null;
