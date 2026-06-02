@@ -61,7 +61,9 @@ function mapUpsell(r: Record<string, unknown>): UpsellRule {
     active: r.active as boolean,
     conversions: (r.conversions as number) ?? 0,
     updatedAt: r.updated_at as string,
+    config: ((r.config as UpsellRule["config"]) ?? {}) as UpsellRule["config"],
   };
+
 }
 
 /** Filter by schedule window (starts_at / ends_at). */
