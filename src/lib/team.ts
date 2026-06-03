@@ -66,7 +66,8 @@ export function slugify(name: string): string {
 
 export async function fetchPublicTeam(): Promise<{ members: TeamMember[]; settings: TeamSettings | null }> {
   const [m, s] = await Promise.all([
-    supabase.from("team_members").select("*").eq("is_visible", true).order("sort_order"),
+    // Use the public view which excludes email/phone (admin-only PII)
+    supabase.from("team_members_public").select("*").order("sort_order"),
     supabase.from("team_settings").select("*").limit(1).maybeSingle(),
   ]);
   return {
