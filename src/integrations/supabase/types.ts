@@ -588,7 +588,60 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      team_members_public: {
+        Row: {
+          bio: string | null
+          created_at: string | null
+          cta_label: string | null
+          cta_url: string | null
+          id: string | null
+          image_url: string | null
+          is_featured: boolean | null
+          is_visible: boolean | null
+          name: string | null
+          quote: string | null
+          role: string | null
+          slug: string | null
+          socials: Json | null
+          sort_order: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string | null
+          cta_label?: string | null
+          cta_url?: string | null
+          id?: string | null
+          image_url?: string | null
+          is_featured?: boolean | null
+          is_visible?: boolean | null
+          name?: string | null
+          quote?: string | null
+          role?: string | null
+          slug?: string | null
+          socials?: Json | null
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string | null
+          cta_label?: string | null
+          cta_url?: string | null
+          id?: string | null
+          image_url?: string | null
+          is_featured?: boolean | null
+          is_visible?: boolean | null
+          name?: string | null
+          quote?: string | null
+          role?: string | null
+          slug?: string | null
+          socials?: Json | null
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       decrement_product_stock: { Args: { p_items: Json }; Returns: boolean }
