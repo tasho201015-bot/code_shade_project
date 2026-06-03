@@ -18,10 +18,9 @@ function MemberProfile() {
 
   useEffect(() => {
     supabase
-      .from("team_members")
+      .from("team_members_public")
       .select("*")
       .eq("slug", slug)
-      .eq("is_visible", true)
       .maybeSingle()
       .then(({ data }) => setMember((data as unknown as TeamMember) ?? null));
   }, [slug]);
