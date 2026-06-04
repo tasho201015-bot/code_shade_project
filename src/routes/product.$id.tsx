@@ -89,10 +89,6 @@ function ProductPage() {
           <div className="text-[10px] uppercase tracking-luxe text-accent">{t(`cat.${p.category}`)}</div>
           <h1 className="font-display text-2xl md:text-3xl mt-2 leading-tight">{displayName}</h1>
           <div className="mt-4 text-2xl tabular-nums">${Number(p.price).toFixed(2)}</div>
-          {displayDesc && (
-            <p className="mt-6 text-muted-foreground leading-relaxed max-w-md">{displayDesc}</p>
-          )}
-
           <div className="mt-10 flex flex-col gap-3">
             <button
               onClick={handleAdd}
