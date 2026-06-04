@@ -308,11 +308,14 @@ export const confirmOrder = createServerFn({ method: "POST" })
         shipping_address?: string;
         phone?: string;
         confirmed_at?: string;
+        confirmation_token?: null;
       } = { status: nextStatus };
       if (data.shipping_address) update.shipping_address = data.shipping_address;
       if (data.phone) update.phone = data.phone;
       if (current === "pending_confirmation" || current === "paid_pending_confirmation") {
         update.confirmed_at = new Date().toISOString();
+        // One-time secret: clear after successful confirmation so it cannot be re-read.
+        update.confirmation_token = null;
       }
 
       const { error: upErr } = await supabaseAdmin
