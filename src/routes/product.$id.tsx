@@ -112,7 +112,12 @@ function ProductPage() {
         </motion.div>
       </div>
 
-      {/* 2. Description tabs */}
+      {/* 2. Sales Booster offers — Upsell → Bundle → Cross-sell (order handled inside) */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-10 mt-16 lg:mt-20">
+        <ProductOffers productId={p.id} productPrice={Number(p.price)} />
+      </div>
+
+      {/* 3. Description tabs */}
       <div className="max-w-7xl mx-auto px-6 lg:px-10 mt-16 lg:mt-20">
         <Tabs defaultValue="description" className="w-full">
           <TabsList className="w-full justify-start gap-8 bg-transparent border-b border-border rounded-none p-0 h-auto">
@@ -156,10 +161,6 @@ function ProductPage() {
         </Tabs>
       </div>
 
-      {/* 3. Sales Booster offers — Upsell → Bundle → Cross-sell (order handled inside) */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-10 mt-10">
-        <ProductOffers productId={p.id} productPrice={Number(p.price)} />
-      </div>
 
       {/* 4. Trust / Service features */}
       <div className="max-w-7xl mx-auto px-6 lg:px-10 mt-16 mb-24">
