@@ -7,7 +7,8 @@ import { CheckCircle2, Loader2, XCircle, Clock } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { useServerFn } from "@tanstack/react-start";
 import { verifyPaymobOrder as verifyPaymobOrderFn } from "@/lib/paymob.functions";
-import { supabase } from "@/integrations/supabase/client";
+import { getConfirmationToken as getConfirmationTokenFn } from "@/lib/orders.functions";
+
 
 // Paymob appends many params; only pick the ones we care about.
 const searchSchema = (s: Record<string, unknown>) => ({
