@@ -85,6 +85,7 @@ function PaymentSuccessPage() {
                 .eq("id", orderRef)
                 .maybeSingle();
               const tok = data?.confirmation_token;
+
               if (tok) {
                 nav({
                   to: "/confirm-order/$id",
