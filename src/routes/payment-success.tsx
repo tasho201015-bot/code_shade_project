@@ -79,12 +79,9 @@ function PaymentSuccessPage() {
             // Forward to the customer confirmation page so they can verify
             // their address & phone before we ship the paid order.
             try {
-              const { data } = await supabase
-                .from("orders")
-                .select("confirmation_token")
-                .eq("id", orderRef)
-                .maybeSingle();
-              const tok = data?.confirmation_token;
+              const res2 = await getToken({ data: { order_id: orderRef } });
+              const tok = res2.ok ? res2.token : null;
+
 
               if (tok) {
                 nav({
