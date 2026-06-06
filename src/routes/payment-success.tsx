@@ -33,6 +33,7 @@ function PaymentSuccessPage() {
   });
   const orderRef = merchant_order_id ?? order;
   const verify = useServerFn(verifyPaymobOrderFn);
+  const getToken = useServerFn(getConfirmationTokenFn);
   const { clear, loaded } = useCart();
   const nav = useNavigate();
   const [status, setStatus] = useState<Status>(
