@@ -45,6 +45,45 @@ const LoadConfirmSchema = z.object({
   token: z.string().min(16).max(128),
 });
 
+const GetConfirmTokenSchema = z.object({
+  order_id: z.string().uuid(),
+  access_token: z.string().optional(),
+});
+
+export const getConfirmationToken = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => GetConfirmTokenSchema.parse(input))
+  .handler(async ({ data }) => {
+    try {
+      const authHeader = getRequestHeader("authorization");
+      const token =
+        data.access_token ||
+        (authHeader?.startsWith("Bearer ") ? authHeader.replace("Bearer ", "") : "");
+      if (!token) return { ok: false as const, error: "Not signed in." };
+
+      const { data: claimsData, error: claimsError } = await supabaseAdmin.auth.getClaims(token);
+      const userId = claimsData?.claims?.sub;
+      if (claimsError || !userId) {
+        return { ok: false as const, error: "Session could not be verified." };
+      }
+
+      const { data: order, error } = await supabaseAdmin
+        .from("orders")
+        .select("id,user_id,confirmation_token")
+        .eq("id", data.order_id)
+        .maybeSingle();
+      if (error || !order) return { ok: false as const, error: "Order not found." };
+      if (order.user_id !== userId) {
+        return { ok: false as const, error: "Forbidden." };
+      }
+      return { ok: true as const, token: order.confirmation_token };
+    } catch (e) {
+      console.error("getConfirmationToken failed", e);
+      return { ok: false as const, error: "Failed to load token." };
+    }
+  });
+
+
+
 export const placeOrder = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => PlaceOrderSchema.parse(input))
   .handler(async ({ data }) => {
