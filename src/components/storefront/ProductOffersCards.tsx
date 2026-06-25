@@ -16,6 +16,7 @@ import { useCart } from "@/lib/cart";
 import { GlowCard } from "@/components/ui/glow-card";
 import { useI18n } from "@/lib/i18n";
 import { loc } from "@/lib/localize";
+import { ProductCard } from "@/components/storefront/ProductCard";
 
 
 interface Props {
