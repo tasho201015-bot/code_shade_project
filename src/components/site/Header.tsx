@@ -139,7 +139,7 @@ export function Header() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="lg:hidden fixed top-20 inset-x-0 z-50 bg-cream border-b border-border shadow-lg"
+              className="lg:hidden fixed top-20 inset-x-0 z-50 bg-noir text-cream border-b border-border shadow-lg"
             >
               <nav className="max-w-7xl mx-auto px-6 py-6 flex flex-col gap-1">
                 <Link to="/" className="py-3 text-xs uppercase tracking-luxe border-b border-border/40">{t("nav.home")}</Link>
