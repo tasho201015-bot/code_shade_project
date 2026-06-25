@@ -23,6 +23,7 @@ import { ProductFAQ } from "@/components/storefront/ProductFAQ";
 import { BackInStockNotify } from "@/components/storefront/BackInStockNotify";
 import { TrendingNow } from "@/components/storefront/TrendingNow";
 import { RecentlyViewed } from "@/components/storefront/RecentlyViewed";
+import { ProductReviews } from "@/components/storefront/ProductReviews";
 import { useAuth } from "@/lib/auth";
 import { useServerFn } from "@tanstack/react-start";
 import { recordRecentlyViewed } from "@/lib/product-experience.functions";
@@ -521,6 +522,9 @@ function ProductPage() {
 
         <RecentlyViewed excludeProductId={p.id} />
         <TrendingNow />
+
+        {/* ============ PRODUCT REVIEWS ============ */}
+        <ProductReviews productId={p.id} />
       </main>
 
       <Footer />
