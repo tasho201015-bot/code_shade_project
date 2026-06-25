@@ -45,14 +45,14 @@ export function OrbitalNav() {
 
   const count = items.length;
   // Radius expressed in CSS so it scales with the container
-  const radiusCss = "calc(clamp(360px, 60vmin, 640px) / 2)";
+  const radiusCss = "calc(clamp(280px, 60vmin, 640px) / 2)";
 
   return (
     <div
       className="relative pointer-events-none select-none"
       style={{
-        width: "clamp(360px, 60vmin, 640px)",
-        height: "clamp(360px, 60vmin, 640px)",
+        width: "clamp(280px, 60vmin, 640px)",
+        height: "clamp(280px, 60vmin, 640px)",
       }}
       aria-label="Orbital navigation"
     >
