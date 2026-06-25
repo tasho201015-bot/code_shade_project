@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import {
@@ -10,6 +11,7 @@ import {
   type PublicProduct,
 } from "@/lib/sales-booster-public";
 import type { Bundle, CrossSellRule, UpsellRule } from "@/lib/selling-types";
+import { resolveImage } from "@/lib/product-image";
 import { useCart } from "@/lib/cart";
 import { GlowCard } from "@/components/ui/glow-card";
 import { useI18n } from "@/lib/i18n";
