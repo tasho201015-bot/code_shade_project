@@ -100,21 +100,14 @@ export function ProductOffers({ productId, productPrice }: Props) {
               <span className="font-display text-2xl tabular-nums font-bold text-white">${u.upsellPrice.toFixed(2)}</span>
             </div>
             {sp && (
-              <div className="flex items-center gap-5 max-w-md">
-                <Link to="/product/$id" params={{ id: sp.id }} className="block w-24 aspect-[3/4] bg-muted overflow-hidden shrink-0">
-                  <img src={resolveImage(sp.image_url)} alt={displayName(sp)} className="w-full h-full object-cover" />
-                </Link>
-                <div className="flex-1">
-                  <Link to="/product/$id" params={{ id: sp.id }} className="font-display text-base hover:text-accent transition-colors">
-                    {displayName(sp)}
-                  </Link>
-                  <button
-                    onClick={() => handleAdd(sp)}
-                    className="mt-3 px-5 py-2.5 text-[10px] uppercase tracking-luxe bg-noir text-cream hover:opacity-90 transition-opacity"
-                  >
-                    {lang === "ar" ? "أضيفي الترقية" : "Add upgrade"}
-                  </button>
-                </div>
+              <div className="max-w-xs">
+                <ProductCard product={sp} />
+                <button
+                  onClick={() => handleAdd(sp)}
+                  className="mt-4 w-full px-5 py-2.5 text-[10px] uppercase tracking-luxe bg-noir text-cream hover:opacity-90 transition-opacity"
+                >
+                  {lang === "ar" ? "أضيفي الترقية" : "Add upgrade"}
+                </button>
               </div>
             )}
           </motion.section>
