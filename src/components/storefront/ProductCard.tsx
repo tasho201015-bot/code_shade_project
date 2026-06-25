@@ -32,7 +32,7 @@ export function ProductCard({
 }: ProductCardProps) {
   const { lang, t } = useI18n();
   const displayName = lang === "ar" && product.name_ar ? product.name_ar : product.name;
-  const category = product.category ?? "uncategorized";
+  const category = product.category;
 
   return (
     <GlowCard
@@ -55,13 +55,15 @@ export function ProductCard({
           />
         </div>
         <div className="mt-4 flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <div className="font-display text-lg leading-tight text-cream truncate">
+          <div>
+            <div className="font-display text-lg leading-tight text-cream">
               {displayName}
             </div>
-            <div className="text-[10px] uppercase tracking-luxe text-cream/60 mt-1">
-              {t(`cat.${category}`)}
-            </div>
+            {category && (
+              <div className="text-[10px] uppercase tracking-luxe text-cream/60 mt-1">
+                {t(`cat.${category}`)}
+              </div>
+            )}
           </div>
           <PriceTag p={product} />
         </div>
