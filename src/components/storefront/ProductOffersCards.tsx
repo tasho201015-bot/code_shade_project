@@ -16,6 +16,7 @@ import { useCart } from "@/lib/cart";
 import { GlowCard } from "@/components/ui/glow-card";
 import { useI18n } from "@/lib/i18n";
 import { loc } from "@/lib/localize";
+import { ProductCard } from "@/components/storefront/ProductCard";
 
 
 interface Props {
@@ -102,27 +103,21 @@ export function ProductOffersCards({ productId }: Props) {
               )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-[120px_1fr_auto] gap-5 md:gap-6 items-center">
-              <Link to="/product/$id" params={{ id: sp.id }} className="block w-28 md:w-[120px] aspect-square bg-muted overflow-hidden">
-                <img src={resolveImage(sp.image_url)} alt={displayName(sp)} className="w-full h-full object-cover" />
-              </Link>
-              <div className="min-w-0">
-                <Link to="/product/$id" params={{ id: sp.id }} className="font-display text-base md:text-lg hover:text-accent transition-colors block">
-                  {displayName(sp)}
-                </Link>
-                {loc(u, "note", lang) && <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{loc(u, "note", lang)}</p>}
-                <div className="mt-2 text-sm tabular-nums font-semibold text-white">${Number(sp.price).toFixed(2)}</div>
-              </div>
-              <div className="flex flex-col items-start md:items-end gap-3">
-                {diff > 0 && (
-                  <div className="text-sm font-bold tabular-nums text-white">+${diff.toFixed(2)}</div>
-                )}
-                <button
-                  onClick={() => handleAdd(sp)}
-                  className="px-5 py-3 text-[10px] uppercase tracking-luxe bg-noir text-cream hover:opacity-90 transition-opacity whitespace-nowrap"
-                >
-                  {lang === "ar" ? "ترقية الآن" : "Upgrade now"}
-                </button>
+            <div className="flex flex-col md:flex-row gap-6 md:items-start">
+              <ProductCard product={sp} className="max-w-[220px]" />
+              <div className="flex-1 flex flex-col items-start gap-3">
+                {loc(u, "note", lang) && <p className="text-sm text-muted-foreground line-clamp-2">{loc(u, "note", lang)}</p>}
+                <div className="flex flex-wrap items-center gap-4">
+                  {diff > 0 && (
+                    <div className="text-sm font-bold tabular-nums text-white">+${diff.toFixed(2)}</div>
+                  )}
+                  <button
+                    onClick={() => handleAdd(sp)}
+                    className="px-5 py-3 text-[10px] uppercase tracking-luxe bg-noir text-cream hover:opacity-90 transition-opacity whitespace-nowrap"
+                  >
+                    {lang === "ar" ? "ترقية الآن" : "Upgrade now"}
+                  </button>
+                </div>
               </div>
             </div>
           </section>
