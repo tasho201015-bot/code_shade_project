@@ -2,14 +2,17 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2 } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
-export function CartLoading({ label = "Loading your bag…" }: { label?: string }) {
+export function CartLoading({ label }: { label?: string }) {
+  const { t } = useI18n();
+  const text = label ?? t("cart.loading");
   return (
     <div className="bg-background min-h-screen">
       <Header />
       <div className="pt-32 pb-32 max-w-6xl mx-auto px-6 lg:px-10">
-        <div className="text-[10px] uppercase tracking-luxe text-accent">Your Bag</div>
-        <h1 className="font-display text-5xl md:text-6xl mt-2">Shopping bag</h1>
+        <div className="text-[10px] uppercase tracking-luxe text-accent">{t("cart.eyebrow")}</div>
+        <h1 className="font-display text-5xl md:text-6xl mt-2">{t("cart.title")}</h1>
         <div className="mt-12 grid lg:grid-cols-[1.5fr_1fr] gap-12">
           <div className="space-y-6">
             {[0, 1].map((i) => (
@@ -33,7 +36,7 @@ export function CartLoading({ label = "Loading your bag…" }: { label?: string 
         </div>
         <div className="mt-10 flex items-center justify-center gap-3 text-xs uppercase tracking-luxe text-muted-foreground">
           <Loader2 className="w-4 h-4 animate-spin" />
-          {label}
+          {text}
         </div>
       </div>
       <Footer />

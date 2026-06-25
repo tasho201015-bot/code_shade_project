@@ -33,7 +33,7 @@ function LegacyCallbackRedirect() {
     });
   }, [nav, search]);
   return (
-    <div className="bg-background min-h-screen flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center">
       <p className="text-muted-foreground text-sm">Redirecting…</p>
     </div>
   );

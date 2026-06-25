@@ -180,6 +180,46 @@ export const Route = createFileRoute("/api/public/paymob-webhook")({
           }
         }
 
+        // First-time paid transition: send order emails (best-effort).
+        if (success && !PAID_OR_BEYOND.has(cur)) {
+          try {
+            const { data: orderRow } = await supabaseAdmin
+              .from("orders")
+              .select("id,user_id,total,shipping_address,governorate,city,phone")
+              .eq("id", existing.id)
+              .single();
+            const { data: items } = await supabaseAdmin
+              .from("order_items")
+              .select("product_name,price,quantity")
+              .eq("order_id", existing.id);
+            if (orderRow) {
+              const { sendOrderConfirmation, sendNewOrderToBusiness } = await import("@/lib/notifications.server");
+              const { data: userInfo } = await supabaseAdmin.auth.admin.getUserById(orderRow.user_id);
+              const customerEmail = userInfo?.user?.email ?? null;
+              const emailItems = (items ?? []).map((i) => ({
+                name: i.product_name as string,
+                price: Number(i.price),
+                quantity: Number(i.quantity),
+              }));
+              const shipping = `${orderRow.shipping_address ?? ""}\n${orderRow.city ?? ""}, ${orderRow.governorate ?? ""}\n${orderRow.phone ?? ""}`;
+              const tasks: Promise<unknown>[] = [];
+              if (customerEmail) {
+                tasks.push(sendOrderConfirmation({
+                  to: customerEmail, orderId: orderRow.id, total: Number(orderRow.total),
+                  items: emailItems, shippingAddress: shipping,
+                }));
+              }
+              tasks.push(sendNewOrderToBusiness({
+                to: "", orderId: orderRow.id, total: Number(orderRow.total),
+                items: emailItems, shippingAddress: shipping, customerEmail: customerEmail ?? undefined,
+              }));
+              await Promise.allSettled(tasks);
+            }
+          } catch (mailErr) {
+            console.error("[paymob-webhook] notification dispatch failed", mailErr);
+          }
+        }
+
         console.log("[paymob-webhook] Order updated", {
           orderId: existing.id,
           newStatus,

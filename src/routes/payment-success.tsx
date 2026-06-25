@@ -8,6 +8,8 @@ import { useCart } from "@/lib/cart";
 import { useServerFn } from "@tanstack/react-start";
 import { verifyPaymobOrder as verifyPaymobOrderFn } from "@/lib/paymob.functions";
 import { getConfirmationToken as getConfirmationTokenFn } from "@/lib/orders.functions";
+import { useI18n } from "@/lib/i18n";
+
 
 
 // Paymob appends many params; only pick the ones we care about.
@@ -28,6 +30,8 @@ export const Route = createFileRoute("/payment-success")({
 type Status = "verifying" | "paid" | "pending" | "failed";
 
 function PaymentSuccessPage() {
+  const { t } = useI18n();
+
   const { success, pending, merchant_order_id, order } = useSearch({
     from: "/payment-success",
   });
@@ -117,7 +121,7 @@ function PaymentSuccessPage() {
   const isFailed = status === "failed";
 
   return (
-    <div className="bg-background min-h-screen">
+    <div className="min-h-screen">
       <Header />
       <div className="pt-32 pb-32 max-w-2xl mx-auto px-6 text-center">
         <motion.div
@@ -137,30 +141,27 @@ function PaymentSuccessPage() {
         </motion.div>
 
         <div className="text-[10px] uppercase tracking-luxe text-muted-foreground">
-          Payment status
+          {t("psucc.status")}
         </div>
         <h1
           className={`font-display text-5xl md:text-6xl mt-3 ${
             isPaid ? "text-accent" : isFailed ? "text-destructive" : "text-foreground"
           }`}
         >
-          {isPaid && "Payment Successful ✅"}
-          {status === "verifying" && "Verifying payment…"}
-          {status === "pending" && "Payment pending"}
-          {isFailed && "Payment failed"}
+          {isPaid && t("psucc.paid")}
+          {status === "verifying" && t("psucc.verifying")}
+          {status === "pending" && t("psucc.pending")}
+          {isFailed && t("psucc.failed")}
         </h1>
         <p className="mt-4 text-muted-foreground">
-          {isPaid &&
-            "Thank you. Your order has been confirmed and your bag has been cleared."}
-          {status === "verifying" &&
-            "We're confirming your payment with the provider. This only takes a moment…"}
-          {status === "pending" &&
-            "Your payment is being processed. We'll update your order as soon as we get confirmation."}
-          {isFailed && "Your payment didn't go through. You can try again from your bag."}
+          {isPaid && t("psucc.paidDesc")}
+          {status === "verifying" && t("psucc.verifyingDesc")}
+          {status === "pending" && t("psucc.pendingDesc")}
+          {isFailed && t("psucc.failedDesc")}
         </p>
         {orderRef && (
           <p className="mt-2 text-xs text-muted-foreground">
-            Reference: <span className="font-mono">{orderRef.slice(0, 12)}</span>
+            {t("psucc.ref")}: <span className="font-mono">{orderRef.slice(0, 12)}</span>
           </p>
         )}
 
@@ -169,23 +170,24 @@ function PaymentSuccessPage() {
             to="/"
             className="px-6 py-3 text-xs uppercase tracking-luxe bg-noir text-cream"
           >
-            Go Home
+            {t("psucc.goHome")}
           </Link>
           <Link
             to="/account"
             className="px-6 py-3 text-xs uppercase tracking-luxe border border-border hover:border-accent transition-colors"
           >
-            View Orders
+            {t("psucc.viewOrders")}
           </Link>
           {isFailed && (
             <Link
               to="/cart"
               className="px-6 py-3 text-xs uppercase tracking-luxe border border-destructive text-destructive hover:bg-destructive hover:text-background transition-colors"
             >
-              Back to bag
+              {t("psucc.backToBag")}
             </Link>
           )}
         </div>
+
       </div>
       <Footer />
     </div>

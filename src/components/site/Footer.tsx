@@ -3,7 +3,7 @@ import { useI18n } from "@/lib/i18n";
 export function Footer() {
   const { t } = useI18n();
   return (
-    <footer className="bg-gradient-noir text-cream mt-32">
+    <footer className="relative isolate text-cream bg-black" style={{ backgroundColor: "#000000" }}>
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-20 grid md:grid-cols-4 gap-12">
         <div>
           <div className="font-display text-3xl tracking-luxe uppercase">Mala<span className="italic font-light">z</span></div>

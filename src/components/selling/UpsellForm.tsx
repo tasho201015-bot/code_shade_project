@@ -68,15 +68,20 @@ export function UpsellForm({
   const [trigger, setTrigger] = useState<string[]>([]);
   const [type, setType] = useState<UpsellType>("upgrade");
   const [headline, setHeadline] = useState("Upgrade Your Choice");
+  const [headlineAr, setHeadlineAr] = useState("");
   const [note, setNote] = useState("");
+  const [noteAr, setNoteAr] = useState("");
   const [suggested, setSuggested] = useState<string[]>([]);
   const [bundleId, setBundleId] = useState<string>("");
   const [originalPrice, setOriginalPrice] = useState(0);
   const [upsellPrice, setUpsellPrice] = useState(0);
   const [badge, setBadge] = useState("");
+  const [badgeAr, setBadgeAr] = useState("");
   const [countdownEndsAt, setCountdownEndsAt] = useState("");
   const [position, setPosition] = useState<UpsellRule["position"]>("below_cart_btn");
+  const [positions, setPositions] = useState<UpsellRule["positions"]>(["below_cart_btn"]);
   const [active, setActive] = useState(true);
+  const [showAr, setShowAr] = useState(false);
 
   // Type-specific config
   const [minQuantity, setMinQuantity] = useState(2);
@@ -92,15 +97,26 @@ export function UpsellForm({
       setTrigger([initial.triggerProductId]);
       setType(initial.type);
       setHeadline(initial.headline);
+      setHeadlineAr(initial.headline_ar ?? "");
       setNote(initial.note);
+      setNoteAr(initial.note_ar ?? "");
       setSuggested(initial.suggestedProductId ? [initial.suggestedProductId] : []);
       setBundleId(initial.suggestedBundleId ?? "");
       setOriginalPrice(initial.originalPrice);
       setUpsellPrice(initial.upsellPrice);
       setBadge(initial.badge);
+      setBadgeAr(initial.badge_ar ?? "");
       setCountdownEndsAt(initial.countdownEndsAt?.slice(0, 10) ?? "");
       setPosition(initial.position);
+      setPositions(
+        initial.positions && initial.positions.length > 0
+          ? initial.positions
+          : initial.position
+            ? [initial.position]
+            : ["below_cart_btn"],
+      );
       setActive(initial.active);
+      setShowAr(false);
       setPriceTouched(true);
       setNoteTouched(true);
       const cfg = (initial.config ?? {}) as UpsellConfig & Record<string, unknown>;
@@ -112,12 +128,12 @@ export function UpsellForm({
       }
     } else if (open) {
       setTrigger([]); setType("upgrade"); setHeadline("Upgrade Your Choice");
-      setNote(""); setSuggested([]); setBundleId("");
-      setOriginalPrice(0); setUpsellPrice(0); setBadge("");
-      setCountdownEndsAt(""); setPosition("below_cart_btn"); setActive(true);
+      setHeadlineAr(""); setNote(""); setNoteAr(""); setSuggested([]); setBundleId("");
+      setOriginalPrice(0); setUpsellPrice(0); setBadge(""); setBadgeAr("");
+      setCountdownEndsAt(""); setPosition("below_cart_btn"); setPositions(["below_cart_btn"]); setActive(true);
       setMinQuantity(2); setDiscountMode("percent"); setDiscountValue(10);
       setLimitedStockMessage("Only a few left");
-      setPriceTouched(false); setNoteTouched(false);
+      setPriceTouched(false); setNoteTouched(false); setShowAr(false);
     }
   }, [initial, open]);
 
@@ -176,7 +192,7 @@ export function UpsellForm({
       headline,
       note,
       badge,
-      position,
+      position: positions[0] ?? "below_cart_btn",
       active,
     };
     switch (type) {
@@ -200,7 +216,7 @@ export function UpsellForm({
         });
     }
   }, [
-    type, trigger, headline, note, badge, position, active,
+    type, trigger, headline, note, badge, positions, active,
     suggested, bundleId, originalPrice, upsellPrice,
     countdownEndsAt, minQuantity, discountMode, discountValue, limitedStockMessage,
   ]);
@@ -228,17 +244,21 @@ export function UpsellForm({
       triggerProductId: trigger[0],
       type,
       headline: headline.trim(),
+      headline_ar: headlineAr.trim() || null,
       note: note.trim(),
+      note_ar: noteAr.trim() || null,
       suggestedProductId: type === "bundle" || type === "quantity" ? null : suggested[0] ?? null,
       suggestedBundleId: type === "bundle" ? bundleId || null : null,
       originalPrice,
       upsellPrice,
       badge: badge.trim(),
+      badge_ar: badgeAr.trim() || null,
       countdownEndsAt:
         type === "limited" && countdownEndsAt
           ? new Date(countdownEndsAt).toISOString()
           : null,
-      position,
+      position: positions[0] ?? "below_cart_btn",
+      positions,
       active,
       config,
     };
@@ -312,6 +332,58 @@ export function UpsellForm({
           placeholder={type === "quantity" ? autoQuantityNote : "Higher quality fabric, limited stock…"}
         />
       </Field>
+
+      {/* ---------- Arabic content ---------- */}
+      <div className="s-card">
+        <button
+          type="button"
+          onClick={() => setShowAr((v) => !v)}
+          className="w-full flex items-center justify-between p-3 text-left"
+        >
+          <span className="text-sm font-medium">المحتوى العربي</span>
+          <svg
+            className={`w-4 h-4 transition-transform ${showAr ? "rotate-180" : ""}`}
+            fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        {showAr && (
+          <div className="px-3 pb-3 space-y-3 border-t s-border pt-3">
+            <Field label="Headline (Arabic)">
+              <input
+                className="s-input font-arabic"
+                dir="rtl"
+                lang="ar"
+                value={headlineAr}
+                onChange={(e) => setHeadlineAr(e.target.value)}
+                placeholder="عنوان الترقية"
+              />
+            </Field>
+            <Field label="Persuasion note (Arabic)">
+              <textarea
+                className="s-input font-arabic"
+                dir="rtl"
+                lang="ar"
+                rows={2}
+                value={noteAr}
+                onChange={(e) => setNoteAr(e.target.value)}
+                placeholder="ملاحظة عربية…"
+              />
+            </Field>
+            <Field label="Badge (Arabic)">
+              <input
+                className="s-input font-arabic"
+                dir="rtl"
+                lang="ar"
+                value={badgeAr}
+                onChange={(e) => setBadgeAr(e.target.value)}
+                placeholder="الأكثر مبيعًا"
+              />
+            </Field>
+          </div>
+        )}
+      </div>
 
       {/* ----- Type-specific blocks ----- */}
       {type === "bundle" && (
@@ -420,13 +492,30 @@ export function UpsellForm({
         </>
       )}
 
-      <Field label="Display position">
-        <select className="s-input" value={position} onChange={(e) => setPosition(e.target.value as UpsellRule["position"])}>
-          <option value="below_cart_btn">Below Add-to-Cart button</option>
-          <option value="popup">Popup after Add-to-Cart</option>
-          <option value="cart">Cart Page</option>
-          <option value="checkout">Checkout Page</option>
-        </select>
+      <Field label="Display positions">
+        <div className="grid grid-cols-2 gap-2">
+          {([
+            { v: "below_cart_btn", label: "Below Add-to-Cart" },
+            { v: "popup", label: "Popup after Add-to-Cart" },
+            { v: "checkout", label: "Checkout Page" },
+          ] as const).map((p) => {
+            const on = positions.includes(p.v);
+            return (
+              <button
+                key={p.v}
+                type="button"
+                onClick={() => {
+                  const next = on ? positions.filter((x) => x !== p.v) : [...positions, p.v];
+                  setPositions(next);
+                  if (next[0]) setPosition(next[0]);
+                }}
+                className={`s-btn ${on ? "s-btn-primary" : "s-btn-ghost"} justify-center !text-xs`}
+              >
+                {p.label}
+              </button>
+            );
+          })}
+        </div>
       </Field>
 
       <label className="flex items-center justify-between s-card p-3">
@@ -475,6 +564,18 @@ export function UpsellForm({
             <div className="text-xs s-muted">
               {limitedStockMessage}
               {countdownEndsAt && ` · ends ${countdownEndsAt}`}
+            </div>
+          )}
+
+          {(headlineAr || noteAr || badgeAr) && (
+            <div className="border-t s-border pt-2 mt-2 space-y-1" dir="rtl">
+              {badgeAr && (
+                <span className="inline-block text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[var(--s-accent)] text-white">
+                  {badgeAr}
+                </span>
+              )}
+              {headlineAr && <div className="text-base font-semibold font-arabic">{headlineAr}</div>}
+              {noteAr && <div className="text-sm s-muted font-arabic">{noteAr}</div>}
             </div>
           )}
         </div>

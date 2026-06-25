@@ -81,7 +81,7 @@ function TeamPage() {
     : {};
 
   return (
-    <div className={`min-h-screen ${settings?.dark_mode ? "bg-noir text-cream" : "bg-background text-foreground"}`}>
+    <div className={`min-h-screen ${settings?.dark_mode ? "text-cream" : "text-foreground"}`}>
       <Header />
 
       {/* Hero header */}

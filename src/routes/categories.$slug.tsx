@@ -5,8 +5,10 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { resolveImage } from "@/lib/product-image";
+import { PriceTag } from "@/components/storefront/PriceTag";
 import { useI18n } from "@/lib/i18n";
 import { ChevronLeft, X, ZoomIn } from "lucide-react";
+import { GlowCard } from "@/components/ui/glow-card";
 
 
 export const Route = createFileRoute("/categories/$slug")({
@@ -45,6 +47,7 @@ interface Cat {
   name_ar: string | null;
   slug: string;
   description: string | null;
+  description_ar: string | null;
   image_url: string | null;
 }
 interface Product {
@@ -55,6 +58,10 @@ interface Product {
   image_url: string | null;
   category: string;
   stock: number;
+  compare_at_price: number | null;
+  offer_enabled: boolean | null;
+  offer_starts_at: string | null;
+  offer_ends_at: string | null;
 }
 
 function CategoryPage() {
@@ -86,7 +93,7 @@ function CategoryPage() {
         supabase.from("categories").select("*").eq("slug", slug).maybeSingle(),
         supabase
           .from("products")
-          .select("id,name,name_ar,price,image_url,category,stock")
+          .select("id,name,name_ar,price,image_url,category,stock,compare_at_price,offer_enabled,offer_starts_at,offer_ends_at")
           .eq("is_active", true)
           .eq("category", slug)
           .order("created_at", { ascending: false }),
@@ -103,7 +110,7 @@ function CategoryPage() {
 
   if (loading) {
     return (
-      <div className="bg-background min-h-screen">
+      <div className="min-h-screen">
         <Header />
         <div className="pt-40 max-w-7xl mx-auto px-6 lg:px-10 text-muted-foreground text-sm">
           {t("catpage.loading")}
@@ -118,7 +125,7 @@ function CategoryPage() {
   const catName = lang === "ar" && cat.name_ar ? cat.name_ar : cat.name;
 
   return (
-    <div className="bg-background min-h-screen">
+    <div className="min-h-screen">
       <Header />
 
       {/* Cinematic cover */}
@@ -156,8 +163,10 @@ function CategoryPage() {
             <h1 className="font-display text-6xl md:text-8xl leading-[0.95] mt-3">
               {catName}
             </h1>
-            {cat.description && (
-              <p className="mt-5 max-w-xl text-sm opacity-85">{cat.description}</p>
+            {(cat.description || cat.description_ar) && (
+              <p className="mt-5 max-w-xl text-sm opacity-85">
+                {lang === "ar" && cat.description_ar ? cat.description_ar : cat.description}
+              </p>
             )}
             <div className="mt-6 text-[10px] uppercase tracking-luxe opacity-70">
               {products.length} {products.length === 1 ? t("catpage.piece") : t("catpage.pieces")} · {t("catpage.curated")}
@@ -199,54 +208,57 @@ function CategoryPage() {
                   transition={{ duration: 0.7, delay: (i % 6) * 0.05, ease: [0.22, 1, 0.36, 1] }}
                   className={`${span} group`}
                 >
-                  <div className={`relative ${aspect} overflow-hidden bg-muted shadow-soft rounded-sm`}>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setZoomImg({
-                          src: resolveImage(p.image_url),
-                          alt: lang === "ar" && p.name_ar ? p.name_ar : p.name,
-                        })
-                      }
-                      className="absolute inset-0 w-full h-full block focus:outline-none focus:ring-2 focus:ring-accent"
-                      aria-label="Zoom image"
-                    >
-                      <motion.img
-                        src={resolveImage(p.image_url)}
-                        alt={lang === "ar" && p.name_ar ? p.name_ar : p.name}
-                        loading="lazy"
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 active:scale-95"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-noir/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                      <div className="absolute bottom-3 right-3 bg-noir/70 text-cream p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                        <ZoomIn className="w-4 h-4" />
+                  <GlowCard customSize glowColor="orange" className="block w-full !p-0 !gap-0 !rounded-[24px] !shadow-none">
+                    <div className="bg-black border border-[#5A5A5A] rounded-[24px] p-4 shadow-luxe overflow-hidden transition-colors hover:border-accent/60">
+                      <div className={`relative ${aspect} overflow-hidden bg-muted rounded-[18px]`}>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setZoomImg({
+                              src: resolveImage(p.image_url),
+                              alt: lang === "ar" && p.name_ar ? p.name_ar : p.name,
+                            })
+                          }
+                          className="absolute inset-0 w-full h-full block focus:outline-none focus:ring-2 focus:ring-accent"
+                          aria-label="Zoom image"
+                        >
+                          <motion.img
+                            src={resolveImage(p.image_url)}
+                            alt={lang === "ar" && p.name_ar ? p.name_ar : p.name}
+                            loading="lazy"
+                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 active:scale-95"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-noir/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                          <div className="absolute bottom-3 right-3 bg-noir/70 text-cream p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                            <ZoomIn className="w-4 h-4" />
+                          </div>
+                        </button>
+                        {p.stock <= 0 && (
+                          <div className="absolute top-3 left-3 bg-noir text-cream px-3 py-1 text-[10px] uppercase tracking-luxe pointer-events-none">
+                            {t("catpage.soldOut")}
+                          </div>
+                        )}
+                        {p.stock > 0 && p.stock <= 3 && (
+                          <div className="absolute top-3 left-3 bg-accent text-background px-3 py-1 text-[10px] uppercase tracking-luxe pointer-events-none">
+                            {t("catpage.onlyLeft", { n: p.stock })}
+                          </div>
+                        )}
                       </div>
-                    </button>
-                    {p.stock <= 0 && (
-                      <div className="absolute top-3 left-3 bg-noir text-cream px-3 py-1 text-[10px] uppercase tracking-luxe pointer-events-none">
-                        {t("catpage.soldOut")}
-                      </div>
-                    )}
-                    {p.stock > 0 && p.stock <= 3 && (
-                      <div className="absolute top-3 left-3 bg-accent text-background px-3 py-1 text-[10px] uppercase tracking-luxe pointer-events-none">
-                        {t("catpage.onlyLeft", { n: p.stock })}
-                      </div>
-                    )}
-                  </div>
-                  <Link to="/product/$id" params={{ id: p.id }} className="block">
-                    <div className="mt-4 flex items-start justify-between gap-4 px-1">
-                      <div className="min-w-0">
-                        <div className="font-display text-xl md:text-2xl leading-tight truncate group-hover:text-accent transition-colors">
-                          {lang === "ar" && p.name_ar ? p.name_ar : p.name}
+                      <Link to="/product/$id" params={{ id: p.id }} className="block">
+                        <div className="mt-4 flex items-start justify-between gap-4">
+                          <div className="min-w-0">
+                            <div className="font-display text-xl md:text-2xl leading-tight truncate text-cream group-hover:text-accent transition-colors">
+                              {lang === "ar" && p.name_ar ? p.name_ar : p.name}
+                            </div>
+                            <div className="text-[10px] uppercase tracking-luxe text-cream/60 mt-1">
+                              {t(`cat.${p.category}`)}
+                            </div>
+                          </div>
+                          <PriceTag p={p} />
                         </div>
-                        <div className="text-[10px] uppercase tracking-luxe text-muted-foreground mt-1">
-                          {t(`cat.${p.category}`)}
-                        </div>
-                      </div>
-                      <div className="text-sm tabular-nums">${Number(p.price).toFixed(0)}</div>
+                      </Link>
                     </div>
-                  </Link>
-
+                  </GlowCard>
                 </motion.div>
               );
             })}

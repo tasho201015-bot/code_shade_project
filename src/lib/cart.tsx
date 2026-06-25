@@ -1,7 +1,18 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-export interface CartItem {
+export interface CartVariant {
+  colorId?: string | null;
+  colorName?: string | null;
+  colorHex?: string | null;
+  sizeId?: string | null;
+  sizeLabel?: string | null;
+}
+
+export interface CartItem extends CartVariant {
+  /** Unique line key: productId + colorId + sizeId. Used by all cart ops. */
+  key: string;
+  /** Source product id (NOT unique per line — shared by variants). */
   id: string;
   name: string;
   price: number;
@@ -11,11 +22,18 @@ export interface CartItem {
   stock?: number;
 }
 
+export function makeVariantKey(productId: string, v?: CartVariant): string {
+  return `${productId}::${v?.colorId ?? ""}::${v?.sizeId ?? ""}`;
+}
+
 interface CartCtx {
   items: CartItem[];
-  add: (item: Omit<CartItem, "quantity">, qty?: number) => { ok: boolean; reason?: string };
-  remove: (id: string) => void;
-  setQty: (id: string, qty: number) => { ok: boolean; reason?: string };
+  add: (
+    item: Omit<CartItem, "quantity" | "key">,
+    qty?: number,
+  ) => { ok: boolean; reason?: string };
+  remove: (key: string) => void;
+  setQty: (key: string, qty: number) => { ok: boolean; reason?: string };
   clear: () => void;
   total: number;
   count: number;
@@ -23,7 +41,7 @@ interface CartCtx {
 }
 
 const Ctx = createContext<CartCtx | undefined>(undefined);
-const KEY = "malaz_cart_v1";
+const KEY = "malaz_cart_v2";
 
 function sanitize(raw: unknown): CartItem[] {
   if (!Array.isArray(raw)) return [];
@@ -40,13 +58,22 @@ function sanitize(raw: unknown): CartItem[] {
       (r as any).quantity > 0
     ) {
       const it = r as any;
+      const variant: CartVariant = {
+        colorId: it.colorId ?? null,
+        colorName: it.colorName ?? null,
+        colorHex: it.colorHex ?? null,
+        sizeId: it.sizeId ?? null,
+        sizeLabel: it.sizeLabel ?? null,
+      };
       out.push({
+        key: typeof it.key === "string" ? it.key : makeVariantKey(it.id, variant),
         id: it.id,
         name: it.name,
         price: it.price,
         image_url: typeof it.image_url === "string" ? it.image_url : null,
         quantity: it.quantity,
         stock: typeof it.stock === "number" ? it.stock : undefined,
+        ...variant,
       });
     }
   }
@@ -86,11 +113,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [items]);
 
-  // Refresh live stock for any in-cart items on mount, so quantity caps stay honest.
+  // Refresh live stock for any in-cart items on mount.
   useEffect(() => {
     const list = items;
     if (!list || list.length === 0) return;
-    const ids = list.map((i) => i.id);
+    const ids = Array.from(new Set(list.map((i) => i.id)));
     let alive = true;
     supabase
       .from("products")
@@ -103,7 +130,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
           (prev ?? []).flatMap((it) => {
             const live = byId.get(it.id);
             if (!live || live.is_active === false || (live.stock ?? 0) <= 0) {
-              // out of stock or removed — drop it
               return [];
             }
             const qty = Math.min(it.quantity, live.stock);
@@ -119,6 +145,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const add: CartCtx["add"] = (item, qty = 1) => {
     let res: { ok: boolean; reason?: string } = { ok: true };
+    const variant: CartVariant = {
+      colorId: item.colorId ?? null,
+      colorName: item.colorName ?? null,
+      colorHex: item.colorHex ?? null,
+      sizeId: item.sizeId ?? null,
+      sizeLabel: item.sizeLabel ?? null,
+    };
+    const key = makeVariantKey(item.id, variant);
     setItems((prev) => {
       const list = prev ?? [];
       const cap = typeof item.stock === "number" ? item.stock : Infinity;
@@ -126,7 +160,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         res = { ok: false, reason: "Out of stock" };
         return list;
       }
-      const found = list.find((p) => p.id === item.id);
+      const found = list.find((p) => p.key === key);
       if (found) {
         const desired = found.quantity + qty;
         const next = Math.min(desired, cap);
@@ -135,21 +169,24 @@ export function CartProvider({ children }: { children: ReactNode }) {
           return list;
         }
         if (next < desired) res = { ok: true, reason: "Capped to available stock" };
-        return list.map((p) => (p.id === item.id ? { ...p, stock: item.stock, quantity: next } : p));
+        return list.map((p) =>
+          p.key === key ? { ...p, stock: item.stock, quantity: next } : p,
+        );
       }
       const next = Math.min(qty, cap);
-      return [...list, { ...item, quantity: next }];
+      return [...list, { ...item, ...variant, key, quantity: next }];
     });
     return res;
   };
 
-  const remove: CartCtx["remove"] = (id) => setItems((p) => (p ?? []).filter((i) => i.id !== id));
+  const remove: CartCtx["remove"] = (key) =>
+    setItems((p) => (p ?? []).filter((i) => i.key !== key));
 
-  const setQty: CartCtx["setQty"] = (id, qty) => {
+  const setQty: CartCtx["setQty"] = (key, qty) => {
     let res: { ok: boolean; reason?: string } = { ok: true };
     setItems((p) =>
       (p ?? []).map((i) => {
-        if (i.id !== id) return i;
+        if (i.key !== key) return i;
         const cap = typeof i.stock === "number" ? i.stock : Infinity;
         const next = Math.max(1, Math.min(qty, cap));
         if (next < qty) res = { ok: false, reason: "Capped to available stock" };

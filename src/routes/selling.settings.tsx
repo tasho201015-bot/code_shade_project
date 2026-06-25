@@ -3,18 +3,11 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { settingsApi, useSellingStore } from "@/lib/selling-store";
 import { Field } from "@/components/selling/BundleForm";
-import type { DisplayLocation, SellingSettings, UpsellRule } from "@/lib/selling-types";
+import type { SellingSettings } from "@/lib/selling-types";
 
 export const Route = createFileRoute("/selling/settings")({
   component: SettingsPage,
 });
-
-const LOCATIONS: { value: DisplayLocation; label: string }[] = [
-  { value: "product", label: "Product Page" },
-  { value: "cart", label: "Cart Page" },
-  { value: "checkout", label: "Checkout" },
-  { value: "homepage", label: "Homepage" },
-];
 
 export function SettingsPage() {
   const settings = useSellingStore((s) => s.settings);
@@ -72,7 +65,44 @@ export function SettingsPage() {
             <option value={2}>2</option><option value={3}>3</option><option value={4}>4</option>
           </select>
         </Field>
+
+        <details className="border-t pt-4 mt-2">
+          <summary className="cursor-pointer font-medium text-sm select-none">المحتوى العربي (Arabic Content)</summary>
+          <p className="text-xs s-muted mt-2 mb-3">
+            Leave any field empty to fall back to the English title above on Arabic pages.
+          </p>
+          <div className="space-y-3" dir="rtl">
+            <Field label="عنوان قسم الباقات">
+              <input
+                className="s-input font-arabic"
+                dir="rtl"
+                placeholder="مثال: أكمل إطلالتك"
+                value={draft.defaultBundleTitle_ar ?? ""}
+                onChange={(e) => set("defaultBundleTitle_ar", e.target.value || null)}
+              />
+            </Field>
+            <Field label="عنوان قسم المنتجات المقترحة">
+              <input
+                className="s-input font-arabic"
+                dir="rtl"
+                placeholder="مثال: قد يعجبك أيضًا"
+                value={draft.defaultCrossSellTitle_ar ?? ""}
+                onChange={(e) => set("defaultCrossSellTitle_ar", e.target.value || null)}
+              />
+            </Field>
+            <Field label="عنوان قسم الترقيات">
+              <input
+                className="s-input font-arabic"
+                dir="rtl"
+                placeholder="مثال: طوّر اختيارك"
+                value={draft.defaultUpsellTitle_ar ?? ""}
+                onChange={(e) => set("defaultUpsellTitle_ar", e.target.value || null)}
+              />
+            </Field>
+          </div>
+        </details>
       </div>
+
 
       <div className="s-card p-6 space-y-4">
         <h2 className="font-semibold">Currency & price format</h2>
@@ -89,39 +119,7 @@ export function SettingsPage() {
         <div className="text-xs s-muted">Preview: <span className="s-accent font-medium">{preview}</span></div>
       </div>
 
-      <div className="s-card p-6 space-y-4">
-        <h2 className="font-semibold">Default display locations</h2>
-        <Field label="Bundles default locations">
-          <div className="grid grid-cols-2 gap-2">
-            {LOCATIONS.map((l) => {
-              const on = draft.defaultBundleLocations.includes(l.value);
-              return (
-                <button
-                  key={l.value}
-                  type="button"
-                  onClick={() => set("defaultBundleLocations", on ? draft.defaultBundleLocations.filter((x) => x !== l.value) : [...draft.defaultBundleLocations, l.value])}
-                  className={`s-btn ${on ? "s-btn-primary" : "s-btn-ghost"} justify-center !text-xs`}
-                >
-                  {l.label}
-                </button>
-              );
-            })}
-          </div>
-        </Field>
-        <Field label="Cross-sell default location">
-          <select className="s-input" value={draft.defaultCrossSellLocation} onChange={(e) => set("defaultCrossSellLocation", e.target.value as DisplayLocation)}>
-            {LOCATIONS.map((l) => <option key={l.value} value={l.value}>{l.label}</option>)}
-          </select>
-        </Field>
-        <Field label="Upsell default position">
-          <select className="s-input" value={draft.defaultUpsellPosition} onChange={(e) => set("defaultUpsellPosition", e.target.value as UpsellRule["position"])}>
-            <option value="below_cart_btn">Below Add-to-Cart</option>
-            <option value="popup">Popup after Add-to-Cart</option>
-            <option value="cart">Cart Page</option>
-            <option value="checkout">Checkout Page</option>
-          </select>
-        </Field>
-      </div>
+      {/* Default display locations moved to each individual Bundle / Cross-Sell / Upsell rule. */}
 
       <div className="s-card p-6 space-y-4">
         <h2 className="font-semibold">Alerts</h2>

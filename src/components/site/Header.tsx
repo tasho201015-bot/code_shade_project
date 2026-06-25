@@ -3,7 +3,8 @@ import { useAuth } from "@/lib/auth";
 import { useCart } from "@/lib/cart";
 import { useI18n } from "@/lib/i18n";
 import { LanguageToggle } from "@/components/site/LanguageToggle";
-import { ShoppingBag, User as UserIcon, LogOut, LayoutDashboard, Menu, X } from "lucide-react";
+import { ShoppingBag, User as UserIcon, LogOut, LayoutDashboard, Menu, X, Heart } from "lucide-react";
+import { useWishlist } from "@/lib/wishlist";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 
@@ -17,11 +18,29 @@ export function Header() {
   }, [menuOpen]);
   const { user, signOut, isAdmin } = useAuth();
   const { count } = useCart();
+  const { count: wishCount } = useWishlist();
   const { t } = useI18n();
   const nav = useNavigate();
+  const isAdminRoute = location.pathname.startsWith("/admin");
   const { scrollY } = useScroll();
-  const bg = useTransform(scrollY, [0, 80], ["oklch(0.985 0.005 80 / 0)", "oklch(0.985 0.005 80 / 0.85)"]);
-  const border = useTransform(scrollY, [0, 80], ["oklch(0.18 0.01 60 / 0)", "oklch(0.18 0.01 60 / 0.08)"]);
+  const bgDynamic = useTransform(scrollY, [0, 80], ["oklch(0.14 0.01 60 / 0.4)", "oklch(0.12 0.01 60 / 0.85)"]);
+  const borderDynamic = useTransform(scrollY, [0, 80], ["oklch(0.94 0.025 82 / 0)", "oklch(0.94 0.025 82 / 0.12)"]);
+  const bg = isAdminRoute ? "#0a0a0a" : bgDynamic;
+  const border = isAdminRoute ? "oklch(0.94 0.025 82 / 0.12)" : borderDynamic;
+
+  // Hide header while inside the hero section on the home page.
+  const isHome = location.pathname === "/";
+  const [hidden, setHidden] = useState(isHome);
+  useEffect(() => {
+    if (!isHome) { setHidden(false); return; }
+    const onScroll = () => {
+      const threshold = window.innerHeight - 120;
+      setHidden(window.scrollY < threshold);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isHome]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -31,19 +50,25 @@ export function Header() {
   return (
     <motion.header
       style={{ backgroundColor: bg, borderBottomColor: border }}
-      className="fixed top-0 inset-x-0 z-50 border-b backdrop-blur-xl"
+      animate={{
+        opacity: hidden ? 0 : 1,
+        y: hidden ? -24 : 0,
+        filter: hidden ? "blur(8px)" : "blur(0px)",
+      }}
+      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+      className={`fixed top-0 inset-x-0 z-50 border-b backdrop-blur-xl ${hidden ? "pointer-events-none" : ""}`}
     >
-      <div className="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
+      <div className={`max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between ${isAdminRoute ? "text-cream" : ""}`}>
         <Link to="/" className="font-display text-2xl tracking-luxe uppercase">
           Mala<span className="italic font-light">z</span>
         </Link>
         <nav className="hidden lg:flex items-center gap-10 text-xs uppercase tracking-luxe">
           <Link to="/" className="link-underline">{t("nav.home")}</Link>
           <Link to="/shop" search={{ category: "all" }} className="link-underline">{t("nav.shop")}</Link>
-          <Link to="/categories" className="link-underline">Collections</Link>
-          <Link to="/team" className="link-underline">Atelier</Link>
+          <Link to="/team" className="link-underline">{t("nav.atelier")}</Link>
           <Link to="/shop" search={{ category: "new-arrivals" } as never} className="link-underline">{t("nav.new")}</Link>
         </nav>
+
 
         <div className="flex items-center gap-2">
           <LanguageToggle />
@@ -57,6 +82,14 @@ export function Header() {
           )}
           <Link to="/account" className="p-2 hover:text-accent transition-colors" aria-label={t("nav.account")}>
             <UserIcon className="w-5 h-5" />
+          </Link>
+          <Link to="/wishlist" className="relative p-2 hover:text-accent transition-colors" aria-label={t("nav.wishlist")}>
+            <Heart className="w-5 h-5" />
+            {wishCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 bg-accent text-accent-foreground text-[10px] w-5 h-5 rounded-full flex items-center justify-center">
+                {wishCount}
+              </span>
+            )}
           </Link>
           <Link to="/cart" className="relative p-2 hover:text-accent transition-colors" aria-label={t("nav.cart")}>
             <ShoppingBag className="w-5 h-5" />
@@ -74,7 +107,7 @@ export function Header() {
           <button
             onClick={() => setMenuOpen((o) => !o)}
             className="md:hidden lg:hidden inline-flex p-2 hover:text-accent transition-colors"
-            aria-label="Menu"
+            aria-label={t("nav.menu")}
             aria-expanded={menuOpen}
           >
             {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -82,11 +115,12 @@ export function Header() {
           <button
             onClick={() => setMenuOpen((o) => !o)}
             className="hidden md:inline-flex lg:hidden p-2 hover:text-accent transition-colors"
-            aria-label="Menu"
+            aria-label={t("nav.menu")}
             aria-expanded={menuOpen}
           >
             {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
+
         </div>
       </div>
 
@@ -110,18 +144,19 @@ export function Header() {
               <nav className="max-w-7xl mx-auto px-6 py-6 flex flex-col gap-1">
                 <Link to="/" className="py-3 text-xs uppercase tracking-luxe border-b border-border/40">{t("nav.home")}</Link>
                 <Link to="/shop" search={{ category: "all" }} className="py-3 text-xs uppercase tracking-luxe border-b border-border/40">{t("nav.shop")}</Link>
-                <Link to="/categories" className="py-3 text-xs uppercase tracking-luxe border-b border-border/40">Collections</Link>
-                <Link to="/team" className="py-3 text-xs uppercase tracking-luxe border-b border-border/40">Atelier</Link>
+                <Link to="/team" className="py-3 text-xs uppercase tracking-luxe border-b border-border/40">{t("nav.atelier")}</Link>
                 <Link to="/shop" search={{ category: "new-arrivals" } as never} className="py-3 text-xs uppercase tracking-luxe border-b border-border/40">{t("nav.new")}</Link>
+                <Link to="/wishlist" className="py-3 text-xs uppercase tracking-luxe border-b border-border/40 flex items-center gap-2"><Heart className="w-4 h-4" /> {t("nav.wishlist")}{wishCount > 0 ? ` (${wishCount})` : ""}</Link>
 
                 {isAdmin && (
                   <div className="mt-4 pt-4 border-t border-border">
-                    <div className="text-[10px] uppercase tracking-luxe text-accent mb-2">Admin</div>
+                    <div className="text-[10px] uppercase tracking-luxe text-accent mb-2">{t("nav.admin")}</div>
                     <Link to="/admin" className="py-3 text-xs uppercase tracking-luxe flex items-center gap-2">
                       <LayoutDashboard className="w-4 h-4" /> {t("nav.admin")}
                     </Link>
                   </div>
                 )}
+
                 {user && (
                   <button onClick={handleSignOut} className="mt-4 py-3 text-xs uppercase tracking-luxe flex items-center gap-2 text-left">
                     <LogOut className="w-4 h-4" /> {t("nav.signout")}

@@ -78,7 +78,7 @@ export function UpsellsPage() {
                     <td className={`px-3 py-3 text-right tabular-nums ${diff > 0 ? "s-accent" : ""}`}>
                       {diff >= 0 ? "+" : ""}${diff.toFixed(2)}
                     </td>
-                    <td className="px-3 py-3 s-muted capitalize">{r.position.replace(/_/g, " ")}</td>
+                    <td className="px-3 py-3 s-muted capitalize">{(r.positions?.length ? r.positions : [r.position]).map((p) => p.replace(/_/g, " ")).join(", ")}</td>
                     <td className="px-3 py-3">
                       <label className="inline-flex items-center gap-2 cursor-pointer">
                         <input type="checkbox" checked={r.active} onChange={() => { upsellsApi.toggle(r.id); toast.success(r.active ? "Disabled" : "Enabled"); }} className="w-4 h-4 accent-emerald-500" />

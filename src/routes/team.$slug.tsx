@@ -33,7 +33,7 @@ function MemberProfile() {
 
   if (member === null) {
     return (
-      <div className="bg-background min-h-screen">
+      <div className="min-h-screen">
         <Header />
         <div className="pt-40 pb-32 max-w-3xl mx-auto px-6 text-center">
           <h1 className="font-display text-4xl">Profile not found</h1>
@@ -47,7 +47,7 @@ function MemberProfile() {
   }
 
   return (
-    <div className="bg-background min-h-screen text-foreground">
+    <div className="min-h-screen text-foreground">
       <Header />
       <div className="pt-28 pb-24 max-w-7xl mx-auto px-6 lg:px-10">
         <BackButton />

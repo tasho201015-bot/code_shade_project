@@ -4,7 +4,9 @@ import { motion } from "framer-motion";
 import { Eye, EyeOff } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth";
+import { useI18n } from "@/lib/i18n";
 import heroBg from "@/assets/product-7.webp";
+
 
 export const Route = createFileRoute("/login")({
   validateSearch: (s: Record<string, unknown>) => ({ redirect: (s.redirect as string) || "/" }),
@@ -13,8 +15,10 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const { signIn, signUp } = useAuth();
+  const { t } = useI18n();
   const nav = useNavigate();
   const search = useSearch({ from: "/login" });
+
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -53,65 +57,68 @@ function LoginPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.9 }}
           >
-            <div className="text-xs tracking-luxe uppercase text-accent mb-3">Maison Malaz</div>
+            <div className="text-xs tracking-luxe uppercase text-accent mb-3">{t("auth.heroEyebrow")}</div>
             <h2 className="font-display text-5xl xl:text-6xl leading-[1.05] text-balance">
-              Where modesty<br /><em className="font-light">becomes couture.</em>
+              {t("auth.heroTitle1")}<br /><em className="font-light">{t("auth.heroTitle2")}</em>
             </h2>
           </motion.div>
+
         </div>
       </div>
 
-      <div className="flex items-center justify-center px-6 py-16">
+      <div className="flex items-center justify-center px-6 py-16 bg-white">
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
-          className="w-full max-w-sm"
+          className="w-full max-w-sm text-neutral-900"
         >
-          <div className="font-display text-3xl tracking-luxe uppercase text-center">
+          <div className="font-display text-3xl tracking-luxe uppercase text-center text-neutral-900">
             Mala<span className="italic font-light">z</span>
           </div>
-          <p className="mt-2 text-center text-xs uppercase tracking-luxe text-muted-foreground">
-            {mode === "signin" ? "Welcome back" : "Create an account"}
+          <p className="mt-2 text-center text-xs uppercase tracking-luxe text-neutral-600">
+            {mode === "signin" ? t("auth.welcome") : t("auth.create")}
           </p>
 
-          <form onSubmit={onSubmit} className="mt-10 space-y-5">
+
+          <form onSubmit={onSubmit} className="login-form mt-10 space-y-5">
             {mode === "signup" && (
               <div>
-                <label className="text-[10px] uppercase tracking-luxe text-muted-foreground">Full name</label>
+                <label className="text-[10px] uppercase tracking-luxe text-neutral-600">{t("auth.name")}</label>
                 <input
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="mt-2 w-full bg-transparent border-b border-border focus:border-accent py-2 outline-none transition-colors"
+                  className="mt-2 w-full bg-white border-b border-neutral-300 focus:border-neutral-900 py-2 outline-none transition-colors text-neutral-900"
                 />
               </div>
             )}
             <div>
-              <label className="text-[10px] uppercase tracking-luxe text-muted-foreground">Email</label>
+              <label className="text-[10px] uppercase tracking-luxe text-neutral-600">{t("auth.email")}</label>
               <input
                 type="email" required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-2 w-full bg-transparent border-b border-border focus:border-accent py-2 outline-none transition-colors"
+                className="mt-2 w-full bg-white border-b border-neutral-300 focus:border-neutral-900 py-2 outline-none transition-colors text-neutral-900"
               />
             </div>
             <div>
-              <label className="text-[10px] uppercase tracking-luxe text-muted-foreground">Password</label>
+              <label className="text-[10px] uppercase tracking-luxe text-neutral-600">{t("auth.password")}</label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"} required minLength={6}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="mt-2 w-full bg-transparent border-b border-border focus:border-accent py-2 pr-8 outline-none transition-colors"
+                  className="mt-2 w-full bg-white border-b border-neutral-300 focus:border-neutral-900 py-2 pr-8 outline-none focus:ring-0 focus-visible:ring-0 transition-colors text-neutral-900"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((s) => !s)}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 mt-1 text-muted-foreground hover:text-foreground transition-colors"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 mt-1 text-neutral-500 hover:text-neutral-900 transition-colors"
+                  aria-label={showPassword ? t("auth.hidePwd") : t("auth.showPwd")}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+
                 </button>
               </div>
               {mode === "signin" && (
@@ -119,9 +126,9 @@ function LoginPage() {
                   <Link
                     to="/forgot-password"
                     onClick={() => console.log("[login] forgot password clicked")}
-                    className="text-[10px] uppercase tracking-luxe text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-[10px] uppercase tracking-luxe text-neutral-600 hover:text-neutral-900 transition-colors"
                   >
-                    Forgot password?
+                    {t("auth.forgot")}
                   </Link>
                 </div>
               )}
@@ -134,15 +141,15 @@ function LoginPage() {
               disabled={loading}
               className="btn-glow w-full bg-noir text-cream py-4 text-xs uppercase tracking-luxe disabled:opacity-60"
             >
-              {loading ? "Please wait…" : mode === "signin" ? "Sign in" : "Create account"}
+              {loading ? t("auth.wait") : mode === "signin" ? t("auth.signin") : t("auth.createBtn")}
             </button>
 
             <button
               type="button"
               onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-              className="w-full text-xs uppercase tracking-luxe text-muted-foreground hover:text-foreground transition-colors"
+              className="w-full text-xs uppercase tracking-luxe text-neutral-600 hover:text-neutral-900 transition-colors"
             >
-              {mode === "signin" ? "New here? — Create an account" : "Have an account? — Sign in"}
+              {mode === "signin" ? t("auth.toSignup") : t("auth.toSignin")}
             </button>
           </form>
         </motion.div>

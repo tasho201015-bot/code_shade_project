@@ -1,7 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { ExactImportedButton } from "@/components/ui/exact-imported-button";
 import { useEffect, useState } from "react";
+import malazLogo from "@/assets/malaz-logo-hero-v2.png.asset.json";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Header } from "@/components/site/Header";
+import { OrbitalNav } from "@/components/site/OrbitalNav";
 import { Footer } from "@/components/site/Footer";
 import { Reveal, Stagger, itemVariants } from "@/components/site/Reveal";
 import { DrawIcon } from "@/components/site/DrawIcon";
@@ -9,6 +12,8 @@ import { TeamMarquee } from "@/components/team/TeamMarquee";
 import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
 import { resolveImage } from "@/lib/product-image";
+import { PriceTag } from "@/components/storefront/PriceTag";
+import { GlowCard } from "@/components/ui/glow-card";
 import heroLg from "@/assets/hero-desktop.jpg";
 import heroMd from "@/assets/hero-md.jpg";
 import heroSm from "@/assets/hero-sm.jpg";
@@ -32,6 +37,10 @@ interface Product {
   price: number;
   image_url: string | null;
   category: string;
+  compare_at_price: number | null;
+  offer_enabled: boolean | null;
+  offer_starts_at: string | null;
+  offer_ends_at: string | null;
 }
 
 // Module-level cache so navigating away/back doesn't refetch within the session.
@@ -48,7 +57,7 @@ function loadHomepageProducts(): Promise<Product[]> {
   if (productsPromise) return productsPromise;
   const p = supabase
     .from("products")
-    .select("id,name,name_ar,price,image_url,category")
+    .select("id,name,name_ar,price,image_url,category,compare_at_price,offer_enabled,offer_starts_at,offer_ends_at")
     .eq("is_active", true)
     .order("created_at", { ascending: false })
     .limit(8)
@@ -77,6 +86,7 @@ const testimonials = [
 
 function HomePage() {
   const { t, lang } = useI18n();
+  const nav = useNavigate();
   const [products, setProducts] = useState<Product[]>(() => productsCache ?? []);
   const [heroLoaded, setHeroLoaded] = useState(false);
   const { scrollY } = useScroll();
@@ -95,59 +105,72 @@ function HomePage() {
   }, []);
 
   return (
-    <div className="bg-background text-foreground">
+    <div className="text-foreground">
       <Header />
 
       {/* HERO */}
-      <section className="relative h-screen overflow-hidden">
-        <motion.div style={{ y: heroY, scale: heroScale, opacity: heroOpacity }} className="absolute inset-0">
-          <img
-            src={heroLg}
-            srcSet={`${heroSm} 768w, ${heroMd} 1280w, ${heroLg} 1920w`}
-            sizes="100vw"
-            alt="Malaz signature abaya"
-            fetchPriority="high"
-            decoding="async"
-            width={1920}
-            height={1080}
-            onLoad={() => setHeroLoaded(true)}
+      <section className="relative h-screen">
+        {/* Centered 3D logo (transparent so global beams show through) */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none pb-[28vh] z-[10]">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute w-[60vmin] h-[60vmin] rounded-full"
             style={{
-              opacity: heroLoaded ? 1 : 0,
-              transition: "opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1)",
+              background:
+                "radial-gradient(circle, rgba(255,122,0,0.55) 0%, rgba(255,157,47,0.25) 35%, rgba(0,0,0,0) 70%)",
+              filter: "blur(40px)",
             }}
-            className="w-full h-full object-cover object-center select-none"
-            draggable={false}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-noir/30 via-noir/10 to-noir/70" />
-        </motion.div>
-
-        <div className="relative z-10 h-full max-w-7xl mx-auto px-6 lg:px-10 flex flex-col justify-end pb-24">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-            className="text-cream max-w-2xl"
+            animate={{ opacity: 1, y: [0, -12, 0], rotateY: [-6, 6, -6] }}
+            transition={{
+              opacity: { duration: 1.4, ease: [0.22, 1, 0.36, 1] },
+              y: { duration: 6, repeat: Infinity, ease: "easeInOut" },
+              rotateY: { duration: 9, repeat: Infinity, ease: "easeInOut" },
+            }}
+            style={{
+              transformStyle: "preserve-3d",
+              perspective: 1000,
+              filter:
+                "drop-shadow(0 30px 40px rgba(0,0,0,0.6)) drop-shadow(0 0 50px rgba(255,122,0,0.45))",
+            }}
+            className="relative"
           >
-            <div className="text-[10px] tracking-luxe uppercase text-accent mb-4">{t("hero.eyebrow")}</div>
-            <h1 className="font-display text-6xl md:text-8xl leading-[0.95] text-balance">
-              {t("hero.title1")}<br /><em className="font-light">{t("hero.title2")}</em>
-            </h1>
-            <p className="mt-6 text-cream/80 max-w-md text-lg leading-relaxed">
-              {t("hero.subtitle")}
-            </p>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.4, duration: 1 }}
-              className="mt-10 flex gap-4"
-            >
-              <Link to="/shop" search={{ category: "all" }} className="btn-glow inline-flex items-center bg-cream text-noir px-8 py-4 text-xs uppercase tracking-luxe">
-                {t("hero.shopCta")}
-              </Link>
-              <Link to="/shop" search={{ category: "new-arrivals" } as never} className="inline-flex items-center text-cream px-8 py-4 text-xs uppercase tracking-luxe link-underline">
-                {t("hero.newCta")}
-              </Link>
-            </motion.div>
+            <img
+              src={malazLogo.url}
+              alt="Malaz"
+              className="w-[26vmin] max-w-[300px] min-w-[140px] h-auto select-none"
+              draggable={false}
+            />
+          </motion.div>
+        </div>
+
+        {/* Orbital navigation */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none pb-[28vh] z-[15]">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.6, duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <OrbitalNav />
+          </motion.div>
+        </div>
+        <div className="relative z-10 h-full max-w-7xl mx-auto px-6 lg:px-10 flex flex-col justify-end pb-24">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.4, duration: 1 }}
+            className="flex gap-4 justify-center"
+          >
+            <ExactImportedButton onClick={() => nav({ to: "/shop", search: { category: "all" } as never })}>
+              {t("hero.shopCta")}
+            </ExactImportedButton>
+            <Link to="/shop" search={{ category: "new-arrivals" } as never} className="inline-flex items-center text-cream px-8 py-4 text-xs uppercase tracking-luxe link-underline">
+              {t("hero.newCta")}
+            </Link>
           </motion.div>
         </div>
 
@@ -155,11 +178,12 @@ function HomePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 text-cream/70 text-[10px] tracking-luxe uppercase"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 text-cream/70 text-[10px] tracking-luxe uppercase z-20"
         >
           {t("hero.scroll")}
         </motion.div>
       </section>
+
 
       {/* INTRO */}
       <section className="py-24 lg:py-32 max-w-5xl mx-auto px-6 lg:px-10 text-center">
@@ -179,16 +203,17 @@ function HomePage() {
         </Reveal>
       </section>
 
+      <>
       {/* COLLECTIONS */}
-      <section className="py-20 lg:py-28 bg-secondary/40">
+      <section className="py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <Reveal>
             <div className="flex items-end justify-between mb-12">
               <div>
                 <div className="text-[10px] tracking-luxe uppercase text-accent">{t("col.eyebrow")}</div>
-                <h2 className="font-display text-4xl md:text-5xl mt-2">{t("col.title")}</h2>
+                <h2 className="font-display text-4xl md:text-5xl mt-2 text-cream">{t("col.title")}</h2>
               </div>
-              <Link to="/shop" search={{ category: "all" }} className="hidden sm:inline-block text-xs uppercase tracking-luxe link-underline">
+              <Link to="/shop" search={{ category: "all" }} className="hidden sm:inline-block text-xs uppercase tracking-luxe link-underline text-cream">
                 {t("col.viewAll")}
               </Link>
             </div>
@@ -197,38 +222,43 @@ function HomePage() {
           <Stagger className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
             {collections.map((c) => (
               <motion.div key={c.href} variants={itemVariants}>
-                <Link
-                  to="/shop"
-                  search={{ category: c.href } as never}
-                  className="group block image-zoom relative aspect-[3/4] bg-muted shadow-soft"
-                >
-                  <img
-                    src={c.img}
-                    alt={t(c.nameKey)}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-noir/70 via-transparent to-transparent" />
-                  <div className="absolute bottom-5 left-5 right-5 text-cream">
-                    <div className="font-display text-2xl">{t(c.nameKey)}</div>
-                    <div className="text-[10px] tracking-luxe uppercase mt-1 opacity-80 group-hover:opacity-100 transition-opacity">
-                      {t("col.shopNow")} →
+                <GlowCard customSize glowColor="orange" className="block w-full !p-0 !gap-0 !rounded-[24px] !shadow-none">
+                  <Link
+                    to="/shop"
+                    search={{ category: c.href } as never}
+                    className="group block bg-black border border-[#5A5A5A] rounded-[24px] p-4 shadow-luxe overflow-hidden transition-colors hover:border-accent/60"
+                  >
+                    <div className="relative aspect-[3/4] bg-muted overflow-hidden rounded-[18px]">
+                      <img
+                        src={c.img}
+                        alt={t(c.nameKey)}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-noir/70 via-transparent to-transparent" />
                     </div>
-                  </div>
-                </Link>
+                    <div className="mt-4 text-cream">
+                      <div className="font-display text-2xl">{t(c.nameKey)}</div>
+                      <div className="text-[10px] tracking-luxe uppercase mt-1 text-cream/70 group-hover:text-cream transition-colors">
+                        {t("col.shopNow")} →
+                      </div>
+                    </div>
+                  </Link>
+                </GlowCard>
               </motion.div>
             ))}
           </Stagger>
         </div>
       </section>
 
+
       {/* FEATURES */}
       <section className="py-24 lg:py-32 max-w-7xl mx-auto px-6 lg:px-10">
         <Reveal>
           <div className="text-center mb-16">
             <div className="text-[10px] tracking-luxe uppercase text-accent">{t("feat.eyebrow")}</div>
-            <h2 className="font-display text-4xl md:text-5xl mt-2">{t("feat.title")}</h2>
+            <h2 className="font-display text-4xl md:text-5xl mt-2 text-cream">{t("feat.title")}</h2>
           </div>
         </Reveal>
         <Stagger className="grid grid-cols-2 lg:grid-cols-5 gap-6 lg:gap-4">
@@ -238,51 +268,57 @@ function HomePage() {
               variants={itemVariants}
               whileHover={{ y: -6 }}
               transition={{ duration: 0.4 }}
-              className="group glass rounded-sm p-8 text-center cursor-default"
+              className="group rounded-sm p-8 text-center cursor-default"
             >
               <div className="text-accent inline-flex">
                 <DrawIcon size={44}>{f.svg}</DrawIcon>
               </div>
-              <h3 className="font-display text-xl mt-5">{t(f.titleKey)}</h3>
-              <p className="text-xs text-muted-foreground mt-2 leading-relaxed">{t(f.descKey)}</p>
+              <h3 className="font-display text-xl mt-5 text-cream">{t(f.titleKey)}</h3>
+              <p className="text-xs text-cream/70 mt-2 leading-relaxed">{t(f.descKey)}</p>
             </motion.div>
           ))}
         </Stagger>
       </section>
 
       {/* PRODUCTS */}
-      <section className="py-20 lg:py-28 bg-secondary/30">
+      <section className="py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
           <Reveal>
             <div className="flex items-end justify-between mb-12">
               <div>
                 <div className="text-[10px] tracking-luxe uppercase text-accent">{t("prod.eyebrow")}</div>
-                <h2 className="font-display text-4xl md:text-5xl mt-2">{t("prod.title")}</h2>
+                <h2 className="font-display text-4xl md:text-5xl mt-2 text-cream">{t("prod.title")}</h2>
               </div>
-              <Link to="/shop" search={{ category: "all" }} className="text-xs uppercase tracking-luxe link-underline">{t("col.viewAll")}</Link>
+              <Link to="/shop" search={{ category: "all" }} className="text-xs uppercase tracking-luxe link-underline text-cream">{t("col.viewAll")}</Link>
             </div>
           </Reveal>
           <Stagger className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8">
             {products.map((p) => (
               <motion.div key={p.id} variants={itemVariants}>
-                <Link to="/product/$id" params={{ id: p.id }} className="block group">
-                  <div className="image-zoom aspect-[3/4] bg-muted shadow-soft">
-                    <img
-                      src={resolveImage(p.image_url)}
-                      alt={p.name}
-                      loading="lazy"
-                      decoding="async"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="mt-4 flex items-start justify-between gap-3">
-                    <div>
-                      <div className="font-display text-lg leading-tight">{lang === "ar" && p.name_ar ? p.name_ar : p.name}</div>
-                      <div className="text-[10px] uppercase tracking-luxe text-muted-foreground mt-1">{t(`cat.${p.category}`)}</div>
+                <GlowCard customSize glowColor="orange" className="block w-full !p-0 !gap-0 !rounded-[24px] !shadow-none">
+                  <Link
+                    to="/product/$id"
+                    params={{ id: p.id }}
+                    className="block group bg-black border border-[#5A5A5A] rounded-[24px] p-4 shadow-luxe overflow-hidden transition-colors hover:border-accent/60"
+                  >
+                    <div className="aspect-[3/4] bg-muted overflow-hidden rounded-[18px]">
+                      <img
+                        src={resolveImage(p.image_url)}
+                        alt={p.name}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
                     </div>
-                    <div className="text-sm tabular-nums">${Number(p.price).toFixed(0)}</div>
-                  </div>
-                </Link>
+                    <div className="mt-4 flex items-start justify-between gap-3">
+                      <div>
+                        <div className="font-display text-lg leading-tight text-cream">{lang === "ar" && p.name_ar ? p.name_ar : p.name}</div>
+                        <div className="text-[10px] uppercase tracking-luxe text-cream/60 mt-1">{t(`cat.${p.category}`)}</div>
+                      </div>
+                      <PriceTag p={p} />
+                    </div>
+                  </Link>
+                </GlowCard>
               </motion.div>
             ))}
           </Stagger>
@@ -294,7 +330,7 @@ function HomePage() {
         <Reveal>
           <div className="text-center mb-16">
             <div className="text-[10px] tracking-luxe uppercase text-accent">{t("test.eyebrow")}</div>
-            <h2 className="font-display text-4xl md:text-5xl mt-2">{t("test.title")}</h2>
+            <h2 className="font-display text-4xl md:text-5xl mt-2 text-cream">{t("test.title")}</h2>
           </div>
         </Reveal>
         <Stagger className="grid md:grid-cols-3 gap-6">
@@ -302,11 +338,11 @@ function HomePage() {
             <motion.figure
               key={tm.nameKey}
               variants={itemVariants}
-              className="glass p-8 rounded-sm"
+              className="p-8 rounded-sm"
             >
               <div className="text-accent font-display text-4xl leading-none">"</div>
-              <blockquote className="mt-3 font-display text-xl leading-snug text-balance">{t(tm.quoteKey)}</blockquote>
-              <figcaption className="mt-6 text-[10px] uppercase tracking-luxe text-muted-foreground">
+              <blockquote className="mt-3 font-display text-xl leading-snug text-balance text-cream">{t(tm.quoteKey)}</blockquote>
+              <figcaption className="mt-6 text-[10px] uppercase tracking-luxe text-cream/70">
                 {t(tm.nameKey)} — {t(tm.roleKey)}
               </figcaption>
             </motion.figure>
@@ -316,6 +352,8 @@ function HomePage() {
 
       {/* TEAM MARQUEE */}
       <TeamMarquee />
+      </>
+
 
       {/* CTA */}
       <section className="relative overflow-hidden">
@@ -337,9 +375,12 @@ function HomePage() {
               </h2>
             </Reveal>
             <Reveal delay={0.25}>
-              <Link to="/shop" search={{ category: "all" }} className="btn-glow mt-10 self-start inline-flex bg-cream text-noir px-10 py-4 text-xs uppercase tracking-luxe">
+              <ExactImportedButton
+                onClick={() => nav({ to: "/shop", search: { category: "all" } as never })}
+                className="mt-10 self-start"
+              >
                 {t("cta.shopNow")}
-              </Link>
+              </ExactImportedButton>
             </Reveal>
           </div>
         </div>

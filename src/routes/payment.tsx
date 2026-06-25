@@ -9,6 +9,8 @@ import { useCart } from "@/lib/cart";
 import { useNavigate } from "@tanstack/react-router";
 import { CartLoading } from "@/components/site/CartLoading";
 import { RouteErrorState } from "@/components/site/RouteErrorState";
+import { useI18n } from "@/lib/i18n";
+
 
 const searchSchema = z.object({
   url: z.string().url().optional(),
@@ -26,8 +28,10 @@ export const Route = createFileRoute("/payment")({
 });
 
 function PaymentPage() {
+  const { t } = useI18n();
   const { url, order } = useSearch({ from: "/payment" });
   const verify = useServerFn(verifyPaymobOrderFn);
+
   const { clear, loaded } = useCart();
   const nav = useNavigate();
   const [status, setStatus] = useState<"pending" | "paid" | "failed" | null>(null);
@@ -98,19 +102,19 @@ function PaymentPage() {
     };
   }, [order, url, verify, clear, nav]);
 
-  if (!loaded) return <CartLoading label="Preparing checkout…" />;
+  if (!loaded) return <CartLoading label={t("pay.preparing")} />;
 
   if (!url || typeof url !== "string") {
     return (
-      <div className="bg-background min-h-screen">
+      <div className="min-h-screen">
         <Header />
         <div className="pt-32 pb-32 max-w-3xl mx-auto px-6 text-center">
-          <h1 className="font-display text-4xl">No active payment</h1>
+          <h1 className="font-display text-4xl">{t("pay.none")}</h1>
           <p className="mt-3 text-muted-foreground text-sm">
-            Start a checkout from your bag to pay online.
+            {t("pay.noneDesc")}
           </p>
           <Link to="/cart" className="link-underline text-foreground mt-6 inline-block">
-            Back to bag
+            {t("pay.backToBag")}
           </Link>
         </div>
         <Footer />
@@ -119,23 +123,24 @@ function PaymentPage() {
   }
 
   return (
-    <div className="bg-background min-h-screen">
+    <div className="min-h-screen">
       <Header />
       <div className="pt-28 pb-16 max-w-5xl mx-auto px-4 lg:px-8">
-        <div className="text-[10px] uppercase tracking-luxe text-accent">Secure checkout</div>
+        <div className="text-[10px] uppercase tracking-luxe text-accent">{t("pay.eyebrow")}</div>
         <h1 className="font-display text-3xl md:text-4xl mt-2">
-          Complete your payment
+          {t("pay.title")}
         </h1>
         {order && (
           <p className="text-xs text-muted-foreground mt-1">
-            Order #{order.slice(0, 8)}
+            {t("pay.orderRef", { ref: order.slice(0, 8) })}
           </p>
         )}
         {status === "pending" && (
           <p className="text-[10px] uppercase tracking-luxe text-muted-foreground mt-2">
-            Waiting for confirmation…
+            {t("pay.waiting")}
           </p>
         )}
+
         <div className="mt-6 border border-border rounded-sm overflow-hidden bg-muted">
           <iframe
             src={url}

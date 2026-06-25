@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WishlistRouteImport } from './routes/wishlist'
 import { Route as TeamRouteImport } from './routes/team'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SellingRouteImport } from './routes/selling'
@@ -34,6 +35,7 @@ import { Route as ProductIdRouteImport } from './routes/product.$id'
 import { Route as PaymentCallbackRouteImport } from './routes/payment.callback'
 import { Route as ConfirmOrderIdRouteImport } from './routes/confirm-order.$id'
 import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
+import { Route as AdminShippingRouteImport } from './routes/admin.shipping'
 import { Route as AdminSalesBoosterRouteImport } from './routes/admin.sales-booster'
 import { Route as AdminSalesBoosterIndexRouteImport } from './routes/admin.sales-booster.index'
 import { Route as ApiPublicPaymobWebhookRouteImport } from './routes/api/public/paymob-webhook'
@@ -43,7 +45,13 @@ import { Route as AdminSalesBoosterProductsRouteImport } from './routes/admin.sa
 import { Route as AdminSalesBoosterCrossSellsRouteImport } from './routes/admin.sales-booster.cross-sells'
 import { Route as AdminSalesBoosterBundlesRouteImport } from './routes/admin.sales-booster.bundles'
 import { Route as ApiPublicPaymobCallbackRouteImport } from './routes/api/public/paymob.callback'
+import { Route as ApiPublicHooksSendDueCampaignsRouteImport } from './routes/api/public/hooks/send-due-campaigns'
 
+const WishlistRoute = WishlistRouteImport.update({
+  id: '/wishlist',
+  path: '/wishlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TeamRoute = TeamRouteImport.update({
   id: '/team',
   path: '/team',
@@ -169,6 +177,11 @@ const CategoriesSlugRoute = CategoriesSlugRouteImport.update({
   path: '/categories/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminShippingRoute = AdminShippingRouteImport.update({
+  id: '/shipping',
+  path: '/shipping',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSalesBoosterRoute = AdminSalesBoosterRouteImport.update({
   id: '/sales-booster',
   path: '/sales-booster',
@@ -219,6 +232,12 @@ const ApiPublicPaymobCallbackRoute = ApiPublicPaymobCallbackRouteImport.update({
   path: '/api/public/paymob/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksSendDueCampaignsRoute =
+  ApiPublicHooksSendDueCampaignsRouteImport.update({
+    id: '/api/public/hooks/send-due-campaigns',
+    path: '/api/public/hooks/send-due-campaigns',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -234,7 +253,9 @@ export interface FileRoutesByFullPath {
   '/selling': typeof SellingRouteWithChildren
   '/shop': typeof ShopRoute
   '/team': typeof TeamRouteWithChildren
+  '/wishlist': typeof WishlistRoute
   '/admin/sales-booster': typeof AdminSalesBoosterRouteWithChildren
+  '/admin/shipping': typeof AdminShippingRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/confirm-order/$id': typeof ConfirmOrderIdRoute
   '/payment/callback': typeof PaymentCallbackRoute
@@ -254,6 +275,7 @@ export interface FileRoutesByFullPath {
   '/admin/sales-booster/upsells': typeof AdminSalesBoosterUpsellsRoute
   '/api/public/paymob-webhook': typeof ApiPublicPaymobWebhookRoute
   '/admin/sales-booster/': typeof AdminSalesBoosterIndexRoute
+  '/api/public/hooks/send-due-campaigns': typeof ApiPublicHooksSendDueCampaignsRoute
   '/api/public/paymob/callback': typeof ApiPublicPaymobCallbackRoute
 }
 export interface FileRoutesByTo {
@@ -269,6 +291,8 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/shop': typeof ShopRoute
   '/team': typeof TeamRouteWithChildren
+  '/wishlist': typeof WishlistRoute
+  '/admin/shipping': typeof AdminShippingRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/confirm-order/$id': typeof ConfirmOrderIdRoute
   '/payment/callback': typeof PaymentCallbackRoute
@@ -288,6 +312,7 @@ export interface FileRoutesByTo {
   '/admin/sales-booster/upsells': typeof AdminSalesBoosterUpsellsRoute
   '/api/public/paymob-webhook': typeof ApiPublicPaymobWebhookRoute
   '/admin/sales-booster': typeof AdminSalesBoosterIndexRoute
+  '/api/public/hooks/send-due-campaigns': typeof ApiPublicHooksSendDueCampaignsRoute
   '/api/public/paymob/callback': typeof ApiPublicPaymobCallbackRoute
 }
 export interface FileRoutesById {
@@ -305,7 +330,9 @@ export interface FileRoutesById {
   '/selling': typeof SellingRouteWithChildren
   '/shop': typeof ShopRoute
   '/team': typeof TeamRouteWithChildren
+  '/wishlist': typeof WishlistRoute
   '/admin/sales-booster': typeof AdminSalesBoosterRouteWithChildren
+  '/admin/shipping': typeof AdminShippingRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/confirm-order/$id': typeof ConfirmOrderIdRoute
   '/payment/callback': typeof PaymentCallbackRoute
@@ -325,6 +352,7 @@ export interface FileRoutesById {
   '/admin/sales-booster/upsells': typeof AdminSalesBoosterUpsellsRoute
   '/api/public/paymob-webhook': typeof ApiPublicPaymobWebhookRoute
   '/admin/sales-booster/': typeof AdminSalesBoosterIndexRoute
+  '/api/public/hooks/send-due-campaigns': typeof ApiPublicHooksSendDueCampaignsRoute
   '/api/public/paymob/callback': typeof ApiPublicPaymobCallbackRoute
 }
 export interface FileRouteTypes {
@@ -343,7 +371,9 @@ export interface FileRouteTypes {
     | '/selling'
     | '/shop'
     | '/team'
+    | '/wishlist'
     | '/admin/sales-booster'
+    | '/admin/shipping'
     | '/categories/$slug'
     | '/confirm-order/$id'
     | '/payment/callback'
@@ -363,6 +393,7 @@ export interface FileRouteTypes {
     | '/admin/sales-booster/upsells'
     | '/api/public/paymob-webhook'
     | '/admin/sales-booster/'
+    | '/api/public/hooks/send-due-campaigns'
     | '/api/public/paymob/callback'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -378,6 +409,8 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/shop'
     | '/team'
+    | '/wishlist'
+    | '/admin/shipping'
     | '/categories/$slug'
     | '/confirm-order/$id'
     | '/payment/callback'
@@ -397,6 +430,7 @@ export interface FileRouteTypes {
     | '/admin/sales-booster/upsells'
     | '/api/public/paymob-webhook'
     | '/admin/sales-booster'
+    | '/api/public/hooks/send-due-campaigns'
     | '/api/public/paymob/callback'
   id:
     | '__root__'
@@ -413,7 +447,9 @@ export interface FileRouteTypes {
     | '/selling'
     | '/shop'
     | '/team'
+    | '/wishlist'
     | '/admin/sales-booster'
+    | '/admin/shipping'
     | '/categories/$slug'
     | '/confirm-order/$id'
     | '/payment/callback'
@@ -433,6 +469,7 @@ export interface FileRouteTypes {
     | '/admin/sales-booster/upsells'
     | '/api/public/paymob-webhook'
     | '/admin/sales-booster/'
+    | '/api/public/hooks/send-due-campaigns'
     | '/api/public/paymob/callback'
   fileRoutesById: FileRoutesById
 }
@@ -450,16 +487,25 @@ export interface RootRouteChildren {
   SellingRoute: typeof SellingRouteWithChildren
   ShopRoute: typeof ShopRoute
   TeamRoute: typeof TeamRouteWithChildren
+  WishlistRoute: typeof WishlistRoute
   CategoriesSlugRoute: typeof CategoriesSlugRoute
   ConfirmOrderIdRoute: typeof ConfirmOrderIdRoute
   ProductIdRoute: typeof ProductIdRoute
   CategoriesIndexRoute: typeof CategoriesIndexRoute
   ApiPublicPaymobWebhookRoute: typeof ApiPublicPaymobWebhookRoute
+  ApiPublicHooksSendDueCampaignsRoute: typeof ApiPublicHooksSendDueCampaignsRoute
   ApiPublicPaymobCallbackRoute: typeof ApiPublicPaymobCallbackRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/wishlist': {
+      id: '/wishlist'
+      path: '/wishlist'
+      fullPath: '/wishlist'
+      preLoaderRoute: typeof WishlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/team': {
       id: '/team'
       path: '/team'
@@ -635,6 +681,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/shipping': {
+      id: '/admin/shipping'
+      path: '/shipping'
+      fullPath: '/admin/shipping'
+      preLoaderRoute: typeof AdminShippingRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/sales-booster': {
       id: '/admin/sales-booster'
       path: '/sales-booster'
@@ -698,6 +751,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymobCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/send-due-campaigns': {
+      id: '/api/public/hooks/send-due-campaigns'
+      path: '/api/public/hooks/send-due-campaigns'
+      fullPath: '/api/public/hooks/send-due-campaigns'
+      preLoaderRoute: typeof ApiPublicHooksSendDueCampaignsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -724,10 +784,12 @@ const AdminSalesBoosterRouteWithChildren =
 
 interface AdminRouteChildren {
   AdminSalesBoosterRoute: typeof AdminSalesBoosterRouteWithChildren
+  AdminShippingRoute: typeof AdminShippingRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminSalesBoosterRoute: AdminSalesBoosterRouteWithChildren,
+  AdminShippingRoute: AdminShippingRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
@@ -788,11 +850,13 @@ const rootRouteChildren: RootRouteChildren = {
   SellingRoute: SellingRouteWithChildren,
   ShopRoute: ShopRoute,
   TeamRoute: TeamRouteWithChildren,
+  WishlistRoute: WishlistRoute,
   CategoriesSlugRoute: CategoriesSlugRoute,
   ConfirmOrderIdRoute: ConfirmOrderIdRoute,
   ProductIdRoute: ProductIdRoute,
   CategoriesIndexRoute: CategoriesIndexRoute,
   ApiPublicPaymobWebhookRoute: ApiPublicPaymobWebhookRoute,
+  ApiPublicHooksSendDueCampaignsRoute: ApiPublicHooksSendDueCampaignsRoute,
   ApiPublicPaymobCallbackRoute: ApiPublicPaymobCallbackRoute,
 }
 export const routeTree = rootRouteImport

@@ -21,6 +21,9 @@ const defaultSettings: SellingSettings = {
   defaultBundleTitle: "Complete the Look",
   defaultCrossSellTitle: "You May Also Like",
   defaultUpsellTitle: "Upgrade Your Choice",
+  defaultBundleTitle_ar: null,
+  defaultCrossSellTitle_ar: null,
+  defaultUpsellTitle_ar: null,
   defaultSuggestionCount: 3,
   bundlesEnabled: true,
   crossSellsEnabled: true,
@@ -51,18 +54,23 @@ function setState(updater: (s: State) => State) {
 
 // ============ Row <-> Type mapping ============
 type BundleRow = {
-  id: string; name: string; description: string; product_ids: string[];
+  id: string; name: string; name_ar: string | null;
+  description: string; description_ar: string | null;
+  product_ids: string[];
   original_price_override: number | null; discount_mode: "fixed" | "percent";
-  discount_value: number; cover_image: string; active: boolean; badge: string;
+  discount_value: number; cover_image: string; active: boolean;
+  badge: string; badge_ar: string | null;
   starts_at: string | null; ends_at: string | null; locations: string[];
   sort_order: number; purchases: number; created_at: string; updated_at: string;
 };
 const fromBundleRow = (r: BundleRow): Bundle => ({
-  id: r.id, name: r.name, description: r.description ?? "",
+  id: r.id, name: r.name, name_ar: r.name_ar,
+  description: r.description ?? "", description_ar: r.description_ar,
   productIds: r.product_ids ?? [],
   originalPriceOverride: r.original_price_override,
   discountMode: r.discount_mode, discountValue: Number(r.discount_value),
-  coverImage: r.cover_image ?? "", active: r.active, badge: r.badge ?? "",
+  coverImage: r.cover_image ?? "", active: r.active,
+  badge: r.badge ?? "", badge_ar: r.badge_ar,
   startsAt: r.starts_at, endsAt: r.ends_at,
   locations: (r.locations ?? []) as Bundle["locations"],
   order: r.sort_order, purchases: r.purchases,
@@ -71,7 +79,9 @@ const fromBundleRow = (r: BundleRow): Bundle => ({
 const toBundleRow = (b: Partial<Bundle>): Record<string, unknown> => {
   const out: Record<string, unknown> = {};
   if (b.name !== undefined) out.name = b.name;
+  if (b.name_ar !== undefined) out.name_ar = b.name_ar;
   if (b.description !== undefined) out.description = b.description;
+  if (b.description_ar !== undefined) out.description_ar = b.description_ar;
   if (b.productIds !== undefined) out.product_ids = b.productIds;
   if (b.originalPriceOverride !== undefined) out.original_price_override = b.originalPriceOverride;
   if (b.discountMode !== undefined) out.discount_mode = b.discountMode;
@@ -79,6 +89,7 @@ const toBundleRow = (b: Partial<Bundle>): Record<string, unknown> => {
   if (b.coverImage !== undefined) out.cover_image = b.coverImage;
   if (b.active !== undefined) out.active = b.active;
   if (b.badge !== undefined) out.badge = b.badge;
+  if (b.badge_ar !== undefined) out.badge_ar = b.badge_ar;
   if (b.startsAt !== undefined) out.starts_at = b.startsAt;
   if (b.endsAt !== undefined) out.ends_at = b.endsAt;
   if (b.locations !== undefined) out.locations = b.locations;
@@ -89,24 +100,39 @@ const toBundleRow = (b: Partial<Bundle>): Record<string, unknown> => {
 
 type CrossRow = {
   id: string; trigger_product_id: string; suggestions: CrossSellSuggestion[];
-  section_title: string; style: "grid" | "carousel" | "list"; max_shown: number;
-  location: "product" | "cart" | "checkout" | "homepage"; active: boolean;
+  section_title: string; section_title_ar: string | null;
+  style: "grid" | "carousel" | "list"; max_shown: number;
+  location: "product" | "cart" | "checkout" | "homepage";
+  locations: string[] | null;
+  active: boolean;
   clicks: number; updated_at: string;
 };
-const fromCrossRow = (r: CrossRow): CrossSellRule => ({
-  id: r.id, triggerProductId: r.trigger_product_id,
-  suggestions: r.suggestions ?? [], sectionTitle: r.section_title,
-  style: r.style, maxShown: r.max_shown, location: r.location,
-  active: r.active, clicks: r.clicks, updatedAt: r.updated_at,
-});
+const fromCrossRow = (r: CrossRow): CrossSellRule => {
+  const locs = (r.locations ?? []) as CrossSellRule["locations"];
+  return {
+    id: r.id, triggerProductId: r.trigger_product_id,
+    suggestions: r.suggestions ?? [], sectionTitle: r.section_title,
+    sectionTitle_ar: r.section_title_ar,
+    style: r.style, maxShown: r.max_shown,
+    location: r.location,
+    locations: locs.length ? locs : (r.location ? [r.location] : []),
+    active: r.active, clicks: r.clicks, updatedAt: r.updated_at,
+  };
+};
 const toCrossRow = (r: Partial<CrossSellRule>): Record<string, unknown> => {
   const out: Record<string, unknown> = {};
   if (r.triggerProductId !== undefined) out.trigger_product_id = r.triggerProductId;
   if (r.suggestions !== undefined) out.suggestions = r.suggestions;
   if (r.sectionTitle !== undefined) out.section_title = r.sectionTitle;
+  if (r.sectionTitle_ar !== undefined) out.section_title_ar = r.sectionTitle_ar;
   if (r.style !== undefined) out.style = r.style;
   if (r.maxShown !== undefined) out.max_shown = r.maxShown;
   if (r.location !== undefined) out.location = r.location;
+  if (r.locations !== undefined) {
+    out.locations = r.locations;
+    // Keep legacy single column in sync (first location, fallback "product")
+    out.location = r.locations[0] ?? "product";
+  }
   if (r.active !== undefined) out.active = r.active;
   if (r.clicks !== undefined) out.clicks = r.clicks;
   return out;
@@ -115,37 +141,53 @@ const toCrossRow = (r: Partial<CrossSellRule>): Record<string, unknown> => {
 type UpsellRow = {
   id: string; trigger_product_id: string;
   type: "upgrade" | "quantity" | "limited" | "bundle";
-  headline: string; note: string;
+  headline: string; headline_ar: string | null;
+  note: string; note_ar: string | null;
   suggested_product_id: string | null; suggested_bundle_id: string | null;
-  original_price: number; upsell_price: number; badge: string;
+  original_price: number; upsell_price: number; badge: string; badge_ar: string | null;
   countdown_ends_at: string | null;
   position: "below_cart_btn" | "popup" | "cart" | "checkout";
+  positions: string[] | null;
   active: boolean; conversions: number; updated_at: string;
   config: UpsellRule["config"] | null;
 };
-const fromUpsellRow = (r: UpsellRow): UpsellRule => ({
-  id: r.id, triggerProductId: r.trigger_product_id, type: r.type,
-  headline: r.headline, note: r.note ?? "",
-  suggestedProductId: r.suggested_product_id, suggestedBundleId: r.suggested_bundle_id,
-  originalPrice: Number(r.original_price), upsellPrice: Number(r.upsell_price),
-  badge: r.badge ?? "", countdownEndsAt: r.countdown_ends_at,
-  position: r.position, active: r.active, conversions: r.conversions,
-  updatedAt: r.updated_at,
-  config: (r.config ?? {}) as UpsellRule["config"],
-});
+const fromUpsellRow = (r: UpsellRow): UpsellRule => {
+  const pos = (r.positions ?? []) as UpsellRule["positions"];
+  return {
+    id: r.id, triggerProductId: r.trigger_product_id, type: r.type,
+    headline: r.headline, headline_ar: r.headline_ar,
+    note: r.note ?? "", note_ar: r.note_ar,
+    suggestedProductId: r.suggested_product_id, suggestedBundleId: r.suggested_bundle_id,
+    originalPrice: Number(r.original_price), upsellPrice: Number(r.upsell_price),
+    badge: r.badge ?? "", badge_ar: r.badge_ar,
+    countdownEndsAt: r.countdown_ends_at,
+    position: r.position,
+    positions: pos.length ? pos : (r.position ? [r.position] : []),
+    active: r.active, conversions: r.conversions,
+    updatedAt: r.updated_at,
+    config: (r.config ?? {}) as UpsellRule["config"],
+  };
+};
 const toUpsellRow = (r: Partial<UpsellRule>): Record<string, unknown> => {
   const out: Record<string, unknown> = {};
   if (r.triggerProductId !== undefined) out.trigger_product_id = r.triggerProductId;
   if (r.type !== undefined) out.type = r.type;
   if (r.headline !== undefined) out.headline = r.headline;
+  if (r.headline_ar !== undefined) out.headline_ar = r.headline_ar;
   if (r.note !== undefined) out.note = r.note;
+  if (r.note_ar !== undefined) out.note_ar = r.note_ar;
   if (r.suggestedProductId !== undefined) out.suggested_product_id = r.suggestedProductId;
   if (r.suggestedBundleId !== undefined) out.suggested_bundle_id = r.suggestedBundleId;
   if (r.originalPrice !== undefined) out.original_price = r.originalPrice;
   if (r.upsellPrice !== undefined) out.upsell_price = r.upsellPrice;
   if (r.badge !== undefined) out.badge = r.badge;
+  if (r.badge_ar !== undefined) out.badge_ar = r.badge_ar;
   if (r.countdownEndsAt !== undefined) out.countdown_ends_at = r.countdownEndsAt;
   if (r.position !== undefined) out.position = r.position;
+  if (r.positions !== undefined) {
+    out.positions = r.positions;
+    out.position = r.positions[0] ?? "below_cart_btn";
+  }
   if (r.active !== undefined) out.active = r.active;
   if (r.conversions !== undefined) out.conversions = r.conversions;
   if (r.config !== undefined) out.config = r.config;
@@ -322,7 +364,8 @@ export const crossSellsApi = {
       sectionTitle: input.sectionTitle ?? state.settings.defaultCrossSellTitle,
       style: input.style ?? "grid",
       maxShown: input.maxShown ?? 3,
-      location: input.location ?? state.settings.defaultCrossSellLocation,
+      location: input.location ?? (input.locations?.[0] ?? "product"),
+      locations: input.locations ?? (input.location ? [input.location] : ["product"]),
       active: input.active ?? true,
       updatedAt: new Date().toISOString(),
       clicks: 0,
@@ -385,7 +428,8 @@ export const upsellsApi = {
       upsellPrice: input.upsellPrice ?? 0,
       badge: input.badge ?? "",
       countdownEndsAt: input.countdownEndsAt ?? null,
-      position: input.position ?? state.settings.defaultUpsellPosition,
+      position: input.position ?? (input.positions?.[0] ?? "below_cart_btn"),
+      positions: input.positions ?? (input.position ? [input.position] : ["below_cart_btn"]),
       active: input.active ?? true,
       updatedAt: new Date().toISOString(),
       conversions: 0,

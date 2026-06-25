@@ -3,8 +3,10 @@ import { useEffect } from "react";
 import appCss from "../styles.css?url";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import { CartProvider } from "@/lib/cart";
+import { WishlistProvider } from "@/lib/wishlist";
 import { I18nProvider } from "@/lib/i18n";
 import { BackButton } from "@/components/site/BackButton";
+import { BeamsBackgroundOrange } from "@/components/ui/beams-background-orange";
 
 function NotFoundComponent() {
   return (
@@ -77,7 +79,12 @@ export const Route = createRootRoute({
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/Oevvt6HiM0Ww3JMFGnieZ8oeEEm1/social-images/social-1776526059596-WhatsApp_Image_2026-04-05_at_12.22.03_AM.webp" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/Oevvt6HiM0Ww3JMFGnieZ8oeEEm1/social-images/social-1776526059596-WhatsApp_Image_2026-04-05_at_12.22.03_AM.webp" },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+    links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -136,8 +143,19 @@ function AuthGate() {
     );
   }
 
+  const isAdminRoute = location.pathname.startsWith("/admin");
+  const isLoginRoute = location.pathname === "/login";
+
   return (
     <>
+      {/* Global animated beams backdrop (fixed canvas, pointer-events-none).
+          Hidden on admin routes and the login page to keep those backgrounds clean. */}
+      {!isAdminRoute && !isLoginRoute && (
+        <>
+          <div aria-hidden className="fixed inset-0 -z-50 bg-neutral-950 pointer-events-none" />
+          <BeamsBackgroundOrange />
+        </>
+      )}
       <BackButton />
       <Outlet />
     </>
@@ -147,7 +165,9 @@ function AuthGate() {
 function RootComponent() {
   return (
     <AuthProvider>
-      <AuthGate />
+      <WishlistProvider>
+        <AuthGate />
+      </WishlistProvider>
     </AuthProvider>
   );
 }

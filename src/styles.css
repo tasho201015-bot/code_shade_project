@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap');
+
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -41,8 +41,12 @@
   --radius: 0.25rem;
 
   /* Malaz palette: noir, cream, champagne, soft gold */
-  --background: oklch(0.985 0.005 80);            /* cream */
-  --foreground: oklch(0.18 0.01 60);              /* deep noir */
+  /* Note: body background is transparent (global BeamsBackground canvas).
+     Foreground/muted/border tokens use warm ivory/champagne tones so default
+     text and borders remain legible on the dark beams backdrop while
+     preserving the brand's luxury aesthetic. */
+  --background: oklch(0.985 0.005 80);            /* cream (used by explicit bg-background surfaces) */
+  --foreground: oklch(0.94 0.025 82);             /* warm ivory */
   --card: oklch(0.99 0.004 80);
   --card-foreground: oklch(0.18 0.01 60);
   --popover: oklch(0.99 0.004 80);
@@ -55,7 +59,7 @@
   --secondary-foreground: oklch(0.22 0.01 60);
 
   --muted: oklch(0.94 0.012 78);
-  --muted-foreground: oklch(0.45 0.012 65);
+  --muted-foreground: oklch(0.82 0.03 80);        /* soft champagne for secondary labels */
 
   --accent: oklch(0.82 0.07 78);                  /* champagne */
   --accent-foreground: oklch(0.18 0.01 60);
@@ -63,9 +67,10 @@
   --destructive: oklch(0.55 0.18 27);
   --destructive-foreground: oklch(0.98 0 0);
 
-  --border: oklch(0.88 0.012 78);
-  --input: oklch(0.88 0.012 78);
+  --border: oklch(0.78 0.04 80 / 28%);            /* warm ivory hairline, visible on dark */
+  --input: oklch(0.78 0.04 80 / 28%);
   --ring: oklch(0.78 0.08 78);
+
 
   --gold: oklch(0.78 0.1 82);
   --champagne: oklch(0.86 0.05 82);
@@ -102,6 +107,19 @@
   --ring: oklch(0.78 0.1 82);
 }
 
+/* Admin dashboard: high-contrast token overrides for the light cream surface */
+.admin-shell {
+  --foreground: oklch(0.18 0.01 60);              /* near-black charcoal */
+  --muted-foreground: oklch(0.38 0.01 60);        /* dark neutral gray */
+  --card-foreground: oklch(0.18 0.01 60);
+  --popover-foreground: oklch(0.18 0.01 60);
+  --secondary-foreground: oklch(0.22 0.01 60);
+  --accent: oklch(0.55 0.12 55);                  /* deeper bronze accent for readable labels */
+  --accent-foreground: oklch(0.97 0.01 80);
+  --border: oklch(0.18 0.01 60 / 0.18);
+  color: var(--foreground);
+}
+
 @font-face {
   font-family: "Cormorant Garamond";
   font-style: normal;
@@ -125,7 +143,7 @@
     scroll-behavior: smooth;
   }
   body {
-    background-color: var(--color-background);
+    background-color: transparent;
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
@@ -225,6 +243,31 @@
   }
   .form-control:focus { border-color: hsl(var(--accent)); }
   select.form-control { appearance: none; cursor: pointer; padding-right: 24px; }
+  /* Ensure native dropdown options remain readable regardless of page foreground color */
+  select.form-control option,
+  select option {
+    color: oklch(0.18 0.01 60);
+    background-color: oklch(0.99 0.004 80);
+  }
+
+  /* Login form inputs: neutralize browser autofill styling so the password field matches the email field */
+  .login-form input:-webkit-autofill,
+  .login-form input:-webkit-autofill:hover,
+  .login-form input:-webkit-autofill:focus,
+  .login-form input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+    -webkit-text-fill-color: #171717 !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+}
+
+/* Glass surfaces sit on a light translucent background; force readable text inside them */
+.glass {
+  color: oklch(0.18 0.01 60);
+}
+.glass .text-muted-foreground,
+.glass label.text-muted-foreground {
+  color: oklch(0.38 0.01 60);
 }
 
 
@@ -238,6 +281,11 @@ html[dir="rtl"] .font-display {
   font-family: 'Tajawal', 'Segoe UI', sans-serif;
   font-weight: 500;
   letter-spacing: 0;
+}
+
+/* Arabic font utility — usable in any direction (admin forms etc.) */
+.font-arabic {
+  font-family: 'Tajawal', 'Segoe UI', sans-serif;
 }
 
 /* ============================================================

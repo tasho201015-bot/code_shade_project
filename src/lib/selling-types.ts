@@ -1,9 +1,11 @@
-export type DisplayLocation = "product" | "cart" | "checkout" | "homepage";
+export type DisplayLocation = "product" | "cart" | "checkout" | "homepage" | "post_purchase";
 
 export interface Bundle {
   id: string;
   name: string;
+  name_ar?: string | null;
   description: string;
+  description_ar?: string | null;
   productIds: string[];
   /** Manual override of original total; if null, computed from products */
   originalPriceOverride: number | null;
@@ -12,6 +14,7 @@ export interface Bundle {
   coverImage: string;
   active: boolean;
   badge: string;
+  badge_ar?: string | null;
   startsAt: string | null;
   endsAt: string | null;
   locations: DisplayLocation[];
@@ -22,11 +25,13 @@ export interface Bundle {
   purchases: number;
 }
 
+
 export type CrossSellStyle = "grid" | "carousel" | "list";
 
 export interface CrossSellSuggestion {
   productId: string;
   label: string;
+  label_ar?: string | null;
 }
 
 export interface CrossSellRule {
@@ -34,14 +39,19 @@ export interface CrossSellRule {
   triggerProductId: string;
   suggestions: CrossSellSuggestion[];
   sectionTitle: string;
+  sectionTitle_ar?: string | null;
   style: CrossSellStyle;
   maxShown: number;
+  /** Legacy single location (kept for backwards-compat). */
   location: DisplayLocation;
+  /** Multi-location display targets. */
+  locations: DisplayLocation[];
   active: boolean;
   updatedAt: string;
   /** mock metric */
   clicks: number;
 }
+
 
 export type UpsellType =
   | "upgrade"
@@ -70,14 +80,19 @@ export interface UpsellRule {
   triggerProductId: string;
   type: UpsellType;
   headline: string;
+  headline_ar?: string | null;
   note: string;
+  note_ar?: string | null;
   suggestedProductId: string | null;
   suggestedBundleId: string | null;
   originalPrice: number;
   upsellPrice: number;
   badge: string;
+  badge_ar?: string | null;
+
   countdownEndsAt: string | null;
   position: "below_cart_btn" | "popup" | "cart" | "checkout";
+  positions: ("below_cart_btn" | "popup" | "cart" | "checkout")[];
   active: boolean;
   updatedAt: string;
   config: UpsellConfig;
@@ -90,6 +105,9 @@ export interface SellingSettings {
   defaultBundleTitle: string;
   defaultCrossSellTitle: string;
   defaultUpsellTitle: string;
+  defaultBundleTitle_ar: string | null;
+  defaultCrossSellTitle_ar: string | null;
+  defaultUpsellTitle_ar: string | null;
   defaultSuggestionCount: number;
   bundlesEnabled: boolean;
   crossSellsEnabled: boolean;

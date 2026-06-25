@@ -10,6 +10,8 @@ function generateConfirmationToken(): string {
 
 const PaySchema = z.object({
   shipping_address: z.string().trim().min(5).max(1000),
+  governorate: z.string().trim().min(2).max(80),
+  city: z.string().trim().min(1).max(120),
   phone: z.string().trim().min(5).max(40),
   access_token: z.string().optional(),
   items: z
@@ -17,6 +19,8 @@ const PaySchema = z.object({
       z.object({
         product_id: z.string().min(1).max(120),
         quantity: z.number().int().min(1).max(99),
+        color: z.string().trim().max(80).optional(),
+        size: z.string().trim().max(40).optional(),
       }),
     )
     .min(1)
@@ -162,9 +166,13 @@ export const createPaymobCheckout = createServerFn({ method: "POST" })
         if (p.stock < i.quantity) throw new Error(`Insufficient stock: ${p.name}`);
         const lineTotal = Number(p.price) * i.quantity;
         total += lineTotal;
+        const variantParts = [i.color, i.size].filter(Boolean);
+        const displayName = variantParts.length
+          ? `${p.name} (${variantParts.join(" · ")})`
+          : p.name;
         return {
           product_id: p.id,
-          product_name: p.name,
+          product_name: displayName,
           price: Number(p.price),
           quantity: i.quantity,
         };
@@ -181,6 +189,8 @@ export const createPaymobCheckout = createServerFn({ method: "POST" })
           status: "pending",
           confirmation_token: generateConfirmationToken(),
           shipping_address: data.shipping_address,
+          governorate: data.governorate,
+          city: data.city,
           phone: data.phone,
           payment_provider: "paymob",
         })
@@ -315,9 +325,13 @@ export const createPaymobWalletCheckout = createServerFn({ method: "POST" })
         if (p.stock < i.quantity) throw new Error(`Insufficient stock: ${p.name}`);
         const lineTotal = Number(p.price) * i.quantity;
         total += lineTotal;
+        const variantParts = [i.color, i.size].filter(Boolean);
+        const displayName = variantParts.length
+          ? `${p.name} (${variantParts.join(" · ")})`
+          : p.name;
         return {
           product_id: p.id,
-          product_name: p.name,
+          product_name: displayName,
           price: Number(p.price),
           quantity: i.quantity,
         };
@@ -333,6 +347,8 @@ export const createPaymobWalletCheckout = createServerFn({ method: "POST" })
           status: "pending",
           confirmation_token: generateConfirmationToken(),
           shipping_address: data.shipping_address,
+          governorate: data.governorate,
+          city: data.city,
           phone: data.phone,
           payment_provider: "paymob_wallet",
         })

@@ -8,7 +8,6 @@ import type { Bundle, DisplayLocation } from "@/lib/selling-types";
 
 const LOCATIONS: { value: DisplayLocation; label: string }[] = [
   { value: "product", label: "Product Page" },
-  { value: "cart", label: "Cart Page" },
   { value: "checkout", label: "Checkout" },
   { value: "homepage", label: "Homepage" },
 ];
@@ -24,35 +23,44 @@ export function BundleForm({
 }) {
   const products = useProducts();
   const [name, setName] = useState("");
+  const [nameAr, setNameAr] = useState("");
   const [desc, setDesc] = useState("");
+  const [descAr, setDescAr] = useState("");
   const [productIds, setProductIds] = useState<string[]>([]);
   const [discountMode, setDiscountMode] = useState<"fixed" | "percent">("percent");
   const [discountValue, setDiscountValue] = useState(10);
   const [cover, setCover] = useState("");
   const [active, setActive] = useState(true);
   const [badge, setBadge] = useState("");
+  const [badgeAr, setBadgeAr] = useState("");
   const [startsAt, setStartsAt] = useState("");
   const [endsAt, setEndsAt] = useState("");
   const [locations, setLocations] = useState<DisplayLocation[]>(["product"]);
+  const [showAr, setShowAr] = useState(false);
 
   useEffect(() => {
     if (initial) {
       setName(initial.name);
+      setNameAr(initial.name_ar ?? "");
       setDesc(initial.description);
+      setDescAr(initial.description_ar ?? "");
       setProductIds(initial.productIds);
       setDiscountMode(initial.discountMode);
       setDiscountValue(initial.discountValue);
       setCover(initial.coverImage);
       setActive(initial.active);
       setBadge(initial.badge);
+      setBadgeAr(initial.badge_ar ?? "");
       setStartsAt(initial.startsAt?.slice(0, 10) ?? "");
       setEndsAt(initial.endsAt?.slice(0, 10) ?? "");
       setLocations(initial.locations);
+      setShowAr(Boolean(initial.name_ar || initial.description_ar || initial.badge_ar));
     } else if (open) {
-      setName(""); setDesc(""); setProductIds([]);
+      setName(""); setNameAr(""); setDesc(""); setDescAr(""); setProductIds([]);
       setDiscountMode("percent"); setDiscountValue(10);
-      setCover(""); setActive(true); setBadge("");
+      setCover(""); setActive(true); setBadge(""); setBadgeAr("");
       setStartsAt(""); setEndsAt(""); setLocations(["product"]);
+      setShowAr(false);
     }
   }, [initial, open]);
 
@@ -71,13 +79,16 @@ export function BundleForm({
     if (productIds.length === 0) return toast.error("Add at least one product");
     const payload: Partial<Bundle> = {
       name: name.trim(),
+      name_ar: nameAr.trim() || null,
       description: desc.trim(),
+      description_ar: descAr.trim() || null,
       productIds,
       discountMode,
       discountValue,
       coverImage: cover.trim(),
       active,
       badge: badge.trim(),
+      badge_ar: badgeAr.trim() || null,
       startsAt: startsAt ? new Date(startsAt).toISOString() : null,
       endsAt: endsAt ? new Date(endsAt).toISOString() : null,
       locations,
@@ -140,6 +151,52 @@ export function BundleForm({
       <Field label="Badge label">
         <input className="s-input" value={badge} onChange={(e) => setBadge(e.target.value)} placeholder="Best Value" />
       </Field>
+
+      <div className="s-card p-3 space-y-3">
+        <button
+          type="button"
+          onClick={() => setShowAr((v) => !v)}
+          className="w-full flex items-center justify-between text-sm font-medium"
+        >
+          <span className="font-arabic" dir="rtl">المحتوى العربي</span>
+          <span className="s-muted text-xs">{showAr ? "−" : "+"}</span>
+        </button>
+        {showAr && (
+          <div className="space-y-3">
+            <Field label="اسم الباقة (Bundle name)">
+              <input
+                className="s-input font-arabic"
+                dir="rtl"
+                lang="ar"
+                value={nameAr}
+                onChange={(e) => setNameAr(e.target.value)}
+                placeholder="أكمل الإطلالة"
+              />
+            </Field>
+            <Field label="الوصف (Description)">
+              <textarea
+                className="s-input font-arabic"
+                dir="rtl"
+                lang="ar"
+                rows={3}
+                value={descAr}
+                onChange={(e) => setDescAr(e.target.value)}
+              />
+            </Field>
+            <Field label="الشارة (Badge)">
+              <input
+                className="s-input font-arabic"
+                dir="rtl"
+                lang="ar"
+                value={badgeAr}
+                onChange={(e) => setBadgeAr(e.target.value)}
+                placeholder="أفضل قيمة"
+              />
+            </Field>
+            <p className="text-xs s-muted">Leave empty to fall back to English.</p>
+          </div>
+        )}
+      </div>
 
       <div className="grid grid-cols-2 gap-3">
         <Field label="Starts at"><input type="date" className="s-input" value={startsAt} onChange={(e) => setStartsAt(e.target.value)} /></Field>

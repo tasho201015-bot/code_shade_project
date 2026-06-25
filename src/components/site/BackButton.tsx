@@ -1,8 +1,10 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 export function BackButton() {
   const location = useLocation();
+  const { t } = useI18n();
 
   if (location.pathname === "/") return null;
 
@@ -13,8 +15,9 @@ export function BackButton() {
         className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 group"
       >
         <ArrowLeft className="w-4 h-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
-        <span>Home</span>
+        <span>{t("back.home")}</span>
       </Link>
     </div>
   );
 }
+

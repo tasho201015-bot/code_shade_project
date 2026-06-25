@@ -3,14 +3,18 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useI18n } from "@/lib/i18n";
 import heroBg from "@/assets/product-7.webp";
 
 export const Route = createFileRoute("/reset-password")({
   component: ResetPasswordPage,
 });
 
+
 function ResetPasswordPage() {
+  const { t } = useI18n();
   const nav = useNavigate();
+
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [show, setShow] = useState(false);
@@ -92,8 +96,9 @@ function ResetPasswordPage() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErr(null);
-    if (password.length < 6) return setErr("Password must be at least 6 characters.");
-    if (password !== confirm) return setErr("Passwords do not match.");
+    if (password.length < 6) return setErr(t("auth.pwdShort"));
+    if (password !== confirm) return setErr(t("auth.pwdMismatch"));
+
     setLoading(true);
     const { error } = await supabase.auth.updateUser({ password });
     setLoading(false);
@@ -127,48 +132,50 @@ function ResetPasswordPage() {
             Mala<span className="italic font-light">z</span>
           </div>
           <p className="mt-2 text-center text-xs uppercase tracking-luxe text-muted-foreground">
-            Set a new password
+            {t("auth.newPwdTitle")}
           </p>
 
           {checking ? (
             <p className="mt-10 text-center text-sm text-muted-foreground animate-pulse">
-              Verifying your reset link…
+              {t("auth.verifying")}
             </p>
           ) : linkError ? (
             <div className="mt-10 space-y-5 text-center">
               <p className="text-sm text-destructive">
-                This reset link is invalid or has expired.
+                {t("auth.linkInvalid")}
               </p>
               <p className="text-xs text-muted-foreground">{linkError}</p>
               <Link
                 to="/forgot-password"
                 className="inline-block btn-glow bg-noir text-cream px-6 py-3 text-xs uppercase tracking-luxe"
               >
-                Request new link
+                {t("auth.requestNew")}
               </Link>
             </div>
           ) : !ready ? (
             <div className="mt-10 space-y-4 text-center">
               <p className="text-sm text-muted-foreground">
-                Open the reset link from your email to continue.
+                {t("auth.openLink")}
               </p>
               <Link
                 to="/forgot-password"
                 className="inline-block text-xs uppercase tracking-luxe text-muted-foreground hover:text-foreground transition-colors"
               >
-                Request new link
+                {t("auth.requestNew")}
               </Link>
             </div>
           ) : done ? (
             <p className="mt-10 text-center text-sm text-foreground">
-              Password updated. Redirecting to sign in…
+              {t("auth.pwdUpdated")}
             </p>
+
           ) : (
             <form onSubmit={onSubmit} className="mt-10 space-y-5">
               <div>
                 <label className="text-[10px] uppercase tracking-luxe text-muted-foreground">
-                  New password
+                  {t("auth.newPwd")}
                 </label>
+
                 <div className="relative">
                   <input
                     type={show ? "text" : "password"}
@@ -182,7 +189,7 @@ function ResetPasswordPage() {
                     type="button"
                     onClick={() => setShow((s) => !s)}
                     className="absolute right-0 top-1/2 -translate-y-1/2 mt-1 text-muted-foreground hover:text-foreground transition-colors"
-                    aria-label={show ? "Hide password" : "Show password"}
+                    aria-label={show ? t("auth.hidePwd") : t("auth.showPwd")}
                   >
                     {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -191,8 +198,9 @@ function ResetPasswordPage() {
 
               <div>
                 <label className="text-[10px] uppercase tracking-luxe text-muted-foreground">
-                  Confirm password
+                  {t("auth.confirmPwd")}
                 </label>
+
                 <input
                   type={show ? "text" : "password"}
                   required
@@ -210,7 +218,7 @@ function ResetPasswordPage() {
                 disabled={loading}
                 className="btn-glow w-full bg-noir text-cream py-4 text-xs uppercase tracking-luxe disabled:opacity-60"
               >
-                {loading ? "Updating…" : "Update password"}
+                {loading ? t("auth.updating") : t("auth.updatePwd")}
               </button>
             </form>
           )}

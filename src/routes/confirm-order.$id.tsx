@@ -10,8 +10,10 @@ import {
   confirmOrder as confirmOrderFn,
 } from "@/lib/orders.functions";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { OrderStatusBadge } from "@/components/site/OrderStatusBadge";
+import { useI18n } from "@/lib/i18n";
+import { PostPurchaseOffers } from "@/components/storefront/PostPurchaseOffers";
+
 
 const searchSchema = (s: Record<string, unknown>) => ({
   token: typeof s.token === "string" ? s.token : "",
@@ -22,7 +24,7 @@ export const Route = createFileRoute("/confirm-order/$id")({
   component: ConfirmOrderPage,
 });
 
-type OrderItem = { id: string; product_name: string; quantity: number; price: number };
+type OrderItem = { id: string; product_id?: string | null; product_name: string; quantity: number; price: number };
 type OrderData = {
   id: string;
   status: string;
@@ -34,6 +36,8 @@ type OrderData = {
 };
 
 function ConfirmOrderPage() {
+  const { t } = useI18n();
+
   const { id } = useParams({ from: "/confirm-order/$id" });
   const { token } = useSearch({ from: "/confirm-order/$id" });
   const load = useServerFn(loadConfirmOrderFn);
@@ -65,7 +69,7 @@ function ConfirmOrderPage() {
           setPhone(res.order.phone);
         }
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Failed to load order.");
+        setError(e instanceof Error ? e.message : t("confirm.failLoad"));
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -108,40 +112,41 @@ function ConfirmOrderPage() {
       );
       setEditing(false);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to confirm.");
+      setError(e instanceof Error ? e.message : t("confirm.failConfirm"));
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="bg-background min-h-screen">
+    <div className="min-h-screen">
       <Header />
       <div className="pt-32 pb-32 max-w-2xl mx-auto px-6 lg:px-10">
-        <div className="text-[10px] uppercase tracking-luxe text-accent">Order confirmation</div>
-        <h1 className="font-display text-4xl md:text-5xl mt-2">Please confirm your order</h1>
+        <div className="text-[10px] uppercase tracking-luxe text-accent">{t("confirm.eyebrow")}</div>
+        <h1 className="font-display text-4xl md:text-5xl mt-2">{t("confirm.title")}</h1>
         <p className="text-muted-foreground mt-3 text-sm">
-          Verify your delivery details so we can ship your order without delay.
+          {t("confirm.desc")}
         </p>
 
         {loading && (
           <div className="mt-12 flex items-center gap-3 text-muted-foreground">
-            <Loader2 className="w-5 h-5 animate-spin" /> Loading your order…
+            <Loader2 className="w-5 h-5 animate-spin" /> {t("confirm.loading")}
           </div>
         )}
 
         {!loading && error && !order && (
-          <div className="mt-12 glass p-6 rounded-sm flex items-start gap-3">
+          <div className="mt-12 bg-black text-white border border-white/10 p-6 rounded-sm flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
             <div>
-              <div className="font-display text-xl">We couldn't open this link</div>
-              <div className="text-sm text-muted-foreground mt-1">{error}</div>
+              <div className="font-display text-xl">{t("confirm.openFail")}</div>
+              <div className="text-sm text-white/70 mt-1">{error}</div>
               <Link to="/account" className="link-underline text-xs uppercase tracking-luxe mt-4 inline-block">
-                Go to your account
+                {t("confirm.toAccount")}
               </Link>
             </div>
           </div>
         )}
+
 
         {!loading && order && (
           <motion.div
@@ -149,10 +154,10 @@ function ConfirmOrderPage() {
             animate={{ opacity: 1, y: 0 }}
             className="mt-10 space-y-8"
           >
-            <div className="glass p-6 rounded-sm space-y-4">
+            <div className="bg-black text-white border border-white/10 p-6 rounded-sm space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="text-[10px] uppercase tracking-luxe text-muted-foreground">Order</div>
+                  <div className="text-[10px] uppercase tracking-luxe text-white/70">{t("confirm.order")}</div>
                   <div className="font-mono text-sm mt-1">#{order.id.slice(0, 8)}</div>
                 </div>
                 <OrderStatusBadge status={order.status} />
@@ -161,54 +166,54 @@ function ConfirmOrderPage() {
               {!editing ? (
                 <div className="space-y-3 pt-2">
                   <div>
-                    <div className="text-[10px] uppercase tracking-luxe text-muted-foreground">Phone</div>
+                    <div className="text-[10px] uppercase tracking-luxe text-white/70">{t("confirm.phone")}</div>
                     <div className="text-sm mt-1">{order.phone}</div>
                   </div>
                   <div>
-                    <div className="text-[10px] uppercase tracking-luxe text-muted-foreground">Shipping address</div>
+                    <div className="text-[10px] uppercase tracking-luxe text-white/70">{t("confirm.address")}</div>
                     <div className="text-sm mt-1 whitespace-pre-wrap">{order.shipping_address}</div>
                   </div>
                 </div>
               ) : (
                 <div className="space-y-3 pt-2">
                   <div>
-                    <label className="text-[10px] uppercase tracking-luxe text-muted-foreground">Phone</label>
+                    <label className="text-[10px] uppercase tracking-luxe text-white/70">{t("confirm.phone")}</label>
                     <input
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="mt-1 w-full bg-transparent border-b border-border focus:border-accent py-2 outline-none text-sm"
+                      className="mt-1 w-full bg-transparent border-b border-white/20 focus:border-accent py-2 outline-none text-sm"
                     />
                   </div>
                   <div>
-                    <label className="text-[10px] uppercase tracking-luxe text-muted-foreground">Shipping address</label>
+                    <label className="text-[10px] uppercase tracking-luxe text-white/70">{t("confirm.address")}</label>
                     <textarea
                       rows={3}
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
-                      className="mt-1 w-full bg-transparent border-b border-border focus:border-accent py-2 outline-none text-sm resize-none"
+                      className="mt-1 w-full bg-transparent border-b border-white/20 focus:border-accent py-2 outline-none text-sm resize-none"
                     />
                   </div>
                 </div>
               )}
             </div>
 
-            <div className="glass p-6 rounded-sm">
-              <div className="text-[10px] uppercase tracking-luxe text-muted-foreground mb-3">Items</div>
+            <div className="bg-black text-white border border-white/10 p-6 rounded-sm">
+              <div className="text-[10px] uppercase tracking-luxe text-white/70 mb-3">{t("confirm.items")}</div>
               <div className="space-y-2">
                 {items.length === 0 && (
-                  <div className="text-sm text-muted-foreground">No items found.</div>
+                  <div className="text-sm text-white/70">{t("confirm.noItems")}</div>
                 )}
                 {items.map((it) => (
                   <div key={it.id} className="flex justify-between text-sm">
                     <span>
-                      {it.product_name} <span className="text-muted-foreground">× {it.quantity}</span>
+                      {it.product_name} <span className="text-white/70">× {it.quantity}</span>
                     </span>
                     <span className="tabular-nums">${(Number(it.price) * it.quantity).toFixed(2)}</span>
                   </div>
                 ))}
               </div>
-              <div className="border-t border-border mt-4 pt-3 flex justify-between font-display text-xl">
-                <span>Total</span>
+              <div className="border-t border-white/20 mt-4 pt-3 flex justify-between font-display text-xl">
+                <span>{t("confirm.total")}</span>
                 <span className="tabular-nums">${order.total.toFixed(2)}</span>
               </div>
             </div>
@@ -216,21 +221,28 @@ function ConfirmOrderPage() {
             {error && <div className="text-xs text-destructive">{error}</div>}
 
             {done ? (
-              <div className="glass p-6 rounded-sm flex items-start gap-3">
-                <CheckCircle2 className="w-6 h-6 text-accent flex-shrink-0" />
-                <div>
-                  <div className="font-display text-xl">Order confirmed</div>
-                  <div className="text-sm text-muted-foreground mt-1">
-                    Thank you. We're preparing your order for shipment.
+              <div className="space-y-6">
+                <div className="bg-black text-white border border-white/10 p-6 rounded-sm flex items-start gap-3">
+                  <CheckCircle2 className="w-6 h-6 text-accent flex-shrink-0" />
+                  <div>
+                    <div className="font-display text-xl">{t("confirm.confirmed")}</div>
+                    <div className="text-sm text-white/70 mt-1">
+                      {t("confirm.confirmedDesc")}
+                    </div>
                   </div>
-                  <div className="mt-4 flex gap-3">
-                    <Link to="/" className="px-5 py-2 text-xs uppercase tracking-luxe bg-noir text-cream">
-                      Go home
-                    </Link>
-                    <Link to="/account" className="px-5 py-2 text-xs uppercase tracking-luxe border border-border hover:border-accent">
-                      View orders
-                    </Link>
-                  </div>
+                </div>
+
+                <PostPurchaseOffers
+                  productIds={items.map((i) => i.product_id).filter((x): x is string => !!x)}
+                />
+
+                <div className="flex gap-3">
+                  <Link to="/" className="px-5 py-2 text-xs uppercase tracking-luxe bg-noir text-cream">
+                    {t("confirm.goHome")}
+                  </Link>
+                  <Link to="/account" className="px-5 py-2 text-xs uppercase tracking-luxe border border-white/20 hover:border-accent">
+                    {t("confirm.viewOrders")}
+                  </Link>
                 </div>
               </div>
             ) : (
@@ -238,25 +250,26 @@ function ConfirmOrderPage() {
                 {!editing ? (
                   <>
                     <Button onClick={() => submit(false)} disabled={submitting}>
-                      {submitting ? "Confirming…" : "Confirm information"}
+                      {submitting ? t("confirm.confirming") : t("confirm.confirmInfo")}
                     </Button>
-                    <Button variant="outline" onClick={() => setEditing(true)} disabled={submitting}>
+                    <Button variant="outline" onClick={() => setEditing(true)} disabled={submitting} className="bg-gold text-black border-gold hover:bg-gold/90 hover:text-black">
                       <Pencil className="w-4 h-4 mr-2" />
-                      Edit information
+                      {t("confirm.editInfo")}
                     </Button>
                   </>
                 ) : (
                   <>
                     <Button onClick={() => submit(true)} disabled={submitting}>
-                      {submitting ? "Saving…" : "Save & confirm"}
+                      {submitting ? t("confirm.saving") : t("confirm.saveConfirm")}
                     </Button>
                     <Button variant="outline" onClick={() => setEditing(false)} disabled={submitting}>
-                      Cancel
+                      {t("confirm.cancelBtn")}
                     </Button>
                   </>
                 )}
               </div>
             )}
+
           </motion.div>
         )}
       </div>

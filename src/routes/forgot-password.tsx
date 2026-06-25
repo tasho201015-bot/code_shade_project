@@ -3,6 +3,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useI18n } from "@/lib/i18n";
 import heroBg from "@/assets/product-7.webp";
 
 export const Route = createFileRoute("/forgot-password")({
@@ -10,6 +11,7 @@ export const Route = createFileRoute("/forgot-password")({
 });
 
 function ForgotPasswordPage() {
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -56,30 +58,30 @@ function ForgotPasswordPage() {
             Mala<span className="italic font-light">z</span>
           </div>
           <p className="mt-2 text-center text-xs uppercase tracking-luxe text-muted-foreground">
-            Reset your password
+            {t("auth.resetTitle")}
           </p>
 
           {sent ? (
             <div className="mt-10 space-y-5 text-center">
               <p className="text-sm text-foreground">
-                We sent a reset link to <span className="font-medium">{email}</span>.
+                {t("auth.sentTo", { email })}
               </p>
               <p className="text-xs text-muted-foreground">
-                Check your inbox and click the link to set a new password.
+                {t("auth.checkInbox")}
               </p>
               <Link
                 to="/login"
                 search={{ redirect: "/" }}
                 className="inline-flex items-center gap-2 text-xs uppercase tracking-luxe text-muted-foreground hover:text-foreground transition-colors"
               >
-                <ArrowLeft className="w-3 h-3" /> Back to sign in
+                <ArrowLeft className="w-3 h-3" /> {t("auth.backToSignin")}
               </Link>
             </div>
           ) : (
             <form onSubmit={onSubmit} className="mt-10 space-y-5">
               <div>
                 <label className="text-[10px] uppercase tracking-luxe text-muted-foreground">
-                  Email
+                  {t("auth.email")}
                 </label>
                 <input
                   type="email"
@@ -97,7 +99,7 @@ function ForgotPasswordPage() {
                 disabled={loading}
                 className="btn-glow w-full bg-noir text-cream py-4 text-xs uppercase tracking-luxe disabled:opacity-60"
               >
-                {loading ? "Sending…" : "Send reset link"}
+                {loading ? t("auth.sending") : t("auth.sendReset")}
               </button>
 
               <Link
@@ -105,7 +107,7 @@ function ForgotPasswordPage() {
                 search={{ redirect: "/" }}
                 className="flex items-center justify-center gap-2 text-xs uppercase tracking-luxe text-muted-foreground hover:text-foreground transition-colors"
               >
-                <ArrowLeft className="w-3 h-3" /> Back to sign in
+                <ArrowLeft className="w-3 h-3" /> {t("auth.backToSignin")}
               </Link>
             </form>
           )}

@@ -95,7 +95,7 @@ export function CrossSellsPage() {
                       </div>
                     </td>
                     <td className="px-3 py-3 s-muted">{r.suggestions.length} · {r.style}</td>
-                    <td className="px-3 py-3 s-muted capitalize">{r.location}</td>
+                    <td className="px-3 py-3 s-muted capitalize">{(r.locations?.length ? r.locations : [r.location]).join(", ")}</td>
                     <td className="px-3 py-3 s-muted">{new Date(r.updatedAt).toLocaleDateString()}</td>
                     <td className="px-3 py-3">
                       <label className="inline-flex items-center gap-2 cursor-pointer">

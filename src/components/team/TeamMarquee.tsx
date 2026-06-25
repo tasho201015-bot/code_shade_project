@@ -20,7 +20,7 @@ export function TeamMarquee() {
   const loop = [...members, ...members];
 
   return (
-    <section className="py-24 lg:py-32 bg-background">
+    <section className="py-24 lg:py-32">
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
         <Reveal>
           <div className="text-center mb-14">

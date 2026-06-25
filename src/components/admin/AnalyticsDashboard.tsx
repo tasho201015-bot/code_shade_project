@@ -1,19 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { format, subDays, startOfDay } from "date-fns";
+import { format } from "date-fns";
 import { toast } from "sonner";
-import { TrendingUp, DollarSign, Receipt, Target, ShoppingBag, Percent, UserPlus, AlertTriangle } from "lucide-react";
+import { TrendingUp, DollarSign, Receipt, Target, ShoppingBag, Percent, UserPlus } from "lucide-react";
 import { grantAdminByEmail } from "@/lib/orders.functions";
-import { Link } from "@tanstack/react-router";
-
-interface Order {
-  id: string;
-  total: number;
-  status: string;
-  created_at: string;
-}
+import {
+  getAnalyticsOverview,
+  getRevenueChartAndGovernorates,
+} from "@/lib/analytics.functions";
+import { useAnalyticsRange } from "@/lib/analytics-range";
 
 interface Expense {
   id: string;
@@ -22,10 +20,8 @@ interface Expense {
   occurred_at: string;
 }
 
-const REVENUE_STATUSES = new Set(["pending", "processing", "shipped", "delivered"]);
-const SUCCESS_STATUSES = new Set(["delivered"]);
-const CONFIRMED_STATUSES = new Set(["processing", "shipped", "delivered"]);
-const CANCELLED_STATUSES = new Set(["cancelled", "returned"]);
+type Overview = Awaited<ReturnType<typeof getAnalyticsOverview>>;
+type ChartData = Awaited<ReturnType<typeof getRevenueChartAndGovernorates>>;
 
 function Metric({ label, value, hint, icon: Icon, accent }: {
   label: string; value: string; hint?: string; icon: React.ComponentType<{ className?: string }>; accent?: boolean;
@@ -46,7 +42,12 @@ function Metric({ label, value, hint, icon: Icon, accent }: {
 }
 
 export function AnalyticsDashboard({ section }: { section: "overview" | "orders" | "performance" }) {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const { range, refreshKey } = useAnalyticsRange();
+  const days = range.days;
+  const fetchOverview = useServerFn(getAnalyticsOverview);
+  const fetchChart = useServerFn(getRevenueChartAndGovernorates);
+  const [overview, setOverview] = useState<Overview | null>(null);
+  const [chart, setChart] = useState<ChartData | null>(null);
   const [expenseRows, setExpenseRows] = useState<Expense[]>([]);
   const [expenseAmount, setExpenseAmount] = useState<string>("");
   const [expenseDesc, setExpenseDesc] = useState<string>("");
@@ -55,67 +56,70 @@ export function AnalyticsDashboard({ section }: { section: "overview" | "orders"
   const [granting, setGranting] = useState(false);
 
   useEffect(() => {
-    const since = subDays(new Date(), 90).toISOString();
-    supabase.from("orders").select("id,total,status,created_at")
-      .gte("created_at", since)
-      .order("created_at", { ascending: false })
-      .limit(1000)
-      .then(({ data }) => setOrders((data ?? []) as Order[]));
+    let cancelled = false;
+    fetchOverview({ data: { from: range.from, to: range.to } })
+      .then((d) => { if (!cancelled) setOverview(d); })
+      .catch(() => { if (!cancelled) setOverview(null); });
+    fetchChart({ data: { from: range.from, to: range.to, days } })
+      .then((d) => { if (!cancelled) setChart(d); })
+      .catch(() => { if (!cancelled) setChart(null); });
     supabase.from("expenses").select("id,amount,description,occurred_at")
-      .gte("occurred_at", since)
+      .gte("occurred_at", range.from)
+      .lte("occurred_at", range.to)
       .order("occurred_at", { ascending: false })
-      .limit(500)
-      .then(({ data }) => setExpenseRows((data ?? []) as Expense[]));
-  }, []);
+      .limit(5000)
+      .then(({ data }) => { if (!cancelled) setExpenseRows((data ?? []) as Expense[]); });
+    return () => { cancelled = true; };
+  }, [fetchOverview, fetchChart, range, days, refreshKey]);
 
   const expenses = useMemo(
-    () => expenseRows.reduce((s, e) => s + Number(e.amount), 0),
-    [expenseRows],
+    () => (overview?.totals.adSpend.amount ?? 0) + (overview?.totals.otherExpenses ?? 0),
+    [overview],
   );
 
   const m = useMemo(() => {
-    const norm = (s: string) => s.toLowerCase();
-    const revenueOrders = orders.filter((o) => REVENUE_STATUSES.has(norm(o.status)));
-    const revenue = revenueOrders.reduce((s, o) => s + Number(o.total), 0);
-    const totalOrders = orders.length;
-    const confirmed = orders.filter((o) => CONFIRMED_STATUSES.has(norm(o.status))).length;
-    const delivered = orders.filter((o) => SUCCESS_STATUSES.has(norm(o.status))).length;
-    const cancelled = orders.filter((o) => CANCELLED_STATUSES.has(norm(o.status))).length;
+    const t = overview?.totals;
+    const revenue = t?.sales.revenue ?? 0;            // gross
+    const netSales = t?.sales.net ?? 0;               // gross − returns
+    const purchases = t?.purchases ?? 0;
+    
+    const sb = overview?.statusBreakdown;
+    const totalOrders = sb
+      ? sb.pending.count + sb.confirmed.count + sb.shipped.count + sb.delivered.count + sb.returned.count + sb.cancelled.count
+      : 0;
+    const confirmed = sb ? sb.confirmed.count + sb.shipped.count + sb.delivered.count : 0;
+    const delivered = sb?.delivered.count ?? 0;
+    const cancelled = sb ? sb.cancelled.count + sb.returned.count : 0;
 
-    const netProfit = revenue - expenses;
-    const ros = expenses > 0 ? revenue / expenses : 0;
-    const aov = revenueOrders.length > 0 ? revenue / revenueOrders.length : 0;
-    const cpp = totalOrders > 0 ? expenses / totalOrders : 0;
+    const netProfit = t?.netProfit ?? 0;
+    const ros = expenses > 0 ? netSales / expenses : 0;
+    const aov = purchases > 0 ? netSales / purchases : 0;
+    const cpp = t?.cpp ?? null;
     const confirmRate = totalOrders > 0 ? (confirmed / totalOrders) * 100 : 0;
     const deliveryRate = totalOrders > 0 ? (delivered / totalOrders) * 100 : 0;
     const returnRate = totalOrders > 0 ? (cancelled / totalOrders) * 100 : 0;
 
-    return { revenue, netProfit, ros, aov, cpp, totalOrders, confirmed, delivered, cancelled, confirmRate, deliveryRate, returnRate };
-  }, [orders, expenses]);
+    return { revenue, netSales, netProfit, ros, aov, cpp, totalOrders, confirmed, delivered, cancelled, confirmRate, deliveryRate, returnRate, purchases };
+  }, [overview, expenses]);
 
-  const revenueByDay = useMemo(() => {
-    const days = 14;
-    const buckets = new Map<string, number>();
-    for (let i = days - 1; i >= 0; i--) {
-      const d = format(subDays(new Date(), i), "MMM d");
-      buckets.set(d, 0);
-    }
-    const cutoff = startOfDay(subDays(new Date(), days - 1)).getTime();
-    orders.forEach((o) => {
-      if (!REVENUE_STATUSES.has(o.status.toLowerCase())) return;
-      const t = new Date(o.created_at).getTime();
-      if (t < cutoff) return;
-      const key = format(new Date(o.created_at), "MMM d");
-      buckets.set(key, (buckets.get(key) || 0) + Number(o.total));
-    });
-    return Array.from(buckets, ([day, revenue]) => ({ day, revenue: Math.round(revenue * 100) / 100 }));
-  }, [orders]);
+  const revenueByDay = useMemo(
+    () => (chart?.series ?? []).map((s) => ({ day: s.day, revenue: s.sales })),
+    [chart],
+  );
 
   const statusBreakdown = useMemo(() => {
-    const counts: Record<string, number> = {};
-    orders.forEach((o) => { const k = o.status.toLowerCase(); counts[k] = (counts[k] || 0) + 1; });
-    return Object.entries(counts).map(([status, count]) => ({ status, count }));
-  }, [orders]);
+    const sb = overview?.statusBreakdown;
+    if (!sb) return [] as { status: string; count: number }[];
+    return [
+      { status: "pending", count: sb.pending.count },
+      { status: "confirmed", count: sb.confirmed.count },
+      { status: "shipped", count: sb.shipped.count },
+      { status: "delivered", count: sb.delivered.count },
+      { status: "returned", count: sb.returned.count },
+      { status: "cancelled", count: sb.cancelled.count },
+    ];
+  }, [overview]);
+
 
   const handleGrant = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -187,14 +191,14 @@ export function AnalyticsDashboard({ section }: { section: "overview" | "orders"
           <Metric label="Total Expenses" value={fmt$(expenses)} hint="Manual entry" icon={Receipt} />
           <Metric label="ROS" value={expenses > 0 ? `${m.ros.toFixed(2)}×` : "No data"} hint={expenses > 0 ? "Return on spend" : "Add expenses to calculate"} icon={Target} />
           <Metric label="AOV" value={fmt$(m.aov)} hint="Avg. order value" icon={ShoppingBag} />
-          <Metric label="CPP" value={expenses > 0 && m.totalOrders > 0 ? fmt$(m.cpp) : "No data"} hint={expenses > 0 && m.totalOrders > 0 ? "Cost per purchase" : "Needs orders & expenses"} icon={Percent} />
+          <Metric label="CPP" value={m.cpp != null ? fmt$(m.cpp) : "No data"} hint={m.cpp != null ? "Cost per purchase" : "Needs orders & ad spend"} icon={Percent} />
         </div>
 
         <div className="glass p-6 rounded-sm border border-border">
           <div className="flex items-center justify-between mb-4">
             <div>
               <div className="text-[10px] uppercase tracking-luxe text-muted-foreground">Revenue</div>
-              <div className="font-display text-xl">Last 14 days</div>
+              <div className="font-display text-xl">{range.label}</div>
             </div>
           </div>
           <div className="h-72">

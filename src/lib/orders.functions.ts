@@ -10,6 +10,8 @@ function generateToken(): string {
 
 const PlaceOrderSchema = z.object({
   shipping_address: z.string().trim().min(5).max(1000),
+  governorate: z.string().trim().min(2).max(80),
+  city: z.string().trim().min(1).max(120),
   phone: z.string().trim().min(5).max(40),
   access_token: z.string().optional(),
   items: z
@@ -17,6 +19,8 @@ const PlaceOrderSchema = z.object({
       z.object({
         product_id: z.string().min(1).max(120),
         quantity: z.number().int().min(1).max(99),
+        color: z.string().trim().max(80).optional(),
+        size: z.string().trim().max(40).optional(),
       })
     )
     .min(1)
@@ -126,9 +130,13 @@ export const placeOrder = createServerFn({ method: "POST" })
       if (p.stock < i.quantity) throw new Error(`Insufficient stock: ${p.name}`);
       const lineTotal = Number(p.price) * i.quantity;
       total += lineTotal;
+      const variantParts = [i.color, i.size].filter(Boolean);
+      const displayName = variantParts.length
+        ? `${p.name} (${variantParts.join(" · ")})`
+        : p.name;
       return {
         product_id: p.id,
-        product_name: p.name,
+        product_name: displayName,
         price: Number(p.price),
         quantity: i.quantity,
       };
@@ -145,6 +153,8 @@ export const placeOrder = createServerFn({ method: "POST" })
         payment_provider: "cod",
         confirmation_token: generateToken(),
         shipping_address: data.shipping_address,
+        governorate: data.governorate,
+        city: data.city,
         phone: data.phone,
       })
       .select("id, confirmation_token")
@@ -169,6 +179,43 @@ export const placeOrder = createServerFn({ method: "POST" })
       await supabaseAdmin.from("order_items").delete().eq("order_id", order.id);
       await supabaseAdmin.from("orders").delete().eq("id", order.id);
       return { ok: false, error: stockErr.message || "Insufficient stock." };
+    }
+
+    // Fire order emails (customer confirmation + business notification).
+    // Failures are logged but never block the order.
+    try {
+      const { sendOrderConfirmation, sendNewOrderToBusiness } = await import("@/lib/notifications.server");
+      const { data: userInfo } = await supabaseAdmin.auth.admin.getUserById(userId);
+      const customerEmail = userInfo?.user?.email ?? null;
+      const emailItems = verifiedItems.map((i) => ({ name: i.product_name, quantity: i.quantity, price: i.price }));
+      const siteOrigin = getRequestHeader("origin") ?? process.env.SITE_ORIGIN ?? undefined;
+      const tasks: Promise<unknown>[] = [];
+      if (customerEmail) {
+        tasks.push(
+          sendOrderConfirmation({
+            to: customerEmail,
+            orderId: order.id,
+            total,
+            items: emailItems,
+            shippingAddress: `${data.shipping_address}\n${data.city}, ${data.governorate}\n${data.phone}`,
+            siteOrigin,
+          }),
+        );
+      }
+      tasks.push(
+        sendNewOrderToBusiness({
+          to: "",
+          orderId: order.id,
+          total,
+          items: emailItems,
+          shippingAddress: `${data.shipping_address}\n${data.city}, ${data.governorate}\n${data.phone}`,
+          siteOrigin,
+          customerEmail: customerEmail ?? undefined,
+        }),
+      );
+      await Promise.allSettled(tasks);
+    } catch (mailErr) {
+      console.error("[placeOrder] notification dispatch failed", mailErr);
     }
 
     return {
@@ -294,7 +341,7 @@ export const loadConfirmOrder = createServerFn({ method: "POST" })
       }
       const { data: items } = await supabaseAdmin
         .from("order_items")
-        .select("id,product_name,quantity,price")
+        .select("id,product_id,product_name,quantity,price")
         .eq("order_id", order.id);
       return {
         ok: true as const,

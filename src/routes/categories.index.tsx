@@ -6,6 +6,7 @@ import { Footer } from "@/components/site/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { resolveImage } from "@/lib/product-image";
 import { ArrowUpRight } from "lucide-react";
+import { useLoc } from "@/lib/localize";
 
 export const Route = createFileRoute("/categories/")({
   component: CategoriesIndex,
@@ -24,8 +25,10 @@ export const Route = createFileRoute("/categories/")({
 interface Cat {
   id: string;
   name: string;
+  name_ar: string | null;
   slug: string;
   description: string | null;
+  description_ar: string | null;
   image_url: string | null;
   sort_order: number;
 }
@@ -37,6 +40,7 @@ interface CatWithCover extends Cat {
 
 function CategoriesIndex() {
   const [cats, setCats] = useState<CatWithCover[]>([]);
+  const tl = useLoc();
 
   useEffect(() => {
     let alive = true;
@@ -82,7 +86,7 @@ function CategoriesIndex() {
   }, []);
 
   return (
-    <div className="bg-background min-h-screen">
+    <div className="min-h-screen">
       <Header />
       <main className="pt-32 pb-24">
         <div className="max-w-7xl mx-auto px-6 lg:px-10">
@@ -132,7 +136,7 @@ function CategoriesIndex() {
                     {cat.cover ? (
                       <motion.img
                         src={resolveImage(cat.cover)}
-                        alt={cat.name}
+                        alt={tl(cat, "name")}
                         loading="lazy"
                         className="absolute inset-0 w-full h-full object-cover will-change-transform"
                         whileHover={{ scale: 1.06 }}
@@ -152,7 +156,7 @@ function CategoriesIndex() {
                       </div>
                       <div className="mt-2 flex items-end justify-between gap-4">
                         <h2 className="font-display text-3xl md:text-5xl leading-none">
-                          {cat.name}
+                          {tl(cat, "name")}
                         </h2>
                         <motion.div
                           className="shrink-0 w-12 h-12 rounded-full bg-cream/10 backdrop-blur flex items-center justify-center border border-cream/30"
@@ -162,9 +166,9 @@ function CategoriesIndex() {
                           <ArrowUpRight className="w-5 h-5" />
                         </motion.div>
                       </div>
-                      {cat.description && (
+                      {(cat.description || cat.description_ar) && (
                         <p className="mt-2 text-xs opacity-75 max-w-md line-clamp-2">
-                          {cat.description}
+                          {tl(cat, "description")}
                         </p>
                       )}
                     </div>
