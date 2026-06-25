@@ -20,6 +20,7 @@ import { AttributesManager } from "@/components/admin/AttributesManager";
 import { ProductFAQManager } from "@/components/admin/ProductFAQManager";
 import { NotificationsManager } from "@/components/admin/NotificationsManager";
 import { CampaignsManager } from "@/components/admin/CampaignsManager";
+import { ReviewsManager } from "@/components/admin/ReviewsManager";
 import { getOfferStatus, isoToLocalInput, localInputToIso, type OfferStatus } from "@/lib/product-offer";
 import { useServerFn } from "@tanstack/react-start";
 import { adminListAllOrders, adminUpdateOrderStatus } from "@/lib/analytics.functions";
@@ -121,7 +122,7 @@ function AdminPage() {
   // When a child route is active (e.g. /admin/sales-booster), render only the Outlet
   // so the child layout owns the full screen. The dashboard shell shows on exact /admin.
   const isChild = pathname !== "/admin" && pathname !== "/admin/";
-  const [tab, setTab] = useState<"dashboard" | "overview" | "orders-analytics" | "performance" | "products" | "categories" | "team" | "orders" | "attributes" | "faqs" | "notifications" | "campaigns">("dashboard");
+  const [tab, setTab] = useState<"dashboard" | "overview" | "orders-analytics" | "performance" | "products" | "categories" | "team" | "orders" | "attributes" | "faqs" | "notifications" | "campaigns" | "reviews">("dashboard");
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [categoryOptions, setCategoryOptions] = useState<{ slug: string; name: string }[]>([]);
@@ -334,6 +335,7 @@ function AdminPage() {
             ["categories", "Categories"],
             ["attributes", "Attributes"],
             ["faqs", "FAQs"],
+            ["reviews", "Reviews"],
             ["notifications", "Notifications"],
             ["campaigns", "Campaigns"],
             ["team", "Team"],
@@ -382,6 +384,7 @@ function AdminPage() {
         {tab === "categories" && <CategoryManager />}
         {tab === "attributes" && <AttributesManager />}
         {tab === "faqs" && <ProductFAQManager />}
+        {tab === "reviews" && <ReviewsManager />}
         {tab === "notifications" && <NotificationsManager />}
         {tab === "campaigns" && <CampaignsManager />}
         {tab === "team" && <TeamManager />}
