@@ -102,7 +102,7 @@ function AccountPage() {
       <Header />
       <div className="pt-32 pb-32 max-w-5xl mx-auto px-6 lg:px-10">
         <div className="text-[10px] uppercase tracking-luxe text-accent">{t("account.eyebrow")}</div>
-        <h1 className="font-display text-5xl md:text-6xl mt-2">{t("account.hello", { email: user?.email ?? "" })}</h1>
+        <h1 className="font-display text-3xl sm:text-5xl md:text-6xl mt-2 break-words">{t("account.hello", { email: user?.email ?? "" })}</h1>
 
         <div className="mt-12">
           <h2 className="font-display text-2xl mb-6">{t("account.orders")}</h2>
