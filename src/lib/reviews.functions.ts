@@ -8,10 +8,10 @@ const UuidSchema = z.string().uuid();
 const ReviewSubmitSchema = z.object({
   product_id: UuidSchema,
   rating: z.number().int().min(1).max(5),
-  title: z.string().trim().max(200).optional().nullable(),
-  title_ar: z.string().trim().max(200).optional().nullable(),
+  title: z.string().trim().max(200).nullable().optional(),
+  title_ar: z.string().trim().max(200).nullable().optional(),
   body: z.string().trim().max(4000).default(""),
-  body_ar: z.string().trim().max(4000).optional().nullable(),
+  body_ar: z.string().trim().max(4000).nullable().optional(),
   lang: z.enum(["en", "ar"]).default("en"),
 });
 
@@ -38,10 +38,12 @@ const ReviewUpsertSchema = z.object({
 
 export const listProductReviews = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
-    z.object({
-      productId: UuidSchema,
-      limit: z.number().int().min(1).max(100).default(50),
-    }).parse(d),
+    z
+      .object({
+        productId: UuidSchema,
+        limit: z.number().int().min(1).max(100).default(50),
+      })
+      .parse(d),
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -75,8 +77,8 @@ export const submitProductReview = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    // Purchase verification: user must have at least one order containing this
-    // product with a revenue (paid / confirmed / delivered) status.
+    // Purchase verification: user must have an order containing this product
+    // with a revenue (paid/confirmed/delivered) status.
     const { data: orderRows } = await supabaseAdmin
       .from("orders")
       .select("id, status, order_items!inner(product_id)")
@@ -89,7 +91,7 @@ export const submitProductReview = createServerFn({ method: "POST" })
       throw new Error("You can only review products you have purchased.");
     }
 
-    // Snapshot name + avatar from profile / auth metadata.
+    // Snapshot name + avatar from profile / auth metadata
     const { data: profile } = await supabaseAdmin
       .from("profiles")
       .select("full_name")
@@ -134,19 +136,18 @@ export const submitProductReview = createServerFn({ method: "POST" })
   });
 
 /* ============================================================ */
-/* ADMIN: list / upsert / delete                                 */
+/* ADMIN                                                         */
 /* ============================================================ */
 
-async function requireAdmin(context: { supabase: ReturnType<typeof requireAdminTypeHelper>; userId: string }) {
+async function assertAdmin(context: {
+  supabase: { rpc: (n: string, a: unknown) => Promise<{ data: boolean | null }> };
+  userId: string;
+}) {
   const { data: isAdmin } = await context.supabase.rpc("has_role", {
     _user_id: context.userId,
     _role: "admin",
   });
   if (!isAdmin) throw new Error("Forbidden");
-}
-// helper type only — never executed
-function requireAdminTypeHelper() {
-  return null as unknown as { rpc: (n: string, a: unknown) => Promise<{ data: boolean | null }> };
 }
 
 export const adminListReviews = createServerFn({ method: "POST" })
@@ -155,7 +156,7 @@ export const adminListReviews = createServerFn({ method: "POST" })
     z.object({ productId: UuidSchema.optional() }).parse(d ?? {}),
   )
   .handler(async ({ data, context }) => {
-    await requireAdmin(context as never);
+    await assertAdmin(context as never);
     let q = context.supabase
       .from("product_reviews")
       .select(
@@ -175,7 +176,7 @@ export const adminUpsertReview = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => ReviewUpsertSchema.parse(d))
   .handler(async ({ data, context }) => {
-    await requireAdmin(context as never);
+    await assertAdmin(context as never);
     const { id, ...rest } = data;
     if (id) {
       const { error } = await context.supabase.from("product_reviews").update(rest).eq("id", id);
@@ -195,7 +196,7 @@ export const adminDeleteReview = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({ id: UuidSchema }).parse(d))
   .handler(async ({ data, context }) => {
-    await requireAdmin(context as never);
+    await assertAdmin(context as never);
     const { error } = await context.supabase.from("product_reviews").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
@@ -204,16 +205,18 @@ export const adminDeleteReview = createServerFn({ method: "POST" })
 export const adminSetReviewFlags = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) =>
-    z.object({
-      id: UuidSchema,
-      is_visible: z.boolean().optional(),
-      is_pinned: z.boolean().optional(),
-      status: z.enum(["pending", "approved", "rejected"]).optional(),
-      sort_order: z.number().int().min(0).max(99999).optional(),
-    }).parse(d),
+    z
+      .object({
+        id: UuidSchema,
+        is_visible: z.boolean().optional(),
+        is_pinned: z.boolean().optional(),
+        status: z.enum(["pending", "approved", "rejected"]).optional(),
+        sort_order: z.number().int().min(0).max(99999).optional(),
+      })
+      .parse(d),
   )
   .handler(async ({ data, context }) => {
-    await requireAdmin(context as never);
+    await assertAdmin(context as never);
     const { id, ...patch } = data;
     const { error } = await context.supabase.from("product_reviews").update(patch).eq("id", id);
     if (error) throw new Error(error.message);
