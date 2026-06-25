@@ -141,6 +141,7 @@
   }
   html {
     scroll-behavior: smooth;
+    overflow-x: clip;
   }
   body {
     background-color: transparent;
@@ -148,7 +149,9 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    overflow-x: clip;
   }
+
   h1, h2, h3, h4 {
     font-family: var(--font-display);
     font-weight: 400;
