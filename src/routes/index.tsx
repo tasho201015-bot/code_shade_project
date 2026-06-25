@@ -142,7 +142,7 @@ function HomePage() {
             <img
               src={malazLogo.url}
               alt="Malaz"
-              className="w-[26vmin] max-w-[300px] min-w-[140px] h-auto select-none"
+              className="w-[32vmin] max-w-[300px] min-w-[180px] h-auto select-none"
               draggable={false}
             />
           </motion.div>
