@@ -239,7 +239,7 @@ export function ProductReviews({ productId }: { productId: string }) {
                 <article
                   key={r.id}
                   data-review-card
-                  className="snap-start shrink-0 w-[85%] sm:w-[60%] md:w-[42%] lg:w-[31%] border border-border rounded-sm p-5 bg-background"
+                  className="snap-start shrink-0 w-[85%] sm:w-[60%] md:w-[42%] lg:w-[31%] border border-border rounded-sm p-5 bg-black text-white"
                 >
                   <div className="flex items-center gap-3">
                     {r.customer_avatar_url ? (
@@ -250,7 +250,7 @@ export function ProductReviews({ productId }: { productId: string }) {
                         className="w-10 h-10 rounded-full object-cover border border-border"
                       />
                     ) : (
-                      <div className="w-10 h-10 rounded-full bg-muted text-foreground flex items-center justify-center text-sm font-medium uppercase">
+                      <div className="w-10 h-10 rounded-full bg-white/20 text-white flex items-center justify-center text-sm font-medium uppercase">
                         {r.customer_name?.[0] ?? "?"}
                       </div>
                     )}
@@ -262,10 +262,10 @@ export function ProductReviews({ productId }: { productId: string }) {
                   {ttl && (
                     <div className="mt-3 text-sm font-medium line-clamp-2">{ttl}</div>
                   )}
-                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed line-clamp-6 whitespace-pre-wrap">
+                  <p className="mt-2 text-sm text-white/80 leading-relaxed line-clamp-6 whitespace-pre-wrap">
                     {bdy}
                   </p>
-                  <div className="mt-3 text-[10px] uppercase tracking-luxe text-muted-foreground">
+                  <div className="mt-3 text-[10px] uppercase tracking-luxe text-white/60">
                     {new Date(r.created_at).toLocaleDateString(lang === "ar" ? "ar-EG" : undefined)}
                   </div>
                 </article>
