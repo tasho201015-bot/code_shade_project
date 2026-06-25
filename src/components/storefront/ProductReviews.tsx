@@ -192,7 +192,7 @@ export function ProductReviews({ productId }: { productId: string }) {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder={t("reviews.titlePlaceholder")}
-                className="w-full px-3 py-2 text-sm border border-border bg-background"
+                className="w-full px-3 py-2 text-sm border border-border bg-black text-white placeholder:text-white/60"
                 maxLength={200}
               />
               <textarea
@@ -201,7 +201,7 @@ export function ProductReviews({ productId }: { productId: string }) {
                 placeholder={t("reviews.bodyPlaceholder")}
                 rows={4}
                 maxLength={4000}
-                className="w-full px-3 py-2 text-sm border border-border bg-background"
+                className="w-full px-3 py-2 text-sm border border-border bg-black text-white placeholder:text-white/60"
               />
               <div className="flex justify-end">
                 <button
