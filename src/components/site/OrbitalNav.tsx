@@ -139,7 +139,7 @@ export function OrbitalNav() {
                     aria-label={item.label}
                     className={cn(
                       "group pointer-events-auto relative flex items-center justify-center",
-                      "w-12 h-12 md:w-14 md:h-14 rounded-full",
+                      "w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full",
                       "transition-transform duration-300 ease-out hover:scale-110",
                     )}
                     style={{
@@ -158,7 +158,7 @@ export function OrbitalNav() {
                           "0 0 26px 4px rgba(183,106,31,0.55), inset 0 0 14px rgba(216,138,58,0.35)",
                       }}
                     />
-                    <Icon className="w-5 h-5 md:w-6 md:h-6 relative" strokeWidth={1.4} />
+                    <Icon className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 relative" strokeWidth={1.4} />
                     {/* Static tooltip below the icon */}
                     <span
                       className="absolute left-1/2 -translate-x-1/2 top-full mt-2 px-2.5 py-1 text-[10px] uppercase tracking-luxe whitespace-nowrap rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
