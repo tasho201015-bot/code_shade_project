@@ -45,13 +45,50 @@ export async function fetchProductSizes(productId: string): Promise<ProductSize[
 }
 
 // ---------- ADMIN: catalog ----------
+let _colorsCache: { data: ProductColor[]; ts: number } | null = null;
+let _sizesCache: { data: ProductSize[]; ts: number } | null = null;
+let _colorsPromise: Promise<ProductColor[]> | null = null;
+let _sizesPromise: Promise<ProductSize[]> | null = null;
+const ATTR_TTL_MS = 60_000;
+
+export function invalidateAttributeCaches() {
+  _colorsCache = null;
+  _sizesCache = null;
+  _colorsPromise = null;
+  _sizesPromise = null;
+}
+
 export async function fetchAllColors(): Promise<ProductColor[]> {
-  const { data } = await supabase.from("product_colors").select("*").order("sort_order");
-  return (data ?? []) as ProductColor[];
+  const now = Date.now();
+  if (_colorsCache && now - _colorsCache.ts < ATTR_TTL_MS) return _colorsCache.data;
+  if (_colorsPromise) return _colorsPromise;
+  _colorsPromise = supabase
+    .from("product_colors")
+    .select("*")
+    .order("sort_order")
+    .then(({ data }) => {
+      const list = (data ?? []) as ProductColor[];
+      _colorsCache = { data: list, ts: Date.now() };
+      _colorsPromise = null;
+      return list;
+    });
+  return _colorsPromise;
 }
 export async function fetchAllSizes(): Promise<ProductSize[]> {
-  const { data } = await supabase.from("product_sizes").select("*").order("sort_order");
-  return (data ?? []) as ProductSize[];
+  const now = Date.now();
+  if (_sizesCache && now - _sizesCache.ts < ATTR_TTL_MS) return _sizesCache.data;
+  if (_sizesPromise) return _sizesPromise;
+  _sizesPromise = supabase
+    .from("product_sizes")
+    .select("*")
+    .order("sort_order")
+    .then(({ data }) => {
+      const list = (data ?? []) as ProductSize[];
+      _sizesCache = { data: list, ts: Date.now() };
+      _sizesPromise = null;
+      return list;
+    });
+  return _sizesPromise;
 }
 
 export async function upsertColor(c: Partial<ProductColor> & { name: string; hex: string }) {
