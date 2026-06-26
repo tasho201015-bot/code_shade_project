@@ -59,7 +59,7 @@ function MemberProfile() {
             className="relative aspect-[4/5] bg-muted overflow-hidden shadow-soft"
           >
             {member.image_url ? (
-              <img src={member.image_url} alt={member.name} className="w-full h-full object-cover" />
+              <img loading="lazy" decoding="async" src={member.image_url} alt={member.name} className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full flex items-center justify-center font-display text-9xl bg-secondary text-muted-foreground">
                 {member.name.charAt(0)}

@@ -128,7 +128,7 @@ export function CheckoutOffers({ cartProductIds }: Props) {
                 {items.map((p) => (
                   <Link key={p.id} to="/product/$id" params={{ id: p.id }} className="block w-20">
                     <div className="aspect-square bg-muted overflow-hidden">
-                      <img src={resolveImage(p.image_url)} alt={displayName(p)} className="w-full h-full object-cover" />
+                      <img loading="lazy" decoding="async" src={resolveImage(p.image_url)} alt={displayName(p)} className="w-full h-full object-cover" />
                     </div>
                     <div className="mt-1 text-[10px] uppercase tracking-luxe truncate">{displayName(p)}</div>
                   </Link>
@@ -176,7 +176,7 @@ export function CheckoutOffers({ cartProductIds }: Props) {
             </div>
             <div className="grid grid-cols-[88px_1fr_auto] gap-4 items-center">
               <Link to="/product/$id" params={{ id: sp.id }} className="block w-22 aspect-square bg-muted overflow-hidden">
-                <img src={resolveImage(sp.image_url)} alt={displayName(sp)} className="w-full h-full object-cover" />
+                <img loading="lazy" decoding="async" src={resolveImage(sp.image_url)} alt={displayName(sp)} className="w-full h-full object-cover" />
               </Link>
               <div className="min-w-0">
                 <Link to="/product/$id" params={{ id: sp.id }} className="font-display text-base hover:text-accent transition-colors block truncate">
@@ -219,7 +219,7 @@ export function CheckoutOffers({ cartProductIds }: Props) {
               {suggested.map((p) => (
                 <div key={p.id} className="space-y-2">
                   <Link to="/product/$id" params={{ id: p.id }} className="block aspect-[3/4] bg-muted overflow-hidden">
-                    <img src={resolveImage(p.image_url)} alt={displayName(p)} className="w-full h-full object-cover" />
+                    <img loading="lazy" decoding="async" src={resolveImage(p.image_url)} alt={displayName(p)} className="w-full h-full object-cover" />
                   </Link>
                   <div className="text-[11px] uppercase tracking-luxe truncate">{displayName(p)}</div>
                   <div className="flex items-center justify-between">
@@ -259,7 +259,7 @@ export function CheckoutOffers({ cartProductIds }: Props) {
               {items.map((p) => (
                 <Link key={p.id} to="/product/$id" params={{ id: p.id }} className="block w-20">
                   <div className="aspect-square bg-muted overflow-hidden">
-                    <img src={resolveImage(p.image_url)} alt={displayName(p)} className="w-full h-full object-cover" />
+                    <img loading="lazy" decoding="async" src={resolveImage(p.image_url)} alt={displayName(p)} className="w-full h-full object-cover" />
                   </div>
                   <div className="mt-1 text-[10px] uppercase tracking-luxe truncate">{displayName(p)}</div>
                 </Link>

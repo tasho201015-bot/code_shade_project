@@ -243,7 +243,7 @@ function ProductPage() {
                     activeImage === i ? "border-noir" : "border-transparent hover:border-border"
                   }`}
                 >
-                  <img src={src} alt={`${displayName} ${i + 1}`} className="w-full h-full object-cover" />
+                  <img loading="lazy" decoding="async" src={src} alt={`${displayName} ${i + 1}`} className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
@@ -255,7 +255,7 @@ function ProductPage() {
                 transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
                 className="w-full aspect-[3/4] bg-muted overflow-hidden shadow-luxe rounded-[20px]"
               >
-                <img src={gallery[activeImage]} alt={displayName} className="w-full h-full object-cover" />
+                <img loading="lazy" decoding="async" src={gallery[activeImage]} alt={displayName} className="w-full h-full object-cover" />
               </motion.div>
             </GlowCard>
           </div>

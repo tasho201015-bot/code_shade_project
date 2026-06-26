@@ -406,7 +406,7 @@ function AdminPage() {
                   initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                   className="glass p-4 rounded-sm flex gap-4">
                   <div className="w-20 h-24 bg-muted overflow-hidden flex-shrink-0">
-                    <img src={resolveImage(p.image_url)} alt="" className="w-full h-full object-cover"/>
+                    <img loading="lazy" decoding="async" src={resolveImage(p.image_url)} alt="" className="w-full h-full object-cover"/>
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-display text-lg truncate">{p.name}</div>
@@ -520,7 +520,7 @@ function AdminPage() {
                       />
                     </label>
                     {editing.image_url && (
-                      <img src={resolveImage(editing.image_url)} alt="" className="w-12 h-14 object-cover bg-muted" />
+                      <img loading="lazy" decoding="async" src={resolveImage(editing.image_url)} alt="" className="w-12 h-14 object-cover bg-muted" />
                     )}
                   </div>
                 )}

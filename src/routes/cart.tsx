@@ -238,7 +238,7 @@ function CartPage() {
                         className="flex gap-4 border-b border-border pb-5"
                       >
                         <div className="w-20 h-24 bg-muted overflow-hidden shadow-soft shrink-0">
-                          <img src={resolveImage(i.image_url)} alt={i.name} className="w-full h-full object-cover" />
+                          <img loading="lazy" decoding="async" src={resolveImage(i.image_url)} alt={i.name} className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-1 min-w-0 flex flex-col justify-between">
                           <div className="flex items-start justify-between gap-3">

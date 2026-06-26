@@ -212,7 +212,7 @@ export function TeamManager() {
             {filtered.map((m) => (
               <div key={m.id} className="group relative border border-border overflow-hidden">
                 <div className="aspect-[3/4] bg-muted">
-                  {m.image_url ? <img src={m.image_url} alt={m.name} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center font-display text-5xl text-muted-foreground">{m.name.charAt(0)}</div>}
+                  {m.image_url ? <img loading="lazy" decoding="async" src={m.image_url} alt={m.name} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center font-display text-5xl text-muted-foreground">{m.name.charAt(0)}</div>}
                 </div>
                 <div className="p-4">
                   <div className="flex items-start justify-between gap-2">
@@ -267,7 +267,7 @@ function SortableRow({
     <div ref={setNodeRef} style={style} className="flex items-center gap-4 p-4 bg-background">
       <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-1 text-muted-foreground" aria-label="Drag"><GripVertical className="w-4 h-4" /></button>
       <div className="w-14 h-14 bg-muted shrink-0 overflow-hidden">
-        {member.image_url ? <img src={member.image_url} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center font-display text-xl text-muted-foreground">{member.name.charAt(0)}</div>}
+        {member.image_url ? <img loading="lazy" decoding="async" src={member.image_url} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center font-display text-xl text-muted-foreground">{member.name.charAt(0)}</div>}
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
@@ -315,7 +315,7 @@ function MemberDrawer({
             <label className="text-[10px] uppercase tracking-luxe text-muted-foreground">Profile image</label>
             <div className="mt-2 flex items-center gap-4">
               <div className="w-24 h-24 bg-muted overflow-hidden">
-                {draft.image_url ? <img src={draft.image_url} className="w-full h-full object-cover" alt="" /> : <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">No image</div>}
+                {draft.image_url ? <img loading="lazy" decoding="async" src={draft.image_url} className="w-full h-full object-cover" alt="" /> : <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">No image</div>}
               </div>
               <label className="inline-flex items-center gap-2 border border-border px-4 py-2 text-xs uppercase tracking-luxe cursor-pointer hover:bg-secondary">
                 <Upload className="w-4 h-4" /> {uploading ? "Uploading…" : "Upload"}
