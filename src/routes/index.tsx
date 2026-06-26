@@ -15,8 +15,6 @@ import { resolveImage } from "@/lib/product-image";
 import { PriceTag } from "@/components/storefront/PriceTag";
 import { GlowCard } from "@/components/ui/glow-card";
 import heroLg from "@/assets/hero-desktop.jpg";
-import heroMd from "@/assets/hero-md.jpg";
-import heroSm from "@/assets/hero-sm.jpg";
 import look2 from "@/assets/product-6.webp";
 import look3 from "@/assets/product-3.webp";
 import look4 from "@/assets/product-4.webp";
@@ -24,7 +22,7 @@ import look4 from "@/assets/product-4.webp";
 export const Route = createFileRoute("/")({
   head: () => ({
     links: [
-      { rel: "preload", as: "image", href: heroLg, fetchpriority: "high" },
+      { rel: "preload", as: "image", href: malazLogo.url, fetchpriority: "high" },
     ],
   }),
   component: HomePage,
@@ -88,7 +86,7 @@ function HomePage() {
   const { t, lang } = useI18n();
   const nav = useNavigate();
   const [products, setProducts] = useState<Product[]>(() => productsCache ?? []);
-  const [heroLoaded, setHeroLoaded] = useState(false);
+  
   const { scrollY } = useScroll();
   const heroY = useTransform(scrollY, [0, 600], [0, 140]);
   const heroScale = useTransform(scrollY, [0, 600], [1, 1.12]);
@@ -142,6 +140,8 @@ function HomePage() {
             <img
               src={malazLogo.url}
               alt="Malaz"
+              fetchPriority="high"
+              decoding="async"
               className="w-[26vmin] max-w-[240px] min-w-[140px] h-auto select-none"
               draggable={false}
             />
