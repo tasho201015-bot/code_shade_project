@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 
@@ -86,11 +86,12 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     return { ok: res.ok, added: true, reason: res.reason };
   }, [ids, add, remove]);
 
-  return (
-    <Ctx.Provider value={{ ids, loaded, count: ids.size, has, add, remove, toggle }}>
-      {children}
-    </Ctx.Provider>
+  const value = useMemo<WishlistCtx>(
+    () => ({ ids, loaded, count: ids.size, has, add, remove, toggle }),
+    [ids, loaded, has, add, remove, toggle],
   );
+
+  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 
 export function useWishlist() {

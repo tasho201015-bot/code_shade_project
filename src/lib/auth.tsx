@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session, User } from "@supabase/supabase-js";
 
@@ -54,11 +54,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  const signIn: AuthCtx["signIn"] = async (email, password) => {
+  const signIn = useCallback<AuthCtx["signIn"]>(async (email, password) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     return { error: error?.message ?? null };
-  };
-  const signUp: AuthCtx["signUp"] = async (email, password, fullName) => {
+  }, []);
+  const signUp = useCallback<AuthCtx["signUp"]>(async (email, password, fullName) => {
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -68,27 +68,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
     });
     return { error: error?.message ?? null };
-  };
-  const signOut = async () => {
+  }, []);
+  const signOut = useCallback(async () => {
     await supabase.auth.signOut();
-  };
+  }, []);
 
-  return (
-    <Ctx.Provider
-      value={{
-        user,
-        session,
-        loading,
-        roles,
-        isAdmin: roles.includes("admin"),
-        signIn,
-        signUp,
-        signOut,
-      }}
-    >
-      {children}
-    </Ctx.Provider>
+  const isAdmin = roles.includes("admin");
+  const value = useMemo<AuthCtx>(
+    () => ({ user, session, loading, roles, isAdmin, signIn, signUp, signOut }),
+    [user, session, loading, roles, isAdmin, signIn, signUp, signOut],
   );
+
+  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 
 export function useAuth() {

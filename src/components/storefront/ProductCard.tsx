@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Link } from "@tanstack/react-router";
 import { GlowCard } from "@/components/ui/glow-card";
 import { resolveImage } from "@/lib/product-image";
@@ -24,7 +25,7 @@ interface ProductCardProps {
   imageClassName?: string;
 }
 
-export function ProductCard({
+function ProductCardBase({
   product,
   className = "",
   linkClassName = "",
@@ -71,3 +72,5 @@ export function ProductCard({
     </GlowCard>
   );
 }
+
+export const ProductCard = memo(ProductCardBase);
