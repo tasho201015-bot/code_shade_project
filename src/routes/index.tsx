@@ -86,7 +86,7 @@ function HomePage() {
   const { t, lang } = useI18n();
   const nav = useNavigate();
   const [products, setProducts] = useState<Product[]>(() => productsCache ?? []);
-  const [heroLoaded, setHeroLoaded] = useState(false);
+  
   const { scrollY } = useScroll();
   const heroY = useTransform(scrollY, [0, 600], [0, 140]);
   const heroScale = useTransform(scrollY, [0, 600], [1, 1.12]);
