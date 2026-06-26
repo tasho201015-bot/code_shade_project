@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState, redirect } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { useAuth } from "@/lib/auth";
@@ -7,20 +7,21 @@ import { supabase } from "@/integrations/supabase/client";
 import { resolveImage } from "@/lib/product-image";
 import { motion } from "framer-motion";
 import { Pencil, Trash2, Plus, Upload } from "lucide-react";
-import { AnalyticsDashboard } from "@/components/admin/AnalyticsDashboard";
-import { DashboardOverview } from "@/components/admin/DashboardOverview";
-import { CategoryManager } from "@/components/admin/CategoryManager";
 import { AnalyticsRangeProvider } from "@/lib/analytics-range";
 import { DateRangePicker } from "@/components/admin/DateRangePicker";
 import { toast } from "sonner";
 import { OrderStatusBadge, ORDER_STATUSES } from "@/components/site/OrderStatusBadge";
 import { normalizeOrderStatus } from "@/lib/order-status";
-import { TeamManager } from "@/components/admin/TeamManager";
-import { AttributesManager } from "@/components/admin/AttributesManager";
-import { ProductFAQManager } from "@/components/admin/ProductFAQManager";
-import { NotificationsManager } from "@/components/admin/NotificationsManager";
-import { CampaignsManager } from "@/components/admin/CampaignsManager";
-import { ReviewsManager } from "@/components/admin/ReviewsManager";
+
+const AnalyticsDashboard = lazy(() => import("@/components/admin/AnalyticsDashboard").then(m => ({ default: m.AnalyticsDashboard })));
+const DashboardOverview = lazy(() => import("@/components/admin/DashboardOverview").then(m => ({ default: m.DashboardOverview })));
+const CategoryManager = lazy(() => import("@/components/admin/CategoryManager").then(m => ({ default: m.CategoryManager })));
+const TeamManager = lazy(() => import("@/components/admin/TeamManager").then(m => ({ default: m.TeamManager })));
+const AttributesManager = lazy(() => import("@/components/admin/AttributesManager").then(m => ({ default: m.AttributesManager })));
+const ProductFAQManager = lazy(() => import("@/components/admin/ProductFAQManager").then(m => ({ default: m.ProductFAQManager })));
+const NotificationsManager = lazy(() => import("@/components/admin/NotificationsManager").then(m => ({ default: m.NotificationsManager })));
+const CampaignsManager = lazy(() => import("@/components/admin/CampaignsManager").then(m => ({ default: m.CampaignsManager })));
+const ReviewsManager = lazy(() => import("@/components/admin/ReviewsManager").then(m => ({ default: m.ReviewsManager })));
 import { getOfferStatus, isoToLocalInput, localInputToIso, type OfferStatus } from "@/lib/product-offer";
 import { useServerFn } from "@tanstack/react-start";
 import { adminListAllOrders, adminUpdateOrderStatus } from "@/lib/analytics.functions";
@@ -375,19 +376,23 @@ function AdminPage() {
               </div>
               <DateRangePicker />
             </div>
-            {tab === "dashboard" && <DashboardOverview />}
-            {tab === "overview" && <AnalyticsDashboard section="overview" />}
-            {tab === "orders-analytics" && <AnalyticsDashboard section="orders" />}
-            {tab === "performance" && <AnalyticsDashboard section="performance" />}
+            <Suspense fallback={<div className="mt-8 text-sm text-muted-foreground">Loading…</div>}>
+              {tab === "dashboard" && <DashboardOverview />}
+              {tab === "overview" && <AnalyticsDashboard section="overview" />}
+              {tab === "orders-analytics" && <AnalyticsDashboard section="orders" />}
+              {tab === "performance" && <AnalyticsDashboard section="performance" />}
+            </Suspense>
           </AnalyticsRangeProvider>
         )}
-        {tab === "categories" && <CategoryManager />}
-        {tab === "attributes" && <AttributesManager />}
-        {tab === "faqs" && <ProductFAQManager />}
-        {tab === "reviews" && <ReviewsManager />}
-        {tab === "notifications" && <NotificationsManager />}
-        {tab === "campaigns" && <CampaignsManager />}
-        {tab === "team" && <TeamManager />}
+        <Suspense fallback={<div className="mt-8 text-sm text-muted-foreground">Loading…</div>}>
+          {tab === "categories" && <CategoryManager />}
+          {tab === "attributes" && <AttributesManager />}
+          {tab === "faqs" && <ProductFAQManager />}
+          {tab === "reviews" && <ReviewsManager />}
+          {tab === "notifications" && <NotificationsManager />}
+          {tab === "campaigns" && <CampaignsManager />}
+          {tab === "team" && <TeamManager />}
+        </Suspense>
 
         {tab === "products" && (
           <div className="mt-8">
@@ -406,7 +411,7 @@ function AdminPage() {
                   initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                   className="glass p-4 rounded-sm flex gap-4">
                   <div className="w-20 h-24 bg-muted overflow-hidden flex-shrink-0">
-                    <img src={resolveImage(p.image_url)} alt="" className="w-full h-full object-cover"/>
+                    <img loading="lazy" decoding="async" src={resolveImage(p.image_url)} alt="" className="w-full h-full object-cover"/>
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-display text-lg truncate">{p.name}</div>
@@ -520,7 +525,7 @@ function AdminPage() {
                       />
                     </label>
                     {editing.image_url && (
-                      <img src={resolveImage(editing.image_url)} alt="" className="w-12 h-14 object-cover bg-muted" />
+                      <img loading="lazy" decoding="async" src={resolveImage(editing.image_url)} alt="" className="w-12 h-14 object-cover bg-muted" />
                     )}
                   </div>
                 )}

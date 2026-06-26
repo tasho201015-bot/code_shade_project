@@ -86,7 +86,7 @@ export function CrossSellsPage() {
                     <td className="px-3 py-3">
                       <div className="flex items-center gap-3">
                         {tp?.image_url ? (
-                          <img src={tp.image_url} alt="" className="w-9 h-9 rounded object-cover border s-border" />
+                          <img loading="lazy" decoding="async" src={tp.image_url} alt="" className="w-9 h-9 rounded object-cover border s-border" />
                         ) : (<div className="w-9 h-9 rounded s-surface-2" />)}
                         <div>
                           <div className="font-medium">{tp?.name ?? "Deleted product"}</div>

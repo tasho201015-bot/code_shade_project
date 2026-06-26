@@ -84,7 +84,7 @@ export function PostPurchaseOffers({ productIds }: Props) {
               {suggested.map((p) => (
                 <div key={p.id} className="space-y-2">
                   <Link to="/product/$id" params={{ id: p.id }} className="block aspect-[3/4] bg-muted overflow-hidden">
-                    <img src={resolveImage(p.image_url)} alt={displayName(p)} className="w-full h-full object-cover" />
+                    <img loading="lazy" decoding="async" src={resolveImage(p.image_url)} alt={displayName(p)} className="w-full h-full object-cover" />
                   </Link>
                   <div className="text-[11px] uppercase tracking-luxe truncate">{displayName(p)}</div>
                   <div className="flex items-center justify-between">

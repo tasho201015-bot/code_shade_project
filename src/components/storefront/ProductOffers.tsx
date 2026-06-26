@@ -101,7 +101,7 @@ export function ProductOffers({ productId, productPrice }: Props) {
             {sp && (
               <div className="flex items-center gap-5 max-w-md">
                 <Link to="/product/$id" params={{ id: sp.id }} className="block w-24 aspect-[3/4] bg-muted overflow-hidden shrink-0">
-                  <img src={resolveImage(sp.image_url)} alt={displayName(sp)} className="w-full h-full object-cover" />
+                  <img loading="lazy" decoding="async" src={resolveImage(sp.image_url)} alt={displayName(sp)} className="w-full h-full object-cover" />
                 </Link>
                 <div className="flex-1">
                   <Link to="/product/$id" params={{ id: sp.id }} className="font-display text-base hover:text-accent transition-colors">
@@ -143,7 +143,7 @@ export function ProductOffers({ productId, productPrice }: Props) {
                 <GlowCard key={p.id} customSize glowColor="orange" className="block w-full !p-0 !gap-0 !rounded-[24px] !shadow-none">
                   <Link to="/product/$id" params={{ id: p.id }} className="group block bg-black border border-[#5A5A5A] rounded-[24px] p-4 shadow-luxe overflow-hidden transition-colors hover:border-accent/60">
                     <div className="aspect-[3/4] bg-muted overflow-hidden rounded-[18px]">
-                      <img src={resolveImage(p.image_url)} alt={displayName(p)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                      <img loading="lazy" decoding="async" src={resolveImage(p.image_url)} alt={displayName(p)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                     </div>
                     <div className="mt-4 text-[11px] uppercase tracking-luxe truncate text-cream">{displayName(p)}</div>
                   </Link>
@@ -204,7 +204,7 @@ export function ProductOffers({ productId, productPrice }: Props) {
                     className="group block bg-black border border-[#5A5A5A] rounded-[24px] p-4 shadow-luxe overflow-hidden transition-colors hover:border-accent/60"
                   >
                     <div className="aspect-[3/4] bg-muted overflow-hidden rounded-[18px]">
-                      <img src={resolveImage(p.image_url)} alt={displayName(p)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                      <img loading="lazy" decoding="async" src={resolveImage(p.image_url)} alt={displayName(p)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                     </div>
                     <div className="mt-4 flex items-baseline justify-between gap-2">
                       <span className="font-display text-sm truncate text-cream">{displayName(p)}</span>

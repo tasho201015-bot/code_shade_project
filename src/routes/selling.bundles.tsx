@@ -82,7 +82,7 @@ export function BundlesPage() {
                     <td className="px-3 py-3">
                       <div className="flex items-center gap-3">
                         {b.coverImage ? (
-                          <img src={b.coverImage} alt="" className="w-10 h-10 rounded object-cover border s-border" />
+                          <img loading="lazy" decoding="async" src={b.coverImage} alt="" className="w-10 h-10 rounded object-cover border s-border" />
                         ) : (
                           <div className="w-10 h-10 rounded s-surface-2" />
                         )}

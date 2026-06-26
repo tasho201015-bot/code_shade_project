@@ -148,7 +148,7 @@ export function ProductOffersCards({ productId }: Props) {
                   <div key={p.id} className="flex items-center gap-3 md:gap-4">
                     <Link to="/product/$id" params={{ id: p.id }} className="block w-28 md:w-32 shrink-0">
                       <div className="aspect-square bg-muted overflow-hidden">
-                        <img src={resolveImage(p.image_url)} alt={displayName(p)} className="w-full h-full object-cover" />
+                        <img loading="lazy" decoding="async" src={resolveImage(p.image_url)} alt={displayName(p)} className="w-full h-full object-cover" />
                       </div>
                       <div className="mt-2 text-[10px] uppercase tracking-luxe truncate">{displayName(p)}</div>
                       <div className="text-xs tabular-nums text-[#8A8A8A]">${Number(p.price).toFixed(2)}</div>
