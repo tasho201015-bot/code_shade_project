@@ -376,19 +376,23 @@ function AdminPage() {
               </div>
               <DateRangePicker />
             </div>
-            {tab === "dashboard" && <DashboardOverview />}
-            {tab === "overview" && <AnalyticsDashboard section="overview" />}
-            {tab === "orders-analytics" && <AnalyticsDashboard section="orders" />}
-            {tab === "performance" && <AnalyticsDashboard section="performance" />}
+            <Suspense fallback={<div className="mt-8 text-sm text-muted-foreground">Loading…</div>}>
+              {tab === "dashboard" && <DashboardOverview />}
+              {tab === "overview" && <AnalyticsDashboard section="overview" />}
+              {tab === "orders-analytics" && <AnalyticsDashboard section="orders" />}
+              {tab === "performance" && <AnalyticsDashboard section="performance" />}
+            </Suspense>
           </AnalyticsRangeProvider>
         )}
-        {tab === "categories" && <CategoryManager />}
-        {tab === "attributes" && <AttributesManager />}
-        {tab === "faqs" && <ProductFAQManager />}
-        {tab === "reviews" && <ReviewsManager />}
-        {tab === "notifications" && <NotificationsManager />}
-        {tab === "campaigns" && <CampaignsManager />}
-        {tab === "team" && <TeamManager />}
+        <Suspense fallback={<div className="mt-8 text-sm text-muted-foreground">Loading…</div>}>
+          {tab === "categories" && <CategoryManager />}
+          {tab === "attributes" && <AttributesManager />}
+          {tab === "faqs" && <ProductFAQManager />}
+          {tab === "reviews" && <ReviewsManager />}
+          {tab === "notifications" && <NotificationsManager />}
+          {tab === "campaigns" && <CampaignsManager />}
+          {tab === "team" && <TeamManager />}
+        </Suspense>
 
         {tab === "products" && (
           <div className="mt-8">
