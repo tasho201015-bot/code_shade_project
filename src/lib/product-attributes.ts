@@ -62,32 +62,26 @@ export async function fetchAllColors(): Promise<ProductColor[]> {
   const now = Date.now();
   if (_colorsCache && now - _colorsCache.ts < ATTR_TTL_MS) return _colorsCache.data;
   if (_colorsPromise) return _colorsPromise;
-  _colorsPromise = supabase
-    .from("product_colors")
-    .select("*")
-    .order("sort_order")
-    .then(({ data }) => {
-      const list = (data ?? []) as ProductColor[];
-      _colorsCache = { data: list, ts: Date.now() };
-      _colorsPromise = null;
-      return list;
-    });
+  _colorsPromise = (async () => {
+    const { data } = await supabase.from("product_colors").select("*").order("sort_order");
+    const list = (data ?? []) as ProductColor[];
+    _colorsCache = { data: list, ts: Date.now() };
+    _colorsPromise = null;
+    return list;
+  })();
   return _colorsPromise;
 }
 export async function fetchAllSizes(): Promise<ProductSize[]> {
   const now = Date.now();
   if (_sizesCache && now - _sizesCache.ts < ATTR_TTL_MS) return _sizesCache.data;
   if (_sizesPromise) return _sizesPromise;
-  _sizesPromise = supabase
-    .from("product_sizes")
-    .select("*")
-    .order("sort_order")
-    .then(({ data }) => {
-      const list = (data ?? []) as ProductSize[];
-      _sizesCache = { data: list, ts: Date.now() };
-      _sizesPromise = null;
-      return list;
-    });
+  _sizesPromise = (async () => {
+    const { data } = await supabase.from("product_sizes").select("*").order("sort_order");
+    const list = (data ?? []) as ProductSize[];
+    _sizesCache = { data: list, ts: Date.now() };
+    _sizesPromise = null;
+    return list;
+  })();
   return _sizesPromise;
 }
 
