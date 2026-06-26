@@ -15,8 +15,6 @@ import { resolveImage } from "@/lib/product-image";
 import { PriceTag } from "@/components/storefront/PriceTag";
 import { GlowCard } from "@/components/ui/glow-card";
 import heroLg from "@/assets/hero-desktop.jpg";
-import heroMd from "@/assets/hero-md.jpg";
-import heroSm from "@/assets/hero-sm.jpg";
 import look2 from "@/assets/product-6.webp";
 import look3 from "@/assets/product-3.webp";
 import look4 from "@/assets/product-4.webp";
@@ -24,7 +22,7 @@ import look4 from "@/assets/product-4.webp";
 export const Route = createFileRoute("/")({
   head: () => ({
     links: [
-      { rel: "preload", as: "image", href: heroLg, fetchpriority: "high" },
+      { rel: "preload", as: "image", href: malazLogo.url, fetchpriority: "high" },
     ],
   }),
   component: HomePage,
