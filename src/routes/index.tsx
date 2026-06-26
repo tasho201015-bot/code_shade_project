@@ -140,6 +140,8 @@ function HomePage() {
             <img
               src={malazLogo.url}
               alt="Malaz"
+              fetchPriority="high"
+              decoding="async"
               className="w-[26vmin] max-w-[240px] min-w-[140px] h-auto select-none"
               draggable={false}
             />
