@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Link } from "@tanstack/react-router";
 import { GlowCard } from "@/components/ui/glow-card";
 import { resolveImage } from "@/lib/product-image";
