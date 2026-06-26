@@ -25,7 +25,7 @@ interface ProductCardProps {
   imageClassName?: string;
 }
 
-export function ProductCard({
+function ProductCardBase({
   product,
   className = "",
   linkClassName = "",
