@@ -143,7 +143,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const add: CartCtx["add"] = (item, qty = 1) => {
+  const add = useCallback<CartCtx["add"]>((item, qty = 1) => {
     let res: { ok: boolean; reason?: string } = { ok: true };
     const variant: CartVariant = {
       colorId: item.colorId ?? null,
@@ -177,12 +177,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
       return [...list, { ...item, ...variant, key, quantity: next }];
     });
     return res;
-  };
+  }, []);
 
-  const remove: CartCtx["remove"] = (key) =>
-    setItems((p) => (p ?? []).filter((i) => i.key !== key));
+  const remove = useCallback<CartCtx["remove"]>((key) =>
+    setItems((p) => (p ?? []).filter((i) => i.key !== key)), []);
 
-  const setQty: CartCtx["setQty"] = (key, qty) => {
+  const setQty = useCallback<CartCtx["setQty"]>((key, qty) => {
     let res: { ok: boolean; reason?: string } = { ok: true };
     setItems((p) =>
       (p ?? []).map((i) => {
@@ -194,21 +194,27 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }),
     );
     return res;
-  };
+  }, []);
 
-  const clear = () => setItems([]);
+  const clear = useCallback(() => setItems([]), []);
 
-  const safeItems = items ?? [];
-  const total = safeItems.reduce((s, i) => s + i.price * i.quantity, 0);
-  const count = safeItems.reduce((s, i) => s + i.quantity, 0);
+  const safeItems = items ?? EMPTY_ITEMS;
+  const { total, count } = useMemo(() => {
+    let t = 0, c = 0;
+    for (const i of safeItems) { t += i.price * i.quantity; c += i.quantity; }
+    return { total: t, count: c };
+  }, [safeItems]);
   const loaded = items !== null;
 
-  return (
-    <Ctx.Provider value={{ items: safeItems, add, remove, setQty, clear, total, count, loaded }}>
-      {children}
-    </Ctx.Provider>
+  const value = useMemo<CartCtx>(
+    () => ({ items: safeItems, add, remove, setQty, clear, total, count, loaded }),
+    [safeItems, add, remove, setQty, clear, total, count, loaded],
   );
+
+  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
+
+const EMPTY_ITEMS: CartItem[] = [];
 
 export function useCart() {
   const ctx = useContext(Ctx);
