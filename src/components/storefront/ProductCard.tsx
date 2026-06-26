@@ -72,3 +72,5 @@ function ProductCardBase({
     </GlowCard>
   );
 }
+
+export const ProductCard = memo(ProductCardBase);
