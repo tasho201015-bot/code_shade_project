@@ -2,12 +2,13 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ExactImportedButton } from "@/components/ui/exact-imported-button";
 import { useEffect, useState } from "react";
 import malazLogo from "@/assets/malaz-logo-hero-v2.png.asset.json";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { Header } from "@/components/site/Header";
 import { OrbitalNav } from "@/components/site/OrbitalNav";
 import { Footer } from "@/components/site/Footer";
 import { Reveal, Stagger, itemVariants } from "@/components/site/Reveal";
 import { DrawIcon } from "@/components/site/DrawIcon";
+
 import { TeamMarquee } from "@/components/team/TeamMarquee";
 import { useI18n } from "@/lib/i18n";
 import { supabase } from "@/integrations/supabase/client";
