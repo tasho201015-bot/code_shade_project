@@ -147,10 +147,11 @@ export function OrbitalNav() {
                     onClick={item.onClick}
                     aria-label={item.label}
                     className={cn(
-                      "group pointer-events-auto relative flex items-center justify-center",
+                      "malaz-orbit-btn group pointer-events-auto relative flex items-center justify-center",
                       "w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full",
                       "transition-transform duration-300 ease-out hover:scale-110",
                     )}
+
                     style={{
                       background:
                         "linear-gradient(135deg, rgba(20,12,6,0.85), rgba(34,20,10,0.70))",
