@@ -32,10 +32,22 @@ function createBeam(width: number, height: number): Beam {
     angle: angle,
     speed: 0.6 + Math.random() * 1.2,
     opacity: 0.12 + Math.random() * 0.16,
-    hue: 20 + Math.random() * 30, // orange range (20-50)
+    hue: 20 + Math.random() * 30,
     pulse: Math.random() * Math.PI * 2,
     pulseSpeed: 0.02 + Math.random() * 0.03,
   };
+}
+
+// Detect low-end / mobile devices so we can drop beam count + framerate.
+// Using deviceMemory (where available), hardwareConcurrency, and coarse pointer.
+function detectTier(): "low" | "mid" | "high" {
+  if (typeof navigator === "undefined") return "high";
+  const mem = (navigator as unknown as { deviceMemory?: number }).deviceMemory ?? 8;
+  const cores = navigator.hardwareConcurrency ?? 8;
+  const coarse = typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches;
+  if (mem <= 4 || cores <= 4 || coarse) return "low";
+  if (mem <= 6 || cores <= 6) return "mid";
+  return "high";
 }
 
 export function BeamsBackgroundOrange({
@@ -46,7 +58,6 @@ export function BeamsBackgroundOrange({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const beamsRef = useRef<Beam[]>([]);
   const animationFrameRef = useRef<number>(0);
-  const MINIMUM_BEAMS = 20;
 
   const opacityMap = {
     subtle: 0.7,
@@ -58,40 +69,57 @@ export function BeamsBackgroundOrange({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext("2d");
+    // Respect reduced motion: render a static frame, no rAF loop.
+    const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
+    const ctx = canvas.getContext("2d", { alpha: true });
     if (!ctx) return;
 
-    const updateCanvasSize = () => {
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
-      canvas.style.width = `${window.innerWidth}px`;
-      canvas.style.height = `${window.innerHeight}px`;
-      ctx.scale(dpr, dpr);
+    const tier = detectTier();
+    // Cap DPR aggressively; the canvas is heavily blurred so high-DPR is wasted.
+    // On low tier we render at sub-CSS resolution and let the browser upscale.
+    const renderScale = tier === "low" ? 0.5 : tier === "mid" ? 0.75 : 1;
+    const dprCap = tier === "low" ? 1 : tier === "mid" ? 1.25 : 1.5;
+    const beamCount = tier === "low" ? 10 : tier === "mid" ? 18 : 30;
+    // Frame interval (ms) — throttle low tier to ~30fps to free the main thread.
+    const frameInterval = tier === "low" ? 1000 / 24 : tier === "mid" ? 1000 / 40 : 0;
 
-      const totalBeams = MINIMUM_BEAMS * 1.5;
-      beamsRef.current = Array.from({ length: totalBeams }, () =>
-        createBeam(canvas.width, canvas.height)
+    const updateCanvasSize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, dprCap);
+      const cssW = window.innerWidth;
+      const cssH = window.innerHeight;
+      canvas.width = Math.round(cssW * dpr * renderScale);
+      canvas.height = Math.round(cssH * dpr * renderScale);
+      canvas.style.width = `${cssW}px`;
+      canvas.style.height = `${cssH}px`;
+      ctx.setTransform(dpr * renderScale, 0, 0, dpr * renderScale, 0, 0);
+
+      beamsRef.current = Array.from({ length: beamCount }, () =>
+        createBeam(cssW, cssH)
       );
     };
 
     updateCanvasSize();
-    window.addEventListener("resize", updateCanvasSize);
 
-    function resetBeam(beam: Beam, index: number, totalBeams: number) {
+    // Debounced resize to avoid re-allocating beams on every pixel change.
+    let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+    const onResize = () => {
+      if (resizeTimer) clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(updateCanvasSize, 150);
+    };
+    window.addEventListener("resize", onResize);
+
+    function resetBeam(beam: Beam, index: number) {
       if (!canvas) return beam;
-
+      const cssW = window.innerWidth;
+      const cssH = window.innerHeight;
       const column = index % 3;
-      const spacing = canvas.width / 3;
+      const spacing = cssW / 3;
 
-      beam.y = canvas.height + 100;
-      beam.x =
-        column * spacing +
-        spacing / 2 +
-        (Math.random() - 0.5) * spacing * 0.5;
+      beam.y = cssH + 100;
+      beam.x = column * spacing + spacing / 2 + (Math.random() - 0.5) * spacing * 0.5;
       beam.width = 100 + Math.random() * 100;
       beam.speed = 0.5 + Math.random() * 0.4;
-      // Alternate between orange and a near-white/cream hue for contrast
       beam.hue = index % 2 === 0 ? 25 + Math.random() * 15 : 40 + Math.random() * 20;
       beam.opacity = 0.2 + Math.random() * 0.1;
       return beam;
@@ -102,35 +130,20 @@ export function BeamsBackgroundOrange({
       ctx.translate(beam.x, beam.y);
       ctx.rotate((beam.angle * Math.PI) / 180);
 
-      // Calculate pulsing opacity
       const pulsingOpacity =
         beam.opacity *
         (0.8 + Math.sin(beam.pulse) * 0.2) *
         opacityMap[intensity];
 
       const gradient = ctx.createLinearGradient(0, 0, 0, beam.length);
-
-      // Orange / white gradient - use lower saturation at higher hues for a creamy white feel
       const saturation = beam.hue > 35 ? "20%" : "85%";
       const lightness = beam.hue > 35 ? "85%" : "60%";
 
       gradient.addColorStop(0, `hsla(${beam.hue}, ${saturation}, ${lightness}, 0)`);
-      gradient.addColorStop(
-        0.1,
-        `hsla(${beam.hue}, ${saturation}, ${lightness}, ${pulsingOpacity * 0.5})`
-      );
-      gradient.addColorStop(
-        0.4,
-        `hsla(${beam.hue}, ${saturation}, ${lightness}, ${pulsingOpacity})`
-      );
-      gradient.addColorStop(
-        0.6,
-        `hsla(${beam.hue}, ${saturation}, ${lightness}, ${pulsingOpacity})`
-      );
-      gradient.addColorStop(
-        0.9,
-        `hsla(${beam.hue}, ${saturation}, ${lightness}, ${pulsingOpacity * 0.5})`
-      );
+      gradient.addColorStop(0.1, `hsla(${beam.hue}, ${saturation}, ${lightness}, ${pulsingOpacity * 0.5})`);
+      gradient.addColorStop(0.4, `hsla(${beam.hue}, ${saturation}, ${lightness}, ${pulsingOpacity})`);
+      gradient.addColorStop(0.6, `hsla(${beam.hue}, ${saturation}, ${lightness}, ${pulsingOpacity})`);
+      gradient.addColorStop(0.9, `hsla(${beam.hue}, ${saturation}, ${lightness}, ${pulsingOpacity * 0.5})`);
       gradient.addColorStop(1, `hsla(${beam.hue}, ${saturation}, ${lightness}, 0)`);
 
       ctx.fillStyle = gradient;
@@ -138,35 +151,54 @@ export function BeamsBackgroundOrange({
       ctx.restore();
     }
 
-    function animate() {
-      if (!canvas || !ctx) return;
+    let lastFrame = 0;
+    let paused = document.hidden;
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.filter = "blur(35px)";
+    function step(now: number) {
+      if (paused || !canvas || !ctx) {
+        animationFrameRef.current = requestAnimationFrame(step);
+        return;
+      }
+      if (frameInterval && now - lastFrame < frameInterval) {
+        animationFrameRef.current = requestAnimationFrame(step);
+        return;
+      }
+      lastFrame = now;
 
-      const totalBeams = beamsRef.current.length;
+      const cssW = window.innerWidth;
+      const cssH = window.innerHeight;
+      ctx.clearRect(0, 0, cssW, cssH);
+
       beamsRef.current.forEach((beam, index) => {
         beam.y -= beam.speed;
         beam.pulse += beam.pulseSpeed;
-
-        // Reset beam when it goes off screen
-        if (beam.y + beam.length < -100) {
-          resetBeam(beam, index, totalBeams);
-        }
-
+        if (beam.y + beam.length < -100) resetBeam(beam, index);
         drawBeam(ctx, beam);
       });
 
-      animationFrameRef.current = requestAnimationFrame(animate);
+      animationFrameRef.current = requestAnimationFrame(step);
     }
 
-    animate();
+    const onVisibility = () => {
+      paused = document.hidden;
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    if (prefersReducedMotion) {
+      // Render one static frame and exit.
+      const cssW = window.innerWidth;
+      const cssH = window.innerHeight;
+      ctx.clearRect(0, 0, cssW, cssH);
+      beamsRef.current.forEach((beam) => drawBeam(ctx, beam));
+    } else {
+      animationFrameRef.current = requestAnimationFrame(step);
+    }
 
     return () => {
-      window.removeEventListener("resize", updateCanvasSize);
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
+      window.removeEventListener("resize", onResize);
+      document.removeEventListener("visibilitychange", onVisibility);
+      if (resizeTimer) clearTimeout(resizeTimer);
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
     };
   }, [intensity]);
 
@@ -174,6 +206,9 @@ export function BeamsBackgroundOrange({
     <div className={cn("relative w-full overflow-hidden bg-neutral-950", className)}>
       <canvas
         ref={canvasRef}
+        // Move the heavy blur to CSS so it's GPU-composited once per frame
+        // instead of applied per draw call inside canvas (which was the main CPU cost).
+        style={{ filter: "blur(35px)", willChange: "transform" }}
         className="fixed inset-0 w-screen h-screen pointer-events-none"
       />
       {children && <div className="relative z-10">{children}</div>}
