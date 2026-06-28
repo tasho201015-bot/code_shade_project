@@ -83,6 +83,13 @@ const GLOW_CSS = `
   inset: -10px;
   border-width: 10px;
 }
+@media (hover: none), (pointer: coarse) {
+  /* Touch devices never trigger the spotlight; drop the fixed-attachment
+     pseudo-element repaints that would otherwise jank scroll. */
+  [data-glow]::before,
+  [data-glow]::after { display: none !important; }
+}
+
 `;
 
 let glowStyleInjected = false;
