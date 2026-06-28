@@ -66,7 +66,16 @@ export function OrbitalNav() {
         @media (prefers-reduced-motion: reduce) {
           .malaz-orbit-spin, .malaz-orbit-counter, .malaz-orbit-shimmer { animation: none; }
         }
+        /* backdrop-filter on a continuously-rotating element forces the GPU
+           to re-sample the framebuffer every frame for each of the 7 icons —
+           the single biggest jank source on Adreno 5xx-class mobile GPUs.
+           Drop it on touch devices; the gradient + border already read as a
+           solid pill against the dark background. */
+        @media (hover: none), (pointer: coarse) {
+          .malaz-orbit-btn { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+        }
       `}</style>
+
 
       {/* Outer ring */}
       <div
