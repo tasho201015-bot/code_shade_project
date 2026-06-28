@@ -66,7 +66,16 @@ export function OrbitalNav() {
         @media (prefers-reduced-motion: reduce) {
           .malaz-orbit-spin, .malaz-orbit-counter, .malaz-orbit-shimmer { animation: none; }
         }
+        /* backdrop-filter on a continuously-rotating element forces the GPU
+           to re-sample the framebuffer every frame for each of the 7 icons —
+           the single biggest jank source on Adreno 5xx-class mobile GPUs.
+           Drop it on touch devices; the gradient + border already read as a
+           solid pill against the dark background. */
+        @media (hover: none), (pointer: coarse) {
+          .malaz-orbit-btn { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+        }
       `}</style>
+
 
       {/* Outer ring */}
       <div
@@ -138,10 +147,11 @@ export function OrbitalNav() {
                     onClick={item.onClick}
                     aria-label={item.label}
                     className={cn(
-                      "group pointer-events-auto relative flex items-center justify-center",
+                      "malaz-orbit-btn group pointer-events-auto relative flex items-center justify-center",
                       "w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 rounded-full",
                       "transition-transform duration-300 ease-out hover:scale-110",
                     )}
+
                     style={{
                       background:
                         "linear-gradient(135deg, rgba(20,12,6,0.85), rgba(34,20,10,0.70))",

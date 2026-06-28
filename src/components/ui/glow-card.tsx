@@ -83,6 +83,13 @@ const GLOW_CSS = `
   inset: -10px;
   border-width: 10px;
 }
+@media (hover: none), (pointer: coarse) {
+  /* Touch devices never trigger the spotlight; drop the fixed-attachment
+     pseudo-element repaints that would otherwise jank scroll. */
+  [data-glow]::before,
+  [data-glow]::after { display: none !important; }
+}
+
 `;
 
 let glowStyleInjected = false;
@@ -164,6 +171,10 @@ const GlowCard: React.FC<GlowCardProps> = ({
   const getSizeClasses = () => (customSize ? '' : sizeMap[size]);
 
   const getInlineStyles = (): React.CSSProperties => {
+    // `background-attachment: fixed` forces a full-viewport repaint on every
+    // scroll frame for every card. On touch devices the spotlight never moves
+    // (no hover), so the fixed attachment buys nothing and costs a lot.
+    const coarse = isCoarsePointer();
     const styles: Record<string, string | number> = {
       '--border':         '3',
       '--border-size':    'calc(var(--border, 2) * 1px)',
@@ -182,11 +193,12 @@ const GlowCard: React.FC<GlowCardProps> = ({
       backgroundColor:    'var(--backdrop, transparent)',
       backgroundSize:     'calc(100% + (2 * var(--border-size))) calc(100% + (2 * var(--border-size)))',
       backgroundPosition: '50% 50%',
-      backgroundAttachment: 'fixed',
+      backgroundAttachment: coarse ? 'scroll' : 'fixed',
       border:             'var(--border-size) solid var(--backup-border)',
       position:           'relative',
       touchAction:        'none',
     };
+
     if (width  !== undefined) styles.width  = typeof width  === 'number' ? `${width}px`  : width;
     if (height !== undefined) styles.height = typeof height === 'number' ? `${height}px` : height;
     return styles as React.CSSProperties;
