@@ -87,11 +87,8 @@ function HomePage() {
   const { t, lang } = useI18n();
   const nav = useNavigate();
   const [products, setProducts] = useState<Product[]>(() => productsCache ?? []);
-  
-  const { scrollY } = useScroll();
-  const heroY = useTransform(scrollY, [0, 600], [0, 140]);
-  const heroScale = useTransform(scrollY, [0, 600], [1, 1.12]);
-  const heroOpacity = useTransform(scrollY, [0, 500], [1, 0.3]);
+
+
 
   useEffect(() => {
     let mounted = true;
