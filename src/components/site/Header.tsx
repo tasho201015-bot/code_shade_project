@@ -44,8 +44,9 @@ export function Header() {
 
   const handleSignOut = async () => {
     await signOut();
-    nav({ to: "/login", search: { redirect: "/" } });
+    nav({ to: "/" });
   };
+
 
   return (
     <motion.header
