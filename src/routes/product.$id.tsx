@@ -162,6 +162,70 @@ function ProductPage() {
     recordView({ data: { productId: id } }).catch(() => { /* non-blocking */ });
   }, [id, user, recordView]);
 
+  // Resume a pending Add-to-Cart / Buy Now action after the user signs in.
+  useEffect(() => {
+    if (!user || !p || !cartLoaded) return;
+    let payload: {
+      productId?: string;
+      action?: "add" | "buy";
+      qty?: number;
+      colorId?: string | null;
+      sizeId?: string | null;
+      ts?: number;
+    } | null = null;
+    try {
+      const raw = sessionStorage.getItem("malaz_pending_action");
+      if (!raw) return;
+      payload = JSON.parse(raw);
+    } catch { return; }
+    if (!payload || payload.productId !== p.id) return;
+    // Only resume actions initiated in the last 15 minutes.
+    if (!payload.ts || Date.now() - payload.ts > 15 * 60 * 1000) {
+      sessionStorage.removeItem("malaz_pending_action");
+      return;
+    }
+    // Wait until variant options finished loading so validation can pass.
+    if (colors.length > 0 && !colors.some((c) => c.id === (payload!.colorId ?? colors[0]?.id))) return;
+    // Apply saved variant selection.
+    const wantColor = payload.colorId ?? (colors[0]?.id ?? null);
+    const wantSize = payload.sizeId ?? null;
+    if (wantColor && wantColor !== selColorId) { setSelColorId(wantColor); return; }
+    if (wantSize && wantSize !== selSizeId) { setSelSizeId(wantSize); return; }
+    if (colors.length > 0 && !selColorId) return;
+    if (sizes.length > 0 && !selSizeId) return;
+
+    sessionStorage.removeItem("malaz_pending_action");
+    const color = colors.find((c) => c.id === selColorId) ?? null;
+    const size = sizes.find((s) => s.id === selSizeId) ?? null;
+    const n = Math.max(1, payload.qty ?? 1);
+    const res = add(
+      {
+        id: p.id,
+        name: p.name,
+        price: Number(p.price),
+        image_url: p.image_url,
+        stock: p.stock,
+        colorId: color?.id ?? null,
+        colorName: color?.name ?? null,
+        colorHex: color?.hex ?? null,
+        sizeId: size?.id ?? null,
+        sizeLabel: size?.label ?? null,
+      },
+      n,
+    );
+    if (!res.ok) {
+      toast.error(res.reason ?? "");
+      return;
+    }
+    if (payload.action === "buy") {
+      nav({ to: "/cart" });
+    } else {
+      setAdded(true);
+      setTimeout(() => setAdded(false), 1600);
+    }
+  }, [user, p, cartLoaded, colors, sizes, selColorId, selSizeId, add, nav]);
+
+
   // Build gallery — product schema has a single image_url, repeat as thumbnails
   const gallery = useMemo(() => {
     const src = resolveImage(p?.image_url);
