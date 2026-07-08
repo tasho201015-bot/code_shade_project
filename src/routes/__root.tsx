@@ -124,12 +124,15 @@ function AuthGate() {
 
   useEffect(() => {
     if (loading) return;
-    if (!user && !isPublic) {
-      router.navigate({ to: "/login", search: { redirect: location.pathname } as never });
-    } else if (user && isPublic && !skipAuthedRedirect) {
+    // Guests may browse every public page freely. Auth is only required at
+    // per-action gates (Add to Cart, Buy Now, Checkout, Wishlist, admin
+    // routes). We still bounce already-signed-in users away from the
+    // login/forgot-password pages so they aren't stuck on auth UI.
+    if (user && isPublic && !skipAuthedRedirect) {
       router.navigate({ to: "/" });
     }
   }, [user, loading, isPublic, skipAuthedRedirect, location.pathname, router]);
+
 
   useEffect(() => {
     console.log("[route] navigated to", location.pathname);
