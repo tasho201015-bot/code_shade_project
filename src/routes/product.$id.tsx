@@ -451,11 +451,15 @@ function ProductPage() {
                 {soldOut ? t("prod.soldOut") : added ? t("prod.added") : t("prod.addToBag")}
               </ExactImportedButton>
               <ExactImportedButton
-                onClick={() => { handleAdd(); nav({ to: "/cart" }); }}
+                onClick={() => {
+                  if (!user) { requireAuthFor("buy", qty); return; }
+                  if (handleAdd()) nav({ to: "/cart" });
+                }}
                 disabled={!cartLoaded || soldOut}
                 backgroundColor="#FAF7F0"
                 lightColor="#141413"
               >
+
                 {t("prod.buyNow")}
               </ExactImportedButton>
               <WishlistButton productId={p.id} variant="full" stopPropagation={false} />
