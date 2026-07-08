@@ -190,14 +190,37 @@ function ProductPage() {
   const visibleSizes = sizes.filter((s) => sizeStatus(s.id) !== "hidden");
 
 
-  const handleAdd = (n: number = qty) => {
-    if (soldOut) return;
-    if (colors.length > 0 && !selColorId) { toast.error(t("prod.selectColor")); return; }
-    if (sizes.length > 0 && !selSizeId) { toast.error(t("prod.selectSize")); return; }
+  const requireAuthFor = (action: "add" | "buy", n: number): boolean => {
+    if (user) return true;
+    try {
+      sessionStorage.setItem(
+        "malaz_pending_action",
+        JSON.stringify({
+          productId: p?.id,
+          action,
+          qty: n,
+          colorId: selColorId,
+          sizeId: selSizeId,
+          ts: Date.now(),
+        }),
+      );
+    } catch { /* ignore */ }
+    const redirect = typeof window !== "undefined"
+      ? window.location.pathname + window.location.search
+      : `/product/${id}`;
+    nav({ to: "/login", search: { redirect } as never });
+    return false;
+  };
+
+  const handleAdd = (n: number = qty): boolean => {
+    if (soldOut) return false;
+    if (!requireAuthFor("add", n)) return false;
+    if (colors.length > 0 && !selColorId) { toast.error(t("prod.selectColor")); return false; }
+    if (sizes.length > 0 && !selSizeId) { toast.error(t("prod.selectSize")); return false; }
     if (selSizeId && sizeStatus(selSizeId) === "out_of_stock") {
       toast.error(t("prod.sizeOOS"));
 
-      return;
+      return false;
     }
     const color = colors.find((c) => c.id === selColorId) ?? null;
     const size = sizes.find((s) => s.id === selSizeId) ?? null;
@@ -218,11 +241,13 @@ function ProductPage() {
     );
     if (!res.ok) {
       toast.error(res.reason ?? t("prod.addToBag"));
-      return;
+      return false;
     }
     setAdded(true);
     setTimeout(() => setAdded(false), 1600);
+    return true;
   };
+
 
   return (
     <div className="min-h-screen">
