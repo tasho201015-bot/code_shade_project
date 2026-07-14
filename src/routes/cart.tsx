@@ -153,15 +153,10 @@ function CartPage() {
 
 
   const handleSubmit = async () => {
-    if (!user) {
-      nav({ to: "/login", search: { redirect: "/cart" } as never });
-      return;
-    }
     const v = validate();
     if (v) { setErr(v); return; }
     setErr(null);
     setSubmitting(true);
-
     const address = buildAddress();
     const fullPhone = `${phoneCode}${phone}`;
     const payload = {

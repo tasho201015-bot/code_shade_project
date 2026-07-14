@@ -162,70 +162,6 @@ function ProductPage() {
     recordView({ data: { productId: id } }).catch(() => { /* non-blocking */ });
   }, [id, user, recordView]);
 
-  // Resume a pending Add-to-Cart / Buy Now action after the user signs in.
-  useEffect(() => {
-    if (!user || !p || !cartLoaded) return;
-    let payload: {
-      productId?: string;
-      action?: "add" | "buy";
-      qty?: number;
-      colorId?: string | null;
-      sizeId?: string | null;
-      ts?: number;
-    } | null = null;
-    try {
-      const raw = sessionStorage.getItem("malaz_pending_action");
-      if (!raw) return;
-      payload = JSON.parse(raw);
-    } catch { return; }
-    if (!payload || payload.productId !== p.id) return;
-    // Only resume actions initiated in the last 15 minutes.
-    if (!payload.ts || Date.now() - payload.ts > 15 * 60 * 1000) {
-      sessionStorage.removeItem("malaz_pending_action");
-      return;
-    }
-    // Wait until variant options finished loading so validation can pass.
-    if (colors.length > 0 && !colors.some((c) => c.id === (payload!.colorId ?? colors[0]?.id))) return;
-    // Apply saved variant selection.
-    const wantColor = payload.colorId ?? (colors[0]?.id ?? null);
-    const wantSize = payload.sizeId ?? null;
-    if (wantColor && wantColor !== selColorId) { setSelColorId(wantColor); return; }
-    if (wantSize && wantSize !== selSizeId) { setSelSizeId(wantSize); return; }
-    if (colors.length > 0 && !selColorId) return;
-    if (sizes.length > 0 && !selSizeId) return;
-
-    sessionStorage.removeItem("malaz_pending_action");
-    const color = colors.find((c) => c.id === selColorId) ?? null;
-    const size = sizes.find((s) => s.id === selSizeId) ?? null;
-    const n = Math.max(1, payload.qty ?? 1);
-    const res = add(
-      {
-        id: p.id,
-        name: p.name,
-        price: Number(p.price),
-        image_url: p.image_url,
-        stock: p.stock,
-        colorId: color?.id ?? null,
-        colorName: color?.name ?? null,
-        colorHex: color?.hex ?? null,
-        sizeId: size?.id ?? null,
-        sizeLabel: size?.label ?? null,
-      },
-      n,
-    );
-    if (!res.ok) {
-      toast.error(res.reason ?? "");
-      return;
-    }
-    if (payload.action === "buy") {
-      nav({ to: "/cart" });
-    } else {
-      setAdded(true);
-      setTimeout(() => setAdded(false), 1600);
-    }
-  }, [user, p, cartLoaded, colors, sizes, selColorId, selSizeId, add, nav]);
-
-
   // Build gallery — product schema has a single image_url, repeat as thumbnails
   const gallery = useMemo(() => {
     const src = resolveImage(p?.image_url);
@@ -254,37 +190,14 @@ function ProductPage() {
   const visibleSizes = sizes.filter((s) => sizeStatus(s.id) !== "hidden");
 
 
-  const requireAuthFor = (action: "add" | "buy", n: number): boolean => {
-    if (user) return true;
-    try {
-      sessionStorage.setItem(
-        "malaz_pending_action",
-        JSON.stringify({
-          productId: p?.id,
-          action,
-          qty: n,
-          colorId: selColorId,
-          sizeId: selSizeId,
-          ts: Date.now(),
-        }),
-      );
-    } catch { /* ignore */ }
-    const redirect = typeof window !== "undefined"
-      ? window.location.pathname + window.location.search
-      : `/product/${id}`;
-    nav({ to: "/login", search: { redirect } as never });
-    return false;
-  };
-
-  const handleAdd = (n: number = qty): boolean => {
-    if (soldOut) return false;
-    if (!requireAuthFor("add", n)) return false;
-    if (colors.length > 0 && !selColorId) { toast.error(t("prod.selectColor")); return false; }
-    if (sizes.length > 0 && !selSizeId) { toast.error(t("prod.selectSize")); return false; }
+  const handleAdd = (n: number = qty) => {
+    if (soldOut) return;
+    if (colors.length > 0 && !selColorId) { toast.error(t("prod.selectColor")); return; }
+    if (sizes.length > 0 && !selSizeId) { toast.error(t("prod.selectSize")); return; }
     if (selSizeId && sizeStatus(selSizeId) === "out_of_stock") {
       toast.error(t("prod.sizeOOS"));
 
-      return false;
+      return;
     }
     const color = colors.find((c) => c.id === selColorId) ?? null;
     const size = sizes.find((s) => s.id === selSizeId) ?? null;
@@ -305,13 +218,11 @@ function ProductPage() {
     );
     if (!res.ok) {
       toast.error(res.reason ?? t("prod.addToBag"));
-      return false;
+      return;
     }
     setAdded(true);
     setTimeout(() => setAdded(false), 1600);
-    return true;
   };
-
 
   return (
     <div className="min-h-screen">
@@ -515,15 +426,11 @@ function ProductPage() {
                 {soldOut ? t("prod.soldOut") : added ? t("prod.added") : t("prod.addToBag")}
               </ExactImportedButton>
               <ExactImportedButton
-                onClick={() => {
-                  if (!user) { requireAuthFor("buy", qty); return; }
-                  if (handleAdd()) nav({ to: "/cart" });
-                }}
+                onClick={() => { handleAdd(); nav({ to: "/cart" }); }}
                 disabled={!cartLoaded || soldOut}
                 backgroundColor="#FAF7F0"
                 lightColor="#141413"
               >
-
                 {t("prod.buyNow")}
               </ExactImportedButton>
               <WishlistButton productId={p.id} variant="full" stopPropagation={false} />
