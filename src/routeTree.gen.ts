@@ -9,102 +9,47 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as WishlistRouteImport } from './routes/wishlist'
-import { Route as TeamRouteImport } from './routes/team'
-import { Route as ShopRouteImport } from './routes/shop'
-import { Route as SellingRouteImport } from './routes/selling'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as PaymentSuccessRouteImport } from './routes/payment-success'
-import { Route as PaymentRouteImport } from './routes/payment'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
-import { Route as CartRouteImport } from './routes/cart'
-import { Route as AdminTeamRouteImport } from './routes/admin-team'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as SellingIndexRouteImport } from './routes/selling.index'
-import { Route as CategoriesIndexRouteImport } from './routes/categories.index'
-import { Route as TeamSlugRouteImport } from './routes/team.$slug'
-import { Route as SellingUpsellsRouteImport } from './routes/selling.upsells'
-import { Route as SellingSettingsRouteImport } from './routes/selling.settings'
-import { Route as SellingProductsRouteImport } from './routes/selling.products'
-import { Route as SellingCrossSellsRouteImport } from './routes/selling.cross-sells'
-import { Route as SellingBundlesRouteImport } from './routes/selling.bundles'
-import { Route as ProductIdRouteImport } from './routes/product.$id'
-import { Route as PaymentCallbackRouteImport } from './routes/payment.callback'
-import { Route as ConfirmOrderIdRouteImport } from './routes/confirm-order.$id'
-import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
-import { Route as AdminShippingRouteImport } from './routes/admin.shipping'
+import { Route as AccountRouteImport } from './routes/account'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AdminTeamRouteImport } from './routes/admin-team'
+import { Route as CartRouteImport } from './routes/cart'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as PaymentRouteImport } from './routes/payment'
+import { Route as PaymentSuccessRouteImport } from './routes/payment-success'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as SellingRouteImport } from './routes/selling'
+import { Route as ShopRouteImport } from './routes/shop'
+import { Route as TeamRouteImport } from './routes/team'
+import { Route as WishlistRouteImport } from './routes/wishlist'
 import { Route as AdminSalesBoosterRouteImport } from './routes/admin.sales-booster'
+import { Route as AdminShippingRouteImport } from './routes/admin.shipping'
+import { Route as CategoriesIndexRouteImport } from './routes/categories.index'
+import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
+import { Route as ConfirmOrderIdRouteImport } from './routes/confirm-order.$id'
+import { Route as PaymentCallbackRouteImport } from './routes/payment.callback'
+import { Route as ProductIdRouteImport } from './routes/product.$id'
+import { Route as SellingIndexRouteImport } from './routes/selling.index'
+import { Route as SellingBundlesRouteImport } from './routes/selling.bundles'
+import { Route as SellingCrossSellsRouteImport } from './routes/selling.cross-sells'
+import { Route as SellingProductsRouteImport } from './routes/selling.products'
+import { Route as SellingSettingsRouteImport } from './routes/selling.settings'
+import { Route as SellingUpsellsRouteImport } from './routes/selling.upsells'
+import { Route as TeamSlugRouteImport } from './routes/team.$slug'
 import { Route as AdminSalesBoosterIndexRouteImport } from './routes/admin.sales-booster.index'
-import { Route as ApiPublicPaymobWebhookRouteImport } from './routes/api/public/paymob-webhook'
-import { Route as AdminSalesBoosterUpsellsRouteImport } from './routes/admin.sales-booster.upsells'
-import { Route as AdminSalesBoosterSettingsRouteImport } from './routes/admin.sales-booster.settings'
-import { Route as AdminSalesBoosterProductsRouteImport } from './routes/admin.sales-booster.products'
-import { Route as AdminSalesBoosterCrossSellsRouteImport } from './routes/admin.sales-booster.cross-sells'
 import { Route as AdminSalesBoosterBundlesRouteImport } from './routes/admin.sales-booster.bundles'
-import { Route as ApiPublicPaymobCallbackRouteImport } from './routes/api/public/paymob.callback'
+import { Route as AdminSalesBoosterCrossSellsRouteImport } from './routes/admin.sales-booster.cross-sells'
+import { Route as AdminSalesBoosterProductsRouteImport } from './routes/admin.sales-booster.products'
+import { Route as AdminSalesBoosterSettingsRouteImport } from './routes/admin.sales-booster.settings'
+import { Route as AdminSalesBoosterUpsellsRouteImport } from './routes/admin.sales-booster.upsells'
+import { Route as ApiPublicPaymobWebhookRouteImport } from './routes/api/public/paymob-webhook'
 import { Route as ApiPublicHooksSendDueCampaignsRouteImport } from './routes/api/public/hooks/send-due-campaigns'
+import { Route as ApiPublicPaymobCallbackRouteImport } from './routes/api/public/paymob.callback'
 
-const WishlistRoute = WishlistRouteImport.update({
-  id: '/wishlist',
-  path: '/wishlist',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TeamRoute = TeamRouteImport.update({
-  id: '/team',
-  path: '/team',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ShopRoute = ShopRouteImport.update({
-  id: '/shop',
-  path: '/shop',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SellingRoute = SellingRouteImport.update({
-  id: '/selling',
-  path: '/selling',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PaymentSuccessRoute = PaymentSuccessRouteImport.update({
-  id: '/payment-success',
-  path: '/payment-success',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PaymentRoute = PaymentRouteImport.update({
-  id: '/payment',
-  path: '/payment',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
-  id: '/forgot-password',
-  path: '/forgot-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CartRoute = CartRouteImport.update({
-  id: '/cart',
-  path: '/cart',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminTeamRoute = AdminTeamRouteImport.update({
-  id: '/admin-team',
-  path: '/admin-team',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccountRoute = AccountRouteImport.update({
@@ -112,64 +57,79 @@ const AccountRoute = AccountRouteImport.update({
   path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SellingIndexRoute = SellingIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => SellingRoute,
+const AdminTeamRoute = AdminTeamRouteImport.update({
+  id: '/admin-team',
+  path: '/admin-team',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CartRoute = CartRouteImport.update({
+  id: '/cart',
+  path: '/cart',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentRoute = PaymentRouteImport.update({
+  id: '/payment',
+  path: '/payment',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaymentSuccessRoute = PaymentSuccessRouteImport.update({
+  id: '/payment-success',
+  path: '/payment-success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellingRoute = SellingRouteImport.update({
+  id: '/selling',
+  path: '/selling',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamRoute = TeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WishlistRoute = WishlistRouteImport.update({
+  id: '/wishlist',
+  path: '/wishlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminSalesBoosterRoute = AdminSalesBoosterRouteImport.update({
+  id: '/sales-booster',
+  path: '/sales-booster',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminShippingRoute = AdminShippingRouteImport.update({
+  id: '/shipping',
+  path: '/shipping',
+  getParentRoute: () => AdminRoute,
 } as any)
 const CategoriesIndexRoute = CategoriesIndexRouteImport.update({
   id: '/categories/',
   path: '/categories/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TeamSlugRoute = TeamSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => TeamRoute,
-} as any)
-const SellingUpsellsRoute = SellingUpsellsRouteImport.update({
-  id: '/upsells',
-  path: '/upsells',
-  getParentRoute: () => SellingRoute,
-} as any)
-const SellingSettingsRoute = SellingSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => SellingRoute,
-} as any)
-const SellingProductsRoute = SellingProductsRouteImport.update({
-  id: '/products',
-  path: '/products',
-  getParentRoute: () => SellingRoute,
-} as any)
-const SellingCrossSellsRoute = SellingCrossSellsRouteImport.update({
-  id: '/cross-sells',
-  path: '/cross-sells',
-  getParentRoute: () => SellingRoute,
-} as any)
-const SellingBundlesRoute = SellingBundlesRouteImport.update({
-  id: '/bundles',
-  path: '/bundles',
-  getParentRoute: () => SellingRoute,
-} as any)
-const ProductIdRoute = ProductIdRouteImport.update({
-  id: '/product/$id',
-  path: '/product/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PaymentCallbackRoute = PaymentCallbackRouteImport.update({
-  id: '/callback',
-  path: '/callback',
-  getParentRoute: () => PaymentRoute,
-} as any)
-const ConfirmOrderIdRoute = ConfirmOrderIdRouteImport.update({
-  id: '/confirm-order/$id',
-  path: '/confirm-order/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CategoriesSlugRoute = CategoriesSlugRouteImport.update({
@@ -177,42 +137,65 @@ const CategoriesSlugRoute = CategoriesSlugRouteImport.update({
   path: '/categories/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminShippingRoute = AdminShippingRouteImport.update({
-  id: '/shipping',
-  path: '/shipping',
-  getParentRoute: () => AdminRoute,
+const ConfirmOrderIdRoute = ConfirmOrderIdRouteImport.update({
+  id: '/confirm-order/$id',
+  path: '/confirm-order/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AdminSalesBoosterRoute = AdminSalesBoosterRouteImport.update({
-  id: '/sales-booster',
-  path: '/sales-booster',
-  getParentRoute: () => AdminRoute,
+const PaymentCallbackRoute = PaymentCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => PaymentRoute,
+} as any)
+const ProductIdRoute = ProductIdRouteImport.update({
+  id: '/product/$id',
+  path: '/product/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellingIndexRoute = SellingIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SellingRoute,
+} as any)
+const SellingBundlesRoute = SellingBundlesRouteImport.update({
+  id: '/bundles',
+  path: '/bundles',
+  getParentRoute: () => SellingRoute,
+} as any)
+const SellingCrossSellsRoute = SellingCrossSellsRouteImport.update({
+  id: '/cross-sells',
+  path: '/cross-sells',
+  getParentRoute: () => SellingRoute,
+} as any)
+const SellingProductsRoute = SellingProductsRouteImport.update({
+  id: '/products',
+  path: '/products',
+  getParentRoute: () => SellingRoute,
+} as any)
+const SellingSettingsRoute = SellingSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => SellingRoute,
+} as any)
+const SellingUpsellsRoute = SellingUpsellsRouteImport.update({
+  id: '/upsells',
+  path: '/upsells',
+  getParentRoute: () => SellingRoute,
+} as any)
+const TeamSlugRoute = TeamSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => TeamRoute,
 } as any)
 const AdminSalesBoosterIndexRoute = AdminSalesBoosterIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminSalesBoosterRoute,
 } as any)
-const ApiPublicPaymobWebhookRoute = ApiPublicPaymobWebhookRouteImport.update({
-  id: '/api/public/paymob-webhook',
-  path: '/api/public/paymob-webhook',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminSalesBoosterUpsellsRoute =
-  AdminSalesBoosterUpsellsRouteImport.update({
-    id: '/upsells',
-    path: '/upsells',
-    getParentRoute: () => AdminSalesBoosterRoute,
-  } as any)
-const AdminSalesBoosterSettingsRoute =
-  AdminSalesBoosterSettingsRouteImport.update({
-    id: '/settings',
-    path: '/settings',
-    getParentRoute: () => AdminSalesBoosterRoute,
-  } as any)
-const AdminSalesBoosterProductsRoute =
-  AdminSalesBoosterProductsRouteImport.update({
-    id: '/products',
-    path: '/products',
+const AdminSalesBoosterBundlesRoute =
+  AdminSalesBoosterBundlesRouteImport.update({
+    id: '/bundles',
+    path: '/bundles',
     getParentRoute: () => AdminSalesBoosterRoute,
   } as any)
 const AdminSalesBoosterCrossSellsRoute =
@@ -221,15 +204,27 @@ const AdminSalesBoosterCrossSellsRoute =
     path: '/cross-sells',
     getParentRoute: () => AdminSalesBoosterRoute,
   } as any)
-const AdminSalesBoosterBundlesRoute =
-  AdminSalesBoosterBundlesRouteImport.update({
-    id: '/bundles',
-    path: '/bundles',
+const AdminSalesBoosterProductsRoute =
+  AdminSalesBoosterProductsRouteImport.update({
+    id: '/products',
+    path: '/products',
     getParentRoute: () => AdminSalesBoosterRoute,
   } as any)
-const ApiPublicPaymobCallbackRoute = ApiPublicPaymobCallbackRouteImport.update({
-  id: '/api/public/paymob/callback',
-  path: '/api/public/paymob/callback',
+const AdminSalesBoosterSettingsRoute =
+  AdminSalesBoosterSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AdminSalesBoosterRoute,
+  } as any)
+const AdminSalesBoosterUpsellsRoute =
+  AdminSalesBoosterUpsellsRouteImport.update({
+    id: '/upsells',
+    path: '/upsells',
+    getParentRoute: () => AdminSalesBoosterRoute,
+  } as any)
+const ApiPublicPaymobWebhookRoute = ApiPublicPaymobWebhookRouteImport.update({
+  id: '/api/public/paymob-webhook',
+  path: '/api/public/paymob-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicHooksSendDueCampaignsRoute =
@@ -238,6 +233,11 @@ const ApiPublicHooksSendDueCampaignsRoute =
     path: '/api/public/hooks/send-due-campaigns',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicPaymobCallbackRoute = ApiPublicPaymobCallbackRouteImport.update({
+  id: '/api/public/paymob/callback',
+  path: '/api/public/paymob/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -499,88 +499,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/wishlist': {
-      id: '/wishlist'
-      path: '/wishlist'
-      fullPath: '/wishlist'
-      preLoaderRoute: typeof WishlistRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/team': {
-      id: '/team'
-      path: '/team'
-      fullPath: '/team'
-      preLoaderRoute: typeof TeamRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/shop': {
-      id: '/shop'
-      path: '/shop'
-      fullPath: '/shop'
-      preLoaderRoute: typeof ShopRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/selling': {
-      id: '/selling'
-      path: '/selling'
-      fullPath: '/selling'
-      preLoaderRoute: typeof SellingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/payment-success': {
-      id: '/payment-success'
-      path: '/payment-success'
-      fullPath: '/payment-success'
-      preLoaderRoute: typeof PaymentSuccessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/payment': {
-      id: '/payment'
-      path: '/payment'
-      fullPath: '/payment'
-      preLoaderRoute: typeof PaymentRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/forgot-password': {
-      id: '/forgot-password'
-      path: '/forgot-password'
-      fullPath: '/forgot-password'
-      preLoaderRoute: typeof ForgotPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cart': {
-      id: '/cart'
-      path: '/cart'
-      fullPath: '/cart'
-      preLoaderRoute: typeof CartRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin-team': {
-      id: '/admin-team'
-      path: '/admin-team'
-      fullPath: '/admin-team'
-      preLoaderRoute: typeof AdminTeamRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/account': {
@@ -590,88 +513,109 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/selling/': {
-      id: '/selling/'
-      path: '/'
-      fullPath: '/selling/'
-      preLoaderRoute: typeof SellingIndexRouteImport
-      parentRoute: typeof SellingRoute
+    '/admin-team': {
+      id: '/admin-team'
+      path: '/admin-team'
+      fullPath: '/admin-team'
+      preLoaderRoute: typeof AdminTeamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cart': {
+      id: '/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof CartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment': {
+      id: '/payment'
+      path: '/payment'
+      fullPath: '/payment'
+      preLoaderRoute: typeof PaymentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payment-success': {
+      id: '/payment-success'
+      path: '/payment-success'
+      fullPath: '/payment-success'
+      preLoaderRoute: typeof PaymentSuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/selling': {
+      id: '/selling'
+      path: '/selling'
+      fullPath: '/selling'
+      preLoaderRoute: typeof SellingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/team': {
+      id: '/team'
+      path: '/team'
+      fullPath: '/team'
+      preLoaderRoute: typeof TeamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wishlist': {
+      id: '/wishlist'
+      path: '/wishlist'
+      fullPath: '/wishlist'
+      preLoaderRoute: typeof WishlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/sales-booster': {
+      id: '/admin/sales-booster'
+      path: '/sales-booster'
+      fullPath: '/admin/sales-booster'
+      preLoaderRoute: typeof AdminSalesBoosterRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/shipping': {
+      id: '/admin/shipping'
+      path: '/shipping'
+      fullPath: '/admin/shipping'
+      preLoaderRoute: typeof AdminShippingRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/categories/': {
       id: '/categories/'
       path: '/categories'
       fullPath: '/categories/'
       preLoaderRoute: typeof CategoriesIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/team/$slug': {
-      id: '/team/$slug'
-      path: '/$slug'
-      fullPath: '/team/$slug'
-      preLoaderRoute: typeof TeamSlugRouteImport
-      parentRoute: typeof TeamRoute
-    }
-    '/selling/upsells': {
-      id: '/selling/upsells'
-      path: '/upsells'
-      fullPath: '/selling/upsells'
-      preLoaderRoute: typeof SellingUpsellsRouteImport
-      parentRoute: typeof SellingRoute
-    }
-    '/selling/settings': {
-      id: '/selling/settings'
-      path: '/settings'
-      fullPath: '/selling/settings'
-      preLoaderRoute: typeof SellingSettingsRouteImport
-      parentRoute: typeof SellingRoute
-    }
-    '/selling/products': {
-      id: '/selling/products'
-      path: '/products'
-      fullPath: '/selling/products'
-      preLoaderRoute: typeof SellingProductsRouteImport
-      parentRoute: typeof SellingRoute
-    }
-    '/selling/cross-sells': {
-      id: '/selling/cross-sells'
-      path: '/cross-sells'
-      fullPath: '/selling/cross-sells'
-      preLoaderRoute: typeof SellingCrossSellsRouteImport
-      parentRoute: typeof SellingRoute
-    }
-    '/selling/bundles': {
-      id: '/selling/bundles'
-      path: '/bundles'
-      fullPath: '/selling/bundles'
-      preLoaderRoute: typeof SellingBundlesRouteImport
-      parentRoute: typeof SellingRoute
-    }
-    '/product/$id': {
-      id: '/product/$id'
-      path: '/product/$id'
-      fullPath: '/product/$id'
-      preLoaderRoute: typeof ProductIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/payment/callback': {
-      id: '/payment/callback'
-      path: '/callback'
-      fullPath: '/payment/callback'
-      preLoaderRoute: typeof PaymentCallbackRouteImport
-      parentRoute: typeof PaymentRoute
-    }
-    '/confirm-order/$id': {
-      id: '/confirm-order/$id'
-      path: '/confirm-order/$id'
-      fullPath: '/confirm-order/$id'
-      preLoaderRoute: typeof ConfirmOrderIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/categories/$slug': {
@@ -681,60 +625,81 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/shipping': {
-      id: '/admin/shipping'
-      path: '/shipping'
-      fullPath: '/admin/shipping'
-      preLoaderRoute: typeof AdminShippingRouteImport
-      parentRoute: typeof AdminRoute
+    '/confirm-order/$id': {
+      id: '/confirm-order/$id'
+      path: '/confirm-order/$id'
+      fullPath: '/confirm-order/$id'
+      preLoaderRoute: typeof ConfirmOrderIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/sales-booster': {
-      id: '/admin/sales-booster'
-      path: '/sales-booster'
-      fullPath: '/admin/sales-booster'
-      preLoaderRoute: typeof AdminSalesBoosterRouteImport
-      parentRoute: typeof AdminRoute
+    '/payment/callback': {
+      id: '/payment/callback'
+      path: '/callback'
+      fullPath: '/payment/callback'
+      preLoaderRoute: typeof PaymentCallbackRouteImport
+      parentRoute: typeof PaymentRoute
+    }
+    '/product/$id': {
+      id: '/product/$id'
+      path: '/product/$id'
+      fullPath: '/product/$id'
+      preLoaderRoute: typeof ProductIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/selling/': {
+      id: '/selling/'
+      path: '/'
+      fullPath: '/selling/'
+      preLoaderRoute: typeof SellingIndexRouteImport
+      parentRoute: typeof SellingRoute
+    }
+    '/selling/bundles': {
+      id: '/selling/bundles'
+      path: '/bundles'
+      fullPath: '/selling/bundles'
+      preLoaderRoute: typeof SellingBundlesRouteImport
+      parentRoute: typeof SellingRoute
+    }
+    '/selling/cross-sells': {
+      id: '/selling/cross-sells'
+      path: '/cross-sells'
+      fullPath: '/selling/cross-sells'
+      preLoaderRoute: typeof SellingCrossSellsRouteImport
+      parentRoute: typeof SellingRoute
+    }
+    '/selling/products': {
+      id: '/selling/products'
+      path: '/products'
+      fullPath: '/selling/products'
+      preLoaderRoute: typeof SellingProductsRouteImport
+      parentRoute: typeof SellingRoute
+    }
+    '/selling/settings': {
+      id: '/selling/settings'
+      path: '/settings'
+      fullPath: '/selling/settings'
+      preLoaderRoute: typeof SellingSettingsRouteImport
+      parentRoute: typeof SellingRoute
+    }
+    '/selling/upsells': {
+      id: '/selling/upsells'
+      path: '/upsells'
+      fullPath: '/selling/upsells'
+      preLoaderRoute: typeof SellingUpsellsRouteImport
+      parentRoute: typeof SellingRoute
+    }
+    '/team/$slug': {
+      id: '/team/$slug'
+      path: '/$slug'
+      fullPath: '/team/$slug'
+      preLoaderRoute: typeof TeamSlugRouteImport
+      parentRoute: typeof TeamRoute
     }
     '/admin/sales-booster/': {
       id: '/admin/sales-booster/'
       path: '/'
       fullPath: '/admin/sales-booster/'
       preLoaderRoute: typeof AdminSalesBoosterIndexRouteImport
-      parentRoute: typeof AdminSalesBoosterRoute
-    }
-    '/api/public/paymob-webhook': {
-      id: '/api/public/paymob-webhook'
-      path: '/api/public/paymob-webhook'
-      fullPath: '/api/public/paymob-webhook'
-      preLoaderRoute: typeof ApiPublicPaymobWebhookRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/sales-booster/upsells': {
-      id: '/admin/sales-booster/upsells'
-      path: '/upsells'
-      fullPath: '/admin/sales-booster/upsells'
-      preLoaderRoute: typeof AdminSalesBoosterUpsellsRouteImport
-      parentRoute: typeof AdminSalesBoosterRoute
-    }
-    '/admin/sales-booster/settings': {
-      id: '/admin/sales-booster/settings'
-      path: '/settings'
-      fullPath: '/admin/sales-booster/settings'
-      preLoaderRoute: typeof AdminSalesBoosterSettingsRouteImport
-      parentRoute: typeof AdminSalesBoosterRoute
-    }
-    '/admin/sales-booster/products': {
-      id: '/admin/sales-booster/products'
-      path: '/products'
-      fullPath: '/admin/sales-booster/products'
-      preLoaderRoute: typeof AdminSalesBoosterProductsRouteImport
-      parentRoute: typeof AdminSalesBoosterRoute
-    }
-    '/admin/sales-booster/cross-sells': {
-      id: '/admin/sales-booster/cross-sells'
-      path: '/cross-sells'
-      fullPath: '/admin/sales-booster/cross-sells'
-      preLoaderRoute: typeof AdminSalesBoosterCrossSellsRouteImport
       parentRoute: typeof AdminSalesBoosterRoute
     }
     '/admin/sales-booster/bundles': {
@@ -744,11 +709,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSalesBoosterBundlesRouteImport
       parentRoute: typeof AdminSalesBoosterRoute
     }
-    '/api/public/paymob/callback': {
-      id: '/api/public/paymob/callback'
-      path: '/api/public/paymob/callback'
-      fullPath: '/api/public/paymob/callback'
-      preLoaderRoute: typeof ApiPublicPaymobCallbackRouteImport
+    '/admin/sales-booster/cross-sells': {
+      id: '/admin/sales-booster/cross-sells'
+      path: '/cross-sells'
+      fullPath: '/admin/sales-booster/cross-sells'
+      preLoaderRoute: typeof AdminSalesBoosterCrossSellsRouteImport
+      parentRoute: typeof AdminSalesBoosterRoute
+    }
+    '/admin/sales-booster/products': {
+      id: '/admin/sales-booster/products'
+      path: '/products'
+      fullPath: '/admin/sales-booster/products'
+      preLoaderRoute: typeof AdminSalesBoosterProductsRouteImport
+      parentRoute: typeof AdminSalesBoosterRoute
+    }
+    '/admin/sales-booster/settings': {
+      id: '/admin/sales-booster/settings'
+      path: '/settings'
+      fullPath: '/admin/sales-booster/settings'
+      preLoaderRoute: typeof AdminSalesBoosterSettingsRouteImport
+      parentRoute: typeof AdminSalesBoosterRoute
+    }
+    '/admin/sales-booster/upsells': {
+      id: '/admin/sales-booster/upsells'
+      path: '/upsells'
+      fullPath: '/admin/sales-booster/upsells'
+      preLoaderRoute: typeof AdminSalesBoosterUpsellsRouteImport
+      parentRoute: typeof AdminSalesBoosterRoute
+    }
+    '/api/public/paymob-webhook': {
+      id: '/api/public/paymob-webhook'
+      path: '/api/public/paymob-webhook'
+      fullPath: '/api/public/paymob-webhook'
+      preLoaderRoute: typeof ApiPublicPaymobWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/send-due-campaigns': {
@@ -756,6 +749,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/hooks/send-due-campaigns'
       fullPath: '/api/public/hooks/send-due-campaigns'
       preLoaderRoute: typeof ApiPublicHooksSendDueCampaignsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/paymob/callback': {
+      id: '/api/public/paymob/callback'
+      path: '/api/public/paymob/callback'
+      fullPath: '/api/public/paymob/callback'
+      preLoaderRoute: typeof ApiPublicPaymobCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
