@@ -10,7 +10,19 @@ import { sendCampaignEmail } from "@/lib/notifications.server";
 export const Route = createFileRoute("/api/public/hooks/send-due-campaigns")({
   server: {
     handlers: {
-      POST: async () => {
+      POST: async ({ request }) => {
+        // Only the trusted pg_cron / service caller may trigger campaign sends.
+        const expected = process.env.SUPABASE_ANON_KEY ?? process.env.SUPABASE_PUBLISHABLE_KEY;
+        const provided =
+          request.headers.get("apikey") ??
+          request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ??
+          "";
+        if (!expected || provided !== expected) {
+          return new Response(JSON.stringify({ ok: false, error: "Unauthorized" }), {
+            status: 401,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
         const nowIso = new Date().toISOString();
         const { data: due, error } = await supabaseAdmin
           .from("email_campaigns")
